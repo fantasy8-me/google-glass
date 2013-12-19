@@ -75,12 +75,31 @@ limitations under the License.
 </div>
 
 <div class="container">
+	
 
   <% String flash = WebUtil.getClearFlash(request);
     if (flash != null) { %>
   <div class="alert alert-info"><%= StringEscapeUtils.escapeHtml4(flash) %></div>
   <% } %>
+  <div class="row">
+    <div class="span4">
 
+      <form action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
+        <input type="hidden" name="operation" value="rawhttp">
+        <textarea class="span4" name="jsonMsg" id="jsonMsg" style="height:250px"></textarea>  
+        <br/>
+        
+        <select  onchange="insertTemplate(this)">
+        	<option selected>Select A Template</option>
+			<option value="simpleText">Simple Text Card</option>
+			<option value="html">Html Card</option>
+		</select>
+        <button class="btn btn-block" type="submit">
+          Insert the above json message
+        </button>
+      </form>
+    </div>
+  </div>
   <h1>Your Recent Timeline</h1>
   <div class="row">
 
@@ -295,5 +314,31 @@ limitations under the License.
 <script
     src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+
+var jsonTemplates = {
+"simpleText" : 
+'    {\n\
+        "text": "This item auto-resizes according to the text length",\n\
+	    "notification": {\n\
+            "level": "DEFAULT"\n\
+        }\n\
+    }',
+"html" : 
+'  {\n\
+      "html": "<strong class=\\\"blue\\\">HTML</strong>",\n\
+      "notification": {\n\
+          "level": "DEFAULT"\n\
+      }\n\
+   }'
+};
+			
+	function insertTemplate(templates){
+		if(templates.selectedIndex !== 0){
+			console.log(templates.selectedIndex)
+			document.getElementById("jsonMsg").value = jsonTemplates[templates[templates.selectedIndex].value];
+		}
+	}
+</script>
 </body>
 </html>
