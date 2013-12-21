@@ -57,6 +57,9 @@ public class NotifyServlet extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
+	  
+	LOG.info("-----------------------------Great, we got a notification ---------------------------- ");
+	System.out.println("-----------------------------Great, we got a notification ----------------------------");
     // Respond with OK and status 200 in a timely fashion to prevent redelivery
     response.setContentType("text/html");
     Writer writer = response.getWriter();

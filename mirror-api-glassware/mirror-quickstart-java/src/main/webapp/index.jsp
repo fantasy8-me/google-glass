@@ -85,11 +85,15 @@ limitations under the License.
     <div class="span4">
 
       <form action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
+        <select name="url">
+        	<option selected value="timeline">timeline url</option>
+			<option value="subscriptions">Subscriptions url</option>
+		</select>      
         <input type="hidden" name="operation" value="rawhttp">
         <textarea class="span4" name="jsonMsg" id="jsonMsg" style="height:250px"></textarea>  
         <br/>
         
-        <select  onchange="insertTemplate(this)">
+        <select onchange="insertTemplate(this)">
         	<option selected>Select A Template</option>
 			<option value="simpleText">Simple Text Card</option>
 			<option value="html">Html Card</option>

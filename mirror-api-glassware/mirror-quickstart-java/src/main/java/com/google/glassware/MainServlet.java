@@ -276,8 +276,10 @@ private boolean preProcess(HttpServletRequest req, HttpServletResponse res, Cred
 		  String message = null;
 	      if (req.getParameter("jsonMsg") != null) {
 			try {
-				LOG.info("JSON Msg: \n" + req.getParameter("jsonMsg"));
-				message = sendJson(req.getParameter("jsonMsg"), credential.getAccessToken());
+				String url = getUrl(req.getParameter("url"));
+				LOG.info("JSON Msg: \nurl:"+ url + "\n" + req.getParameter("jsonMsg"));
+				
+				message = sendJson(req.getParameter("jsonMsg"), credential.getAccessToken(),url);
 			} catch (Exception e) {
 				e.printStackTrace();
 				message = e.getMessage();
@@ -299,8 +301,7 @@ private boolean preProcess(HttpServletRequest req, HttpServletResponse res, Cred
 	 * @return
 	 * @throws Exception
 	 */
-	public static String sendJson(String jsonStr, String accessToken) throws Exception {
-		String url = "https://www.googleapis.com/mirror/v1/timeline";
+	public static String sendJson(String jsonStr, String accessToken, String url) throws Exception {
 
 		HttpClient client = new DefaultHttpClient();
 		HttpPost post = new HttpPost(url);
@@ -324,5 +325,16 @@ private boolean preProcess(HttpServletRequest req, HttpServletResponse res, Cred
 		System.out.println(result.toString());
 		LOG.info("Full Response: " + result.toString());
 		return result.toString();
+	}
+	
+	private String getUrl(String key){
+		if("timeline".equals(key)){
+			return "https://www.googleapis.com/mirror/v1/timeline";
+		}else if("subscriptions".equals(key)){
+			return "https://www.googleapis.com/mirror/v1/subscriptions";
+		}else{//default
+			return "https://www.googleapis.com/mirror/v1/timeline";
+		}
+		
 	}
 }
