@@ -276,6 +276,7 @@ private boolean preProcess(HttpServletRequest req, HttpServletResponse res, Cred
 		  String message = null;
 	      if (req.getParameter("jsonMsg") != null) {
 			try {
+				LOG.info("JSON Msg: \n" + req.getParameter("jsonMsg"));
 				message = sendJson(req.getParameter("jsonMsg"), credential.getAccessToken());
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -311,6 +312,7 @@ private boolean preProcess(HttpServletRequest req, HttpServletResponse res, Cred
 		HttpResponse response = client.execute(post);
 		int statusCode = response.getStatusLine().getStatusCode();
 		System.out.println("Response Code : " + statusCode);
+		LOG.info("Response Code : " + statusCode);
 
 		BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 
@@ -320,6 +322,7 @@ private boolean preProcess(HttpServletRequest req, HttpServletResponse res, Cred
 			result.append(line);
 		}
 		System.out.println(result.toString());
+		LOG.info("Full Response: " + result.toString());
 		return result.toString();
 	}
 }
