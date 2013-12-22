@@ -58,14 +58,9 @@ public class NotifyServlet extends HttpServlet {
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 	  
-	LOG.info("-----------------------------Great, we got a notification ---------------------------- ");
-	System.out.println("-----------------------------Great, we got a notification ----------------------------");
-    // Respond with OK and status 200 in a timely fashion to prevent redelivery
-    response.setContentType("text/html");
-    Writer writer = response.getWriter();
-    writer.append("OK");
-    writer.close();
-
+	LOG.info("-----------------------------Great2, we got a notification ---------------------------- ");
+	System.out.println("-----------------------------Great2, we got a notification ----------------------------");
+	
     // Get the notification object from the request body (into a string so we
     // can log it)
     BufferedReader notificationReader =
@@ -84,7 +79,16 @@ public class NotifyServlet extends HttpServlet {
       }
     }
 
-    LOG.info("got raw notification " + notificationString);
+    LOG.info("got raw notification [" + notificationString+"]");	
+	
+	
+    // Respond with OK and status 200 in a timely fashion to prevent redelivery
+    response.setContentType("text/html");
+    Writer writer = response.getWriter();
+    writer.append("OK");
+    writer.close();
+
+
 
     JsonFactory jsonFactory = new JacksonFactory();
 
