@@ -67,6 +67,11 @@ public class NotifyServlet extends HttpServlet {
         new BufferedReader(new InputStreamReader(request.getInputStream()));
     String notificationString = "";
 
+    String sCurrentLine;
+	while ((sCurrentLine = notificationReader.readLine()) != null) {
+		System.out.println(sCurrentLine);
+		LOG.info(sCurrentLine);
+	}
     // Count the lines as a very basic way to prevent Denial of Service attacks
     int lines = 0;
     while (notificationReader.ready()) {
