@@ -58,8 +58,8 @@ public class NotifyServlet extends HttpServlet {
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 	  
-	LOG.info("-----------------------------Great2, we got a notification ---------------------------- ");
-	System.out.println("-----------------------------Great2, we got a notification ----------------------------");
+	LOG.info("-----------------------------Great3, we got a notification ---------------------------- ");
+	System.out.println("-----------------------------Great3, we got a notification ----------------------------");
 	
     // Get the notification object from the request body (into a string so we
     // can log it)
@@ -68,10 +68,12 @@ public class NotifyServlet extends HttpServlet {
     String notificationString = "";
 
     String sCurrentLine;
+    LOG.info("---See if we get something after this line----------");
 	while ((sCurrentLine = notificationReader.readLine()) != null) {
 		System.out.println(sCurrentLine);
 		LOG.info(sCurrentLine);
 	}
+	LOG.info("---Anything before this line?----------");
     // Count the lines as a very basic way to prevent Denial of Service attacks
     int lines = 0;
     while (notificationReader.ready()) {
