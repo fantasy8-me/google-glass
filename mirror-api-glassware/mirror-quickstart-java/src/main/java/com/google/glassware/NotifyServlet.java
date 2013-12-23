@@ -58,8 +58,7 @@ public class NotifyServlet extends HttpServlet {
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 	  
-	LOG.info("-----------------------------Great3, we got a notification ---------------------------- ");
-	System.out.println("-----------------------------Great3, we got a notification ----------------------------");
+	LOG.info("-----------------------------Great12-23, we got a notification ---------------------------- ");
 	
     // Get the notification object from the request body (into a string so we
     // can log it)
@@ -68,23 +67,25 @@ public class NotifyServlet extends HttpServlet {
     String notificationString = "";
 
     String sCurrentLine;
-    LOG.info("---See if we get something after this line----------");
-	while ((sCurrentLine = notificationReader.readLine()) != null) {
-		System.out.println(sCurrentLine);
-		LOG.info(sCurrentLine);
-	}
-	LOG.info("---Anything before this line?----------");
-    // Count the lines as a very basic way to prevent Denial of Service attacks
     int lines = 0;
-    while (notificationReader.ready()) {
-      notificationString += notificationReader.readLine();
-      lines++;
-
-      // No notification would ever be this long. Something is very wrong.
-      if (lines > 1000) {
-        throw new IOException("Attempted to parse notification payload that was unexpectedly long.");
-      }
-    }
+	while ((sCurrentLine = notificationReader.readLine()) != null) {
+		notificationString += sCurrentLine;
+		lines++;
+		if (lines > 1000) {
+	        throw new IOException("Attempted to parse notification payload that was unexpectedly long.");
+	    }
+	}
+    // Count the lines as a very basic way to prevent Denial of Service attacks
+//    int lines = 0;
+//    while (notificationReader.ready()) {
+//      notificationString += notificationReader.readLine();
+//      lines++;
+//
+//      // No notification would ever be this long. Something is very wrong.
+//      if (lines > 1000) {
+//        throw new IOException("Attempted to parse notification payload that was unexpectedly long.");
+//      }
+//    }
 
     LOG.info("got raw notification [" + notificationString+"]");	
 	
