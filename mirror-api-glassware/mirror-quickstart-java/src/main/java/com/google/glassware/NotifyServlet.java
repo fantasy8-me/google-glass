@@ -110,7 +110,8 @@ public class NotifyServlet extends HttpServlet {
     String userId = notification.getUserToken();
     Credential credential = AuthUtil.getCredential(userId);
     Mirror mirrorClient = MirrorClient.getMirror(credential);
-
+    
+    LOG.info("----------access token[" + credential.getAccessToken() + "]--------------------");
 
     if (notification.getCollection().equals("locations")) {
       LOG.info("Notification of updated location");
@@ -169,7 +170,18 @@ public class NotifyServlet extends HttpServlet {
             new MenuItem().setAction("DELETE")));
 
         mirrorClient.timeline().update(timelineItem.getId(), timelineItem).execute();
-      } else {
+      } else if(notification.getUserActions().contains(new UserAction().setType("CUSTOM"))) {
+    	  int indexOfCustomMenu = notification.getUserActions().indexOf(new UserAction().setType("CUSTOM"));
+    	  LOG.info("indexofMenu:"+indexOfCustomMenu);
+    	  UserAction ua = notification.getUserActions().get(indexOfCustomMenu);
+    	  if("Mark".equals(ua.getPayload())){
+    		  timelineItem.setText("Item is marked");
+    		  timelineItem.setHtml("");
+    		  mirrorClient.timeline().update(timelineItem.getId(), timelineItem).execute();
+    		  LOG.info("Item is marked------------");
+    	  }
+        } 
+      else {
         LOG.warning("I don't know what to do with this notification, so I'm ignoring it.");
       }
     }
