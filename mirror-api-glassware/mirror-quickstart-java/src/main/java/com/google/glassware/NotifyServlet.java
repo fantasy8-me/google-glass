@@ -180,8 +180,14 @@ public class NotifyServlet extends HttpServlet {
     		  mirrorClient.timeline().update(timelineItem.getId(), timelineItem).execute();
     		  LOG.info("Item is marked------------");
     	  }
-        } 
-      else {
+      } else if(notification.getUserActions().contains(new UserAction().setType("REPLY"))) {
+    	  LOG.info("I know you just reply my card");
+    	  String itemid = notification.getItemId();
+    	  
+    	  TimelineItem item = mirrorClient.timeline().get(itemid).execute();
+  		  
+  		  LOG.info("Is it what you just spoke?:[" + item.getText() + "]");
+    }else {
         LOG.warning("I don't know what to do with this notification, so I'm ignoring it.");
       }
     }
