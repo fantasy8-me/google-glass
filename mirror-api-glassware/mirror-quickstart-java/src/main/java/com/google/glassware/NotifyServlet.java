@@ -175,7 +175,7 @@ public class NotifyServlet extends HttpServlet {
     	  UserAction ua = notification.getUserActions().get(0);
     	  if("Mark".equals(ua.getPayload())){
     		  timelineItem.setText("Item is marked");
-    		  timelineItem.setHtml("");
+    		  timelineItem.setHtml("Item is marked");
     		  mirrorClient.timeline().update(timelineItem.getId(), timelineItem).execute();
     		  LOG.info("Item is marked------------");
     	  }
