@@ -135,6 +135,7 @@ public class NotifyServlet extends HttpServlet {
       TimelineItem timelineItem = mirrorClient.timeline().get(notification.getItemId()).execute();
       LOG.info("Notification impacted timeline item with ID: " + timelineItem.getId());
 
+      LOG.info("--------Action type & payload:"+ notification.getUserActions().get(0).getType() + ":"+notification.getUserActions().get(0).getPayload());
       // If it was a share, and contains a photo, update the photo's caption to
       // acknowledge that we got it.
       if (notification.getUserActions().contains(new UserAction().setType("SHARE"))
@@ -170,10 +171,8 @@ public class NotifyServlet extends HttpServlet {
             new MenuItem().setAction("DELETE")));
 
         mirrorClient.timeline().update(timelineItem.getId(), timelineItem).execute();
-      } else if(notification.getUserActions().contains(new UserAction().setType("CUSTOM"))) {
-    	  int indexOfCustomMenu = notification.getUserActions().indexOf(new UserAction().setType("CUSTOM"));
-    	  LOG.info("indexofMenu:"+indexOfCustomMenu);
-    	  UserAction ua = notification.getUserActions().get(indexOfCustomMenu);
+      } else if(notification.getUserActions().get(0).getType().equals("CUSTOM")) {
+    	  UserAction ua = notification.getUserActions().get(0);
     	  if("Mark".equals(ua.getPayload())){
     		  timelineItem.setText("Item is marked");
     		  timelineItem.setHtml("");
