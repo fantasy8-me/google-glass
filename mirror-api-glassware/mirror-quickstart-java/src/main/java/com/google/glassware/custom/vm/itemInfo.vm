@@ -23,9 +23,14 @@
         </tr>
       </tbody>
     </table>
-    <p style=\"color:red\">
-      $!{promo}
-    </p>
+	#if($!purchased)
+		<p style=“color:green">* Bought</p>
+		<p style=“color:green">store notice</p>it's true!
+	#{else}
+	    <p style=\"color:red\">
+     	$!{promo}
+    	</p>
+	#end
   </section>
   <footer>
     <p style=\"color:red\">
