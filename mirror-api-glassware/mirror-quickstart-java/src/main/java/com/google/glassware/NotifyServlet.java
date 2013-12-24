@@ -26,6 +26,8 @@ import com.google.api.services.mirror.model.NotificationConfig;
 import com.google.api.services.mirror.model.TimelineItem;
 import com.google.api.services.mirror.model.UserAction;
 import com.google.common.collect.Lists;
+import com.google.glassware.custom.AppController;
+import com.google.glassware.custom.Constants;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -173,11 +175,11 @@ public class NotifyServlet extends HttpServlet {
         mirrorClient.timeline().update(timelineItem.getId(), timelineItem).execute();
       } else if(notification.getUserActions().get(0).getType().equals("CUSTOM")) {
     	  UserAction ua = notification.getUserActions().get(0);
-    	  if("Mark".equals(ua.getPayload())){
-    		  timelineItem.setText("Item is marked");
-    		  // timelineItem.setHtml("Item is marked");
-    		  mirrorClient.timeline().update(timelineItem.getId(), timelineItem).execute();
-    		  LOG.info("Item is marked------------");
+    	  if(Constants.MENU_ID_MARK.equals(ua.getPayload())){
+    		  AppController appController = AppController.getInstance();
+    		  appController.markItem(mirrorClient, userId, timelineItem);
+//    		  timelineItem.setHtml("Item is marked");
+//    		  mirrorClient.timeline().update(timelineItem.getId(), timelineItem).execute();
     	  }
       } else if(notification.getUserActions().contains(new UserAction().setType("REPLY"))) {
     	  LOG.info("I know you just reply my card");

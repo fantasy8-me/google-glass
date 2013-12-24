@@ -1,11 +1,11 @@
 {
-	"dummyusrId1":[
+"dummyusrId1":[
 		{
 			"prdNum":1,
 			"prdName":"McCormick Ground Cinnamon",
 			"imgUrl":"http://i.imgur.com/jvtNuXM.jpg",
 			"quantity":2,
-			"price": 3.29,
+			"price": "$3.29",
 			"promo":"Buy 2 Get 1",
 			"notes":["Don't take the green one.","Don't forget to check about the promotion."],
 			"purchased":false
@@ -14,10 +14,68 @@
 			"prdNum":2,
 			"prdName":"Homestead Creamery",
 			"imgUrl":"http://i.imgur.com/la5npkK.png",
-			"quantity":3,
-			"price": 5,
+			"quantity":1,
+			"price": "$5.00",
+			"notes":["We might need another one, call me.","Consider buying chocolate."],
 			"purchased":false
-		}		
+		},
+		{
+			"prdNum":3,
+			"prdName":"Whisker Lickins Tuna",
+			"imgUrl":"http://i.imgur.com/fimPGOg.jpg",
+			"quantity":1,
+			"price": "$1.79",
+			"promo": "50% Today",
+			"purchased":false			
+		},	
+		{
+			"prdNum":4,
+			"prdName":"Hazelnuts Creamer Singles",
+			"imgUrl":"http://i.imgur.com/BYXojl1.jpg",
+			"quantity":3,
+			"price": "$4.00",
+			"promo": "2 For 6",
+			"notes":["I need that for the cake."],
+			"purchased":false
+		},			
+		{
+			"prdNum":5,
+			"prdName":"Simply Organic Cinnamon",
+			"imgUrl":"http://i.imgur.com/iNm5Yuh.jpg",
+			"quantity":1,
+			"price": "$2.79",
+			"notes":["Buy only ‘Simply Organic’."],
+			"purchased":false	
+		},
+		{
+			"prdNum":6,
+			"prdName":"Garelick Trumoo Chocolate",
+			"imgUrl":"http://i.imgur.com/Ry6nDV4.png",
+			"quantity":2,
+			"price": "$3.00",
+			"promo": "Buy 2 Get 2 Free",
+			"notes":["We have guests tomorrow, consider buying more."],
+			"purchased":false	
+		},
+		{
+			"prdNum":7,
+			"prdName":"Chicken Tuna Feast for Cat",
+			"imgUrl":"http://i.imgur.com/HTWuEv9.jpg",
+			"quantity":2,
+			"price": "$3.00",
+			"notes":["Check that it’s enough for a week.","Call alex about cat toys purchase.","Return me a call before you buy, I might get it somewhere else."],
+			"purchased":false	
+		},
+		{
+			"prdNum":8,
+			"prdName":"Reeses Peanut Butter Hearts",
+			"imgUrl":"http://i.imgur.com/YwkSIdl.png",
+			"quantity":5,
+			"price": "$1.00",
+			"promo": "10 Units for 7",
+			"notes":["Check about promotions, we have guests tomorrow."],
+			"purchased":false	
+		}
 	],
 	"dummyusrId2":[
 		{

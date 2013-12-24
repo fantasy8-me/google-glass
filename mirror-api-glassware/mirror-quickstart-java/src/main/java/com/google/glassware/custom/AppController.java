@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.mortbay.log.Log;
+
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.util.ArrayMap;
 import com.google.api.services.mirror.Mirror;
@@ -33,6 +35,7 @@ public class AppController {
 
 	};
 
+	
 	public synchronized static AppController getInstance() {
 		if (appController == null) {
 			appController = new AppController();
@@ -49,6 +52,7 @@ public class AppController {
 		Credential credential;
 		credential = AuthUtil.getCredential(userId);
 		Mirror mirrorClient = MirrorClient.getMirror(credential);
+		((DemoShoppingListProvider)shoppingListProvider).refreshData(); //For testing only
 
 		bundleIdSuffix = String.valueOf(System.currentTimeMillis());
 
@@ -123,7 +127,36 @@ public class AppController {
 			e.printStackTrace();
 		}
 	}
+	
+	public void markItem(Mirror mirrorClient, String userId,TimelineItem timelineItem) {
+		Map itemData = null;
+		String bundleId = timelineItem.getBundleId();
+		Log.info("----------bundld id:" + bundleId + " itemid:" + timelineItem.getId());
+		int itemNub = Integer.parseInt(bundleId.substring(4,bundleId.indexOf("_")));
+		Log.info("----------bundld id:" + bundleId + " item number:" + itemNub);
+		
+		List shoppingList = shoppingListProvider.getShoppingList(userId);
+		for (int i = 0; i < shoppingList.size(); i++) {
+			if(itemNub-1 == i){
+				Map item = (Map)shoppingList.get(i);
+				item.put(Constants.ITEM_COL_PURCHASED, true);
+			}
+		}
+//		Map items = new HashMap<String, List>();
+//		items.put(Constants.LIST_PARM_ITEMS, shoppingList);
+//		items.put(Constants.ITEM_PARM_MAXITEM, shoppingList.size());
+		
+		String html = VelocityHelper.getFinalStr((Map)shoppingList.get(itemNub-1), "itemInfo.vm");
+		timelineItem.setHtml(html);
 
+		try {
+			mirrorClient.timeline().update(timelineItem.getId(), timelineItem).execute();
+			  LOG.info("Item is marked------------");
+		} catch (IOException e) {
+			LOG.severe("Error when create item info card, data:" + itemData);
+			e.printStackTrace();
+		}
+	}
 	private void createItemConverCard(Mirror mirrorClient, Map itemData) {
 
 		String html = VelocityHelper.getFinalStr(itemData, "itemConver.vm");

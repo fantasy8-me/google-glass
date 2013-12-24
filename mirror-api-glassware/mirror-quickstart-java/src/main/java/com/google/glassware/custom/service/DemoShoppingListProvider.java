@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.glassware.custom.model.JsonDb;
 
 public class DemoShoppingListProvider implements ShoppingListProvider {
 
@@ -21,7 +20,7 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
 	private DemoShoppingListProvider() {
 		JsonFactory jsonFactory = new JacksonFactory();
 		try {
-			productData = jsonFactory.fromInputStream(JsonDb.class.getResourceAsStream("/productData.json"),
+			productData = jsonFactory.fromInputStream(DemoShoppingListProvider.class.getResourceAsStream("/productData.json"),
 					HashMap.class);
 		} catch (IOException e) {
 			LOG.severe("Can not init produc data");
@@ -35,6 +34,20 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
 		}
 		return demoShoppingListProvider;
 
+	}
+	
+	/**
+	 * For testing use only
+	 */
+	public void refreshData(){
+		JsonFactory jsonFactory = new JacksonFactory();
+		try {
+			productData = jsonFactory.fromInputStream(DemoShoppingListProvider.class.getResourceAsStream("/productData.json"),
+					HashMap.class);
+		} catch (IOException e) {
+			LOG.severe("Can not init produc data");
+			e.printStackTrace();
+		}
 	}
 
 	public List<Map> getShoppingList(String userId) {
