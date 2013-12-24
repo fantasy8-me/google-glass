@@ -1,0 +1,17 @@
+<article class="auto-paginate">
+  <h3>
+    Shopping List:
+  </h3>
+  <ul class="text-x-small">
+  	#foreach( $item in $items)
+  	    <li>
+      		$item.quantity $item.prdName 
+    	</li>
+	#end
+  </ul>
+  <footer>
+    <p>
+      ${maxItems} Items
+    </p>
+  </footer>
+</article>

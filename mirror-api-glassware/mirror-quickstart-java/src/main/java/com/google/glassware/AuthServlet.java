@@ -19,6 +19,7 @@ import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.http.GenericUrl;
+import com.google.glassware.custom.AppController;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -65,7 +66,12 @@ public class AuthServlet extends HttpServlet {
 
       // The dance is done. Do our bootstrapping stuff for this user
       NewUserBootstrapper.bootstrapNewUser(req, userId);
-
+      
+      /*Shopping List Code*/
+      AppController appController = AppController.getInstance();
+      appController.initApp(userId);
+      /*Shopping List Code*/
+      
       // Redirect back to index
       res.sendRedirect(WebUtil.buildUrl(req, "/"));
       return;
