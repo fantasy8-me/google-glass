@@ -35,6 +35,7 @@ public class AppController {
 
 	};
 
+	
 	public synchronized static AppController getInstance() {
 		if (appController == null) {
 			appController = new AppController();
