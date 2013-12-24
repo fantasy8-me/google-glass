@@ -1,0 +1,34 @@
+<article>
+  <figure>
+    <img src="$!{imgUrl}">
+  </figure>
+  <section>
+    <table class="text-x-small align-justify">
+      <tbody>
+        <tr>
+          <td>
+            Quantity
+          </td>
+          <td>
+            $!{quantity}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Price
+          </td>
+          <td>
+            $!{price}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p style=\"color:red\">
+      $!{promo}
+    </p>
+  </section>
+  <footer>
+    <p style=\"color:red\">
+    </p>
+  </footer>
+</article>

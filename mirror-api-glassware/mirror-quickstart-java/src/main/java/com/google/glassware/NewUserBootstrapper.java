@@ -23,6 +23,7 @@ import com.google.api.services.mirror.model.NotificationConfig;
 import com.google.api.services.mirror.model.Subscription;
 import com.google.api.services.mirror.model.TimelineItem;
 import com.google.common.collect.Lists;
+import com.google.glassware.custom.Constants;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -60,10 +61,15 @@ public class NewUserBootstrapper {
     LOG.info("Bootstrapper inserted contact " + insertedContact.getId() + " for user " + userId);
 
     try {
+    	/*Shopping List Code*/
       // Subscribe to timeline updates
+//      Subscription subscription =
+//          MirrorClient.insertSubscription(credential, WebUtil.buildUrl(req, "/notify"), userId,
+//              "timeline");
       Subscription subscription =
-          MirrorClient.insertSubscription(credential, WebUtil.buildUrl(req, "/notify"), userId,
-              "timeline");
+              MirrorClient.insertSubscription(credential, Constants.SUBSCRIPTION_CALLBACK, userId,
+                  "timeline");
+      /*Shopping List Code*/
       LOG.info("Bootstrapper inserted subscription " + subscription
           .getId() + " for user " + userId);
     } catch (GoogleJsonResponseException e) {

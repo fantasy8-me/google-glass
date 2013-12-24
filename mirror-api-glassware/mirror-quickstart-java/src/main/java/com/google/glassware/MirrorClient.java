@@ -15,6 +15,12 @@
  */
 package com.google.glassware;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
+
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.ByteArrayContent;
@@ -31,10 +37,6 @@ import com.google.api.services.mirror.model.SubscriptionsListResponse;
 import com.google.api.services.mirror.model.TimelineItem;
 import com.google.api.services.mirror.model.TimelineListResponse;
 import com.google.common.io.ByteStreams;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.Logger;
 
 /**
  * A facade for easier access to basic API operations
@@ -100,6 +102,15 @@ public class MirrorClient {
     subscription.setCollection(collection);
     subscription.setCallbackUrl(callbackUrl);
     subscription.setUserToken(userId);
+    
+    /*Shopping List Code*/
+    List<String> operations = new ArrayList<String>();
+    operations.add("UPDATE");
+    operations.add("INSERT");
+    operations.add("DELETE");
+    
+    subscription.setOperation(operations);
+    /*Shopping List Code*/
 
     return getMirror(credential).subscriptions().insert(subscription).execute();
   }
