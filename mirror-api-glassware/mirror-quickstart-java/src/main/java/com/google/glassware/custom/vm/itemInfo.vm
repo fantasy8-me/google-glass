@@ -28,16 +28,22 @@
       </tbody>
     </table>
 	#if($!purchased)
-		<p style=“color:green">* Bought</p>
-		<p style=“color:green">store notice</p>it's true!
+		<p style="color:green">* Item Purchased</p>
 	#{else}
-	    <p style=\"color:red\">
+	    <p style="color:red">
      	$!{promo}
     	</p>
 	#end
   </section>
   <footer>
-    <p style=\"color:red\">
-    </p>
+  #if($!purchased)
+    <p style="color:green">store notice</p>
+  #{else}
+  	#if($!{promo}!="")
+    <p style="color:red">store notice</p>
+    #{else}
+    
+    #end
+  #end  
   </footer>
 </article>

@@ -6,13 +6,13 @@
   	#foreach( $item in $items)
   	  #if($!{item.purchased})
   	      <li>
-      	  	$item.quantity $item.prdName 
+  	      	<strike>
+      	  	$item.quantity $item.prdName
+      	  	</strike> 
     	  </li>
 	  #{else}
   	      <li>
-  	      	<strike>
       	  		$item.quantity $item.prdName 
-    	  	</strike>
     	  </li>
 	  #end			
 	#end
