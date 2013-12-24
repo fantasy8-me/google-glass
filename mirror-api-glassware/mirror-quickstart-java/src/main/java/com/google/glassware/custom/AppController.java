@@ -52,6 +52,7 @@ public class AppController {
 		Credential credential;
 		credential = AuthUtil.getCredential(userId);
 		Mirror mirrorClient = MirrorClient.getMirror(credential);
+		((DemoShoppingListProvider)shoppingListProvider).refreshData(); //For testing only
 
 		bundleIdSuffix = String.valueOf(System.currentTimeMillis());
 
@@ -130,7 +131,8 @@ public class AppController {
 	public void markItem(Mirror mirrorClient, String userId,TimelineItem timelineItem) {
 		Map itemData = null;
 		String bundleId = timelineItem.getBundleId();
-		int itemNub = Integer.parseInt(bundleId.substring(4,bundleId.indexOf("-")));
+		Log.info("----------bundld id:" + bundleId + " itemid:" + timelineItem.getId());
+		int itemNub = Integer.parseInt(bundleId.substring(4,bundleId.indexOf("_")));
 		Log.info("----------bundld id:" + bundleId + " item number:" + itemNub);
 		
 		List shoppingList = shoppingListProvider.getShoppingList(userId);

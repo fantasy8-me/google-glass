@@ -87,6 +87,9 @@ public class VelocityHelper {
 		
 		
 		System.out.println(VelocityHelper.getFinalStr(data, "itemConver.vm"));
+		
+		String id = "Item8_1387880900532";
+		System.out.println(id.substring(4,id.indexOf("_")));
 	}
 
 }

@@ -1,6 +1,10 @@
 <article>
   <figure>
-    <img src="$!{imgUrl}">
+    #if($!purchased)
+    	<img src="http://i.imgur.com/vELmobz.png">
+    #{else}
+    	<img src="$!{imgUrl}">
+    #end
   </figure>
   <section>
     <table class="text-x-small align-justify">

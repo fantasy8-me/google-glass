@@ -35,6 +35,20 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
 		return demoShoppingListProvider;
 
 	}
+	
+	/**
+	 * For testing use only
+	 */
+	public void refreshData(){
+		JsonFactory jsonFactory = new JacksonFactory();
+		try {
+			productData = jsonFactory.fromInputStream(DemoShoppingListProvider.class.getResourceAsStream("/productData.json"),
+					HashMap.class);
+		} catch (IOException e) {
+			LOG.severe("Can not init produc data");
+			e.printStackTrace();
+		}
+	}
 
 	public List<Map> getShoppingList(String userId) {
 		// TODO.Eric before the implementaion of local json db, we need to hard
