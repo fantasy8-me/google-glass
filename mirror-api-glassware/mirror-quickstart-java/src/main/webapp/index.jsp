@@ -82,24 +82,44 @@ limitations under the License.
   <div class="alert alert-info"><%= StringEscapeUtils.escapeHtml4(flash) %></div>
   <% } %>
   <div class="row">
-    <div class="span4">
-
+    <div class="span6">
+      <form class="form-horizontal" action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
+      	<input type="hidden" name="operation" value="rawhttp">
+		  <div class="control-group">
+		    <label class="control-label">Service Endpoint</label>
+		    <div class="controls">
+			    <select name="url">
+			       	<option selected value="timeline">timeline url</option>
+					<option value="subscriptions">Subscriptions url</option>
+				</select>   
+		    </div>
+		  </div>      
+    	  <div class="control-group">
+		    <label class="control-label">Json Message</label>
+		    <div class="controls">
+		    	<textarea class="span4" name="jsonMsg" id="jsonMsg" style="height:250px"></textarea>
+		    </div>
+		  </div> 
+    	  <div class="control-group">
+		    <label class="control-label">Message Template</label>
+		    <div class="controls">
+		        <select onchange="insertTemplate(this)">
+		        	<option selected>Select A Template</option>
+					<option value="simpleText">Simple Text Card</option>
+					<option value="html">Html Card</option>
+				</select>
+		    </div>
+		  </div>        
+          <button class="btn btn-block" type="submit">
+            Insert the above json message
+          </button>
+      </form>
+    </div>
+    <div class="span5 offset1">
       <form action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
-        <select name="url">
-        	<option selected value="timeline">timeline url</option>
-			<option value="subscriptions">Subscriptions url</option>
-		</select>      
-        <input type="hidden" name="operation" value="rawhttp">
-        <textarea class="span4" name="jsonMsg" id="jsonMsg" style="height:250px"></textarea>  
-        <br/>
-        
-        <select onchange="insertTemplate(this)">
-        	<option selected>Select A Template</option>
-			<option value="simpleText">Simple Text Card</option>
-			<option value="html">Html Card</option>
-		</select>
-        <button class="btn btn-block" type="submit">
-          Insert the above json message
+      	<input type="hidden" name="operation" value="startshopping">
+        <button class="btn btn-block btn-primary" type="submit">
+          Start Shopping
         </button>
       </form>
     </div>

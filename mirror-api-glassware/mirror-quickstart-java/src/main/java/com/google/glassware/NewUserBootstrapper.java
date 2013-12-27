@@ -49,7 +49,7 @@ public class NewUserBootstrapper {
   public static void bootstrapNewUser(HttpServletRequest req, String userId) throws IOException {
     Credential credential = AuthUtil.newAuthorizationCodeFlow().loadCredential(userId);
 
-    // Create contact
+    /* Create contact comment by Shopping List Code
     Contact starterProjectContact = new Contact();
     starterProjectContact.setId(MainServlet.CONTACT_ID);
     starterProjectContact.setDisplayName(MainServlet.CONTACT_NAME);
@@ -58,7 +58,7 @@ public class NewUserBootstrapper {
     starterProjectContact.setAcceptCommands(Lists.newArrayList(
         new Command().setType("TAKE_A_NOTE")));
     Contact insertedContact = MirrorClient.insertContact(credential, starterProjectContact);
-    LOG.info("Bootstrapper inserted contact " + insertedContact.getId() + " for user " + userId);
+    LOG.info("Bootstrapper inserted contact " + insertedContact.getId() + " for user " + userId);*/
 
     try {
     	/*Shopping List Code*/
@@ -78,11 +78,12 @@ public class NewUserBootstrapper {
     }
 
     // Send welcome timeline item
+    /*Shopping List Code comment
     TimelineItem timelineItem = new TimelineItem();
     timelineItem.setText("Welcome to the Glass Java Quick Start");
     timelineItem.setNotification(new NotificationConfig().setLevel("DEFAULT"));
     TimelineItem insertedItem = MirrorClient.insertTimelineItem(credential, timelineItem);
     LOG.info("Bootstrapper inserted welcome message " + insertedItem.getId() + " for user "
-        + userId);
+        + userId);*/
   }
 }

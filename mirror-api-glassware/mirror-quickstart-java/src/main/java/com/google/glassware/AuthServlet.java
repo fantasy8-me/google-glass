@@ -67,11 +67,6 @@ public class AuthServlet extends HttpServlet {
       // The dance is done. Do our bootstrapping stuff for this user
       NewUserBootstrapper.bootstrapNewUser(req, userId);
       
-      /*Shopping List Code*/
-      AppController appController = AppController.getInstance();
-      appController.initApp(userId);
-      /*Shopping List Code*/
-      
       // Redirect back to index
       res.sendRedirect(WebUtil.buildUrl(req, "/"));
       return;

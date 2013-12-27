@@ -29,6 +29,7 @@ import com.google.api.services.mirror.model.NotificationConfig;
 import com.google.api.services.mirror.model.Subscription;
 import com.google.api.services.mirror.model.TimelineItem;
 import com.google.common.collect.Lists;
+import com.google.glassware.custom.AppController;
 import com.google.glassware.custom.Constants;
 
 import java.io.BufferedReader;
@@ -280,7 +281,7 @@ public class MainServlet extends HttpServlet {
 private boolean preProcess(HttpServletRequest req, HttpServletResponse res, Credential credential) throws IOException{
 	  if (req.getParameter("operation").equals("rawhttp")) {
 		  String message = null;
-	      if (req.getParameter("jsonMsg") != null) {
+	      if (!req.getParameter("jsonMsg").isEmpty()) {
 			try {
 				String url = getUrl(req.getParameter("url"));
 				LOG.info("JSON Msg: \nurl:"+ url + "\n" + req.getParameter("jsonMsg"));
@@ -294,7 +295,12 @@ private boolean preProcess(HttpServletRequest req, HttpServletResponse res, Cred
           WebUtil.setFlash(req, message);
           res.sendRedirect(WebUtil.buildUrl(req, "/"));	      
 	      return true;
-	  }else{
+	  }else if(req.getParameter("operation").equals("startshopping")){
+          AppController appController = AppController.getInstance();
+          appController.initApp(AuthUtil.getUserId(req));
+          res.sendRedirect(WebUtil.buildUrl(req, "/"));	   
+          return true;
+      }else{
 		  return false;
 	  }
   }
