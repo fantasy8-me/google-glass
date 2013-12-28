@@ -1,0 +1,49 @@
+<article>
+  <figure>
+    #if($!purchased)
+    	<img src="http://i.imgur.com/vELmobz.png">
+    #{else}
+    	<img src="$!{imgUrl}">
+    #end
+  </figure>
+  <section>
+    <table class="text-x-small align-justify">
+      <tbody>
+        <tr>
+          <td>
+            Quantity
+          </td>
+          <td>
+            $!{quantity}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Price
+          </td>
+          <td>
+            $!{price}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+	#if($!purchased)
+		<p style="color:green">* Item Purchased</p>
+	#{else}
+	    <p style="color:red">
+     	$!{promo}
+    	</p>
+	#end
+  </section>
+  <footer>
+  #if($!purchased)
+    <p style="color:green">store notice</p>
+  #{else}
+  	#if($!{promo}!="")
+    <p style="color:red">store notice</p>
+    #{else}
+    
+    #end
+  #end  
+  </footer>
+</article>

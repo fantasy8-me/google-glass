@@ -1,0 +1,43 @@
+{
+"dummyusrId1":[
+		{
+			"prdNum":1,
+			"prdName":"McCormick Ground Cinnamon",
+			"imgUrl":"http://i.imgur.com/jvtNuXM.jpg",
+			"quantity":2,
+			"price": "$3.29",
+			"promo":"Buy 2 Get 1",
+			"notes":["Don't take the green one.","Don't forget to check about the promotion."],
+			"purchased":false
+		},
+		{
+			"prdNum":2,
+			"prdName":"Homestead Creamery",
+			"imgUrl":"http://i.imgur.com/la5npkK.png",
+			"quantity":1,
+			"price": "$5.00",
+			"notes":["We might need another one, call me.","Consider buying chocolate."],
+			"purchased":false
+		}
+	],
+	"dummyusrId2":[
+		{
+			"prdNum":21,
+			"prdName":"2-McCormick Ground Cinnamon",
+			"imgUrl":"http://i.imgur.com/jvtNuXM.jpg",
+			"quantity":2,
+			"price": 3.29,
+			"promo":"Buy 2 Get 1",
+			"notes":["Don't take the green one.","Don't forget to check about the promotion."],
+			"purchased":false
+		},
+		{
+			"prdNum":22,
+			"prdName":"2-Homestead Creamery",
+			"imgUrl":"http://i.imgur.com/la5npkK.png",
+			"quantity":3,
+			"price": 5,
+			"purchased":false
+		}	
+	]	
+}
