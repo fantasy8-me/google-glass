@@ -2,24 +2,28 @@
   <h3>
     Shopping List:
   </h3>
-  <ul class="text-x-small">
-  	#foreach( $item in $items)
-  	  #if($!{item.purchased})
-  	      <li>
-  	      	<strike>
-      	  	$item.quantity $item.prdName
-      	  	</strike> 
-    	  </li>
-	  #{else}
-  	      <li>
-      	  		$item.quantity $item.prdName 
-    	  </li>
-	  #end			
-	#end
-  </ul>
+  #foreach( $category in $allProducts.keySet())
+  	#set( $productsForCategory = $allProducts.get($category))
+  	<h4>$categoryTitles.get($category)</h4>
+    <ul class="text-x-small">
+  	  #foreach( $product in $productsForCategory)
+  	    #if($!{item.purchased})
+  	        <li>
+  	        	<strike>
+      	  	  $product.quantity $product.prdName
+      	  	  </strike> 
+    	    </li>
+	    #{else}
+  	        <li>
+      	   		$product.quantity $product.prdName 
+    	    </li>
+	    #end			
+	  #end
+    </ul>
+  #end
+
   <footer>
     <p>
-      ${maxItems} Items
     </p>
   </footer>
 </article>

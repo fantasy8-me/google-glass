@@ -1,0 +1,14 @@
+<article class="photo">
+  <img src="$!{imgUrl}" width="100%" height="100%">
+  <div class="photo-overlay">
+  </div>
+  <section>
+    <p class="text-auto-size">
+      ${title}
+      Meat & Fish
+    </p>
+  </section>
+  <footer>
+     $!{completeInCategory} / $!{subtotal}
+  </footer>
+</article>

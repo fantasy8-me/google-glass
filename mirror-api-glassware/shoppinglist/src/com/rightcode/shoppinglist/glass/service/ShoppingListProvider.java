@@ -5,7 +5,8 @@ import java.util.Map;
 
 public interface ShoppingListProvider {
 	
-	public List<Map> getShoppingList(String userId);
+	public List<Map> getShoppingList(String userId, String category);
 	
+	public Map<String,List<Map>> getShoppingList(String userId);
 
 }

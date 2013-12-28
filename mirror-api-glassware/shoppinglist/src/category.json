@@ -1,0 +1,14 @@
+{
+    "category1":{
+        "imgUrl":"http://i.imgur.com/ES0qSVy.jpg",
+        "title":"Meat & Fish"
+    },
+    "category2":{
+        "imgUrl":"http://i.imgur.com/BR1WbUM.jpg",
+        "title":"Fruits & Veggies"
+    },
+    "category3":{
+        "imgUrl":"http://i.imgur.com/UEDiKQZ.jpg",
+        "title":"Bakery"
+    }
+}
