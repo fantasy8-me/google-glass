@@ -15,23 +15,23 @@ limitations under the License.
 -->
 <%@ page import="com.google.api.client.auth.oauth2.Credential" %>
 <%@ page import="com.google.api.services.mirror.model.Contact" %>
-<%@ page import="com.google.glassware.shoppinglist.glass.ref.com.rightcode.shoppinglist.glass.ref.MirrorClient" %>
-<%@ page import="com.google.glassware.shoppinglist.glass.ref.com.rightcode.shoppinglist.glass.ref.WebUtil" %>
+<%@ page import="com.google.glassware.MirrorClient" %>
+<%@ page import="com.google.glassware.WebUtil" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.google.api.services.mirror.model.TimelineItem" %>
 <%@ page import="com.google.api.services.mirror.model.Subscription" %>
 <%@ page import="com.google.api.services.mirror.model.Attachment" %>
-<%@ page import="com.google.glassware.shoppinglist.glass.ref.com.rightcode.shoppinglist.glass.ref.MainServlet" %>
+<%@ page import="com.google.glassware.MainServlet" %>
 <%@ page import="org.apache.commons.lang3.StringEscapeUtils" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <!doctype html>
 <%
-	String userId = com.google.glassware.shoppinglist.glass.ref.AuthUtil.getUserId(request);
+  String userId = com.google.glassware.AuthUtil.getUserId(request);
   String appBaseUrl = WebUtil.buildUrl(request, "/");
 
-  Credential credential = com.google.glassware.shoppinglist.glass.ref.AuthUtil.getCredential(userId);
+  Credential credential = com.google.glassware.AuthUtil.getCredential(userId);
 
   Contact contact = MirrorClient.getContact(credential, MainServlet.CONTACT_ID);
 
