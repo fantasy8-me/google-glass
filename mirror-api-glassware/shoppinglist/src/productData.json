@@ -8,7 +8,7 @@
                 "quantity":2,
                 "price": "$4.79",
                 "promo":"Buy 2 Get 1",
-                "purchased":false
+                "category":"category1"
             },
             {
                 "prdNum":2,
@@ -17,7 +17,7 @@
                 "quantity":3,
                 "price": "$5.00",
                 "promo":"2 Costs $6",
-                "purchased":false
+				"category":"category1"
             },
             {
                 "prdNum":7,
@@ -25,7 +25,7 @@
                 "imgUrl":"http://i.imgur.com/ta9B8vO.jpg",
                 "quantity":2,
                 "price": "$5.00",
-                "purchased":false
+                "category":"category1"
             }
         ],
         "category2" : [
@@ -35,7 +35,7 @@
                 "imgUrl":"http://i.imgur.com/nYSu75X.jpg",
                 "quantity":3,
                 "price": "$2.09",
-                "purchased":false           
+                "category":"category2"         
             },  
             {
                 "prdNum":4,
@@ -44,7 +44,7 @@
                 "quantity":1,
                 "price": "$4.99",
                 "promo": "50% Today",
-                "purchased":false
+                "category":"category2"
             },
             {
                 "prdNum":5,
@@ -52,7 +52,7 @@
                 "imgUrl":"http://i.imgur.com/2xprD9a.jpg",
                 "quantity":1,
                 "price": "$4.39",
-                "purchased":false
+                "category":"category2"
             }
         ],
         "category3" : [
@@ -63,7 +63,7 @@
                 "quantity":2,
                 "price": "$3.49",
                 "promo":"Buy 2 Get 2 Free",
-                "purchased":false
+                "category":"category3"
             },
             {
                 "prdNum":8,
@@ -72,7 +72,7 @@
                 "quantity":3,
                 "price": "$3.79",
                 "promo":"3 For $8",
-                "purchased":false
+                "category":"category3"
             }
         ]
     }

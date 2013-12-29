@@ -177,9 +177,10 @@ public class NotifyServlet extends HttpServlet {
     	  UserAction ua = notification.getUserActions().get(0);
     	  if(Constants.MENU_ID_MARK.equals(ua.getPayload())){
     		  AppController appController = AppController.getInstance();
-    		  appController.markItem(mirrorClient, userId, timelineItem);
-//    		  timelineItem.setHtml("Item is marked");
-//    		  mirrorClient.timeline().update(timelineItem.getId(), timelineItem).execute();
+    		  appController.markOrUnMarkProduct(mirrorClient, userId, timelineItem,true);
+    	  }else if(Constants.MENU_ID_UNMARK.equals(ua.getPayload())){
+    	      AppController appController = AppController.getInstance();
+              appController.markOrUnMarkProduct(mirrorClient, userId, timelineItem,false);
     	  }
       } else if(notification.getUserActions().contains(new UserAction().setType("REPLY"))) {
     	  LOG.info("I know you just reply my card");

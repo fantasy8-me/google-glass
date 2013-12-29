@@ -20,14 +20,22 @@ public class Constants {
 	
 	/*Param to store sutotal for each category*/
 	public final static String VELOCITY_PARM_SUBTOTOAL = "subtotal";
-	public final static String VELOCITY_COMPLETE_IN_CATEGORY = "completeInCategory";
+	public final static String VELOCITY_PARM_COMPLETED_IN_CATEGORY = "completedInCategory";
+	
+	public final static String VELOCITY_PARM_TOTOAL = "total";
+	
+	public final static String VELOCITY_PARM_COMPLETED= "completed";
 	
 	public final static String MENU_ID_MARK = "mark";
+	public final static String MENU_ID_UNMARK = "unmark";
+	
 	public final static String MENU_ICON_MARK = "http://i.imgur.com/IDQZwYS.png";
+	public final static String MENU_ICON_UNMARK = "http://i.imgur.com/IDQZwYS.png"; //Eric.TODO update image
 	public final static String MENU_ID_STARTSHOPPING = "startShopping";
 	public final static String MENU_ICON_STARTSHOPPING = "http://i.imgur.com/RiO9mCR.png";
 	
 	public final static String SUBSCRIPTION_CALLBACK = "https://glassshoppinglist.appspot.com/notify";
+//	public final static String SUBSCRIPTION_CALLBACK = "https://shoppinglistforglass.appspot.com/notify";
 	
 	
 	public final static String CARD_TYPE_MAIN="M";

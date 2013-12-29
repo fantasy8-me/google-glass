@@ -116,11 +116,29 @@ limitations under the License.
     </div>
     <div class="span5 offset1">
       <form action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
-      	<input type="hidden" name="operation" value="startshopping">
+      	<input type="hidden" name="operation" value="initialShoppingListApp">
         <button class="btn btn-block btn-primary" type="submit">
-          Start Shopping
+          Initial Shopping List Glassware
         </button>
       </form>
+     
+     <hr>
+     <h3>Debug Block<h4>
+     <form class="form-horizontal" action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
+      	<input type="hidden" id="operationInTest" name="operation" value="">
+      	<div class="control-group">
+		    <label class="control-label">Additional Info</label>
+		    <div class="controls">
+		       <input type="text" class="input-lg" name="addInfo"/>
+		    </div>
+		</div>  
+        <button class="btn btn-warning" type="submit" onclick="document.getElementById('operationInTest').value='testing1'">
+          Testing Button A
+        </button>
+        <button class="btn btn-warning" type="submit" onclick="document.getElementById('operationInTest').value='testing2'">
+          Testing Button B
+        </button>
+      </form>      
     </div>
   </div>
   <h1>Your Recent Timeline</h1>

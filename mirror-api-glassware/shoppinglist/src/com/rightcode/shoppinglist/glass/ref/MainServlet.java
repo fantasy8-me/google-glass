@@ -15,29 +15,13 @@
  */
 package com.rightcode.shoppinglist.glass.ref;
 
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.googleapis.batch.BatchRequest;
-import com.google.api.client.googleapis.batch.json.JsonBatchCallback;
-import com.google.api.client.googleapis.json.GoogleJsonError;
-import com.google.api.client.googleapis.json.GoogleJsonResponseException;
-import com.google.api.client.http.HttpHeaders;
-import com.google.api.services.mirror.model.Command;
-import com.google.api.services.mirror.model.Contact;
-import com.google.api.services.mirror.model.MenuItem;
-import com.google.api.services.mirror.model.MenuValue;
-import com.google.api.services.mirror.model.NotificationConfig;
-import com.google.api.services.mirror.model.Subscription;
-import com.google.api.services.mirror.model.TimelineItem;
-import com.google.common.collect.Lists;
-import com.rightcode.shoppinglist.glass.AppController;
-import com.rightcode.shoppinglist.glass.Constants;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServlet;
@@ -49,6 +33,24 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.googleapis.batch.BatchRequest;
+import com.google.api.client.googleapis.batch.json.JsonBatchCallback;
+import com.google.api.client.googleapis.json.GoogleJsonError;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.google.api.client.http.HttpHeaders;
+import com.google.api.services.mirror.Mirror;
+import com.google.api.services.mirror.model.Command;
+import com.google.api.services.mirror.model.Contact;
+import com.google.api.services.mirror.model.MenuItem;
+import com.google.api.services.mirror.model.MenuValue;
+import com.google.api.services.mirror.model.NotificationConfig;
+import com.google.api.services.mirror.model.TimelineItem;
+import com.google.common.collect.Lists;
+import com.rightcode.shoppinglist.glass.AppController;
+import com.rightcode.shoppinglist.glass.Constants;
+import com.rightcode.shoppinglist.glass.dao.CardDao;
 
 /**
  * Handles POST requests from index.jsp
@@ -295,10 +297,20 @@ private boolean preProcess(HttpServletRequest req, HttpServletResponse res, Cred
           WebUtil.setFlash(req, message);
           res.sendRedirect(WebUtil.buildUrl(req, "/"));	      
 	      return true;
-	  }else if(req.getParameter("operation").equals("startshopping")){
+	  }else if(req.getParameter("operation").equals("initialShoppingListApp")){
           AppController appController = AppController.getInstance();
           appController.initApp(AuthUtil.getUserId(req));
           res.sendRedirect(WebUtil.buildUrl(req, "/"));	   
+          return true;
+      }else if(req.getParameter("operation").startsWith("testing")){
+          Mirror mirrorClient = MirrorClient.getMirror(credential);
+          if(req.getParameter("operation").equals("testing1")){
+              AppController.getInstance().markItem(mirrorClient, AuthUtil.getUserId(req), req.getParameter("addInfo"));
+          }else{
+              AppController.getInstance().unMarkItem(mirrorClient, AuthUtil.getUserId(req), req.getParameter("addInfo"));
+          }
+          
+          res.sendRedirect(WebUtil.buildUrl(req, "/"));
           return true;
       }else{
 		  return false;

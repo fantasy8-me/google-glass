@@ -93,7 +93,7 @@ public class VelocityHelper {
 		
 //		System.out.println(VelocityHelper.getFinalStr(data, "itemConver.vm"));
 		
-		Map<String, List<Map>> shoppingList = DemoShoppingListProvider.getInstance().getShoppingList("");
+		Map<String, List<Map<String,Object>>> shoppingList = DemoShoppingListProvider.getInstance().getShoppingList("");
 		
 	    Map items = new HashMap<String, Object>();
 	    items.put(Constants.VELOCICY_PARM_AllPRODUCTS, shoppingList);

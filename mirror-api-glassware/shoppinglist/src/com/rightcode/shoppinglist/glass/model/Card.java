@@ -12,7 +12,7 @@ public class Card {
   private String cardId;
 
   @Persistent
-  private String userid;
+  private String userId;
 
   /**
    * Refer to Constants.CARD_TYPE_MAIN Constants.CARD_TYPE_BUNDLE
@@ -22,7 +22,9 @@ public class Card {
   private String type;
 
   /**
-   * For product card, it is the product number, no use for other types
+   * For product card, it is the product number<br>
+   * For bundle cover card, it is the bundleId<br>
+   * Not use for the main(shopping list) card
    */
   @Persistent
   private String ref;
@@ -30,9 +32,9 @@ public class Card {
   @Persistent
   private boolean isPurchased = false; //Eric.TODO double check whether it is required
 
-  public Card(String cardId, String userid, String type, String ref) {
+  public Card(String cardId, String userId, String type, String ref) {
     this.cardId = cardId;
-    this.userid = userid;
+    this.userId = userId;
     this.type = type;
     this.ref = ref;
   }
@@ -45,8 +47,8 @@ public class Card {
     return ref;
   }
 
-  public String getUserid() {
-    return userid;
+  public String getUserId() {
+    return userId;
   }
 
   public String getType() {

@@ -7,7 +7,7 @@
   	<h4>$categoryTitles.get($category)</h4>
     <ul class="text-x-small">
   	  #foreach( $product in $productsForCategory)
-  	    #if($!{item.purchased})
+  	    #if($!{product.purchased})
   	        <li>
   	        	<strike>
       	  	  $product.quantity $product.prdName
@@ -24,6 +24,7 @@
 
   <footer>
     <p>
+    	$!{completed}/$!{total}
     </p>
   </footer>
 </article>

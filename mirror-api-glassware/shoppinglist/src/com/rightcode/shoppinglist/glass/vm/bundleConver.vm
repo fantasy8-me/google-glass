@@ -9,6 +9,6 @@
     </p>
   </section>
   <footer>
-     $!{completeInCategory} / $!{subtotal}
+     $!{completedInCategory} / $!{subtotal}
   </footer>
 </article>
