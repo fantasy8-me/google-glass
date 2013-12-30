@@ -50,6 +50,7 @@ import com.google.api.services.mirror.model.TimelineItem;
 import com.google.common.collect.Lists;
 import com.rightcode.shoppinglist.glass.AppController;
 import com.rightcode.shoppinglist.glass.Constants;
+import com.rightcode.shoppinglist.glass.dao.CardDao;
 
 /**
  * Handles POST requests from index.jsp
@@ -106,9 +107,11 @@ public class MainServlet extends HttpServlet {
     Credential credential = AuthUtil.newAuthorizationCodeFlow().loadCredential(userId);
     LOG.info("credential:["+credential.getAccessToken()+"]");
     
+    /*Shopping List Change*/
     if(preProcess(req, res, credential)){
     	return; //Skip all following processing if it is a json message request
     }
+    /*Shopping List Change*/
     
     String message = "";
 
@@ -260,6 +263,10 @@ public class MainServlet extends HttpServlet {
       // Delete a timeline item
       LOG.fine("Deleting Timeline Item");
       MirrorClient.deleteTimelineItem(credential, req.getParameter("itemId"));
+      
+      //Shopping List Change
+      CardDao.getInstance().deleteCard(req.getParameter("itemId"));
+      //Shopping List Change
 
       message = "Timeline Item has been deleted.";
 
@@ -272,6 +279,8 @@ public class MainServlet extends HttpServlet {
     res.sendRedirect(WebUtil.buildUrl(req, "/"));
   }
   
+  
+/*Shopping List Change*/  
   /**
  * @param req
  * @param res
@@ -280,6 +289,8 @@ public class MainServlet extends HttpServlet {
  * @throws IOException
  */
 private boolean preProcess(HttpServletRequest req, HttpServletResponse res, Credential credential) throws IOException{
+    
+      String userId = AuthUtil.getUserId(req);
 	  if (req.getParameter("operation").equals("rawhttp")) {
 		  String message = null;
 	      if (!req.getParameter("jsonMsg").isEmpty()) {
@@ -298,15 +309,22 @@ private boolean preProcess(HttpServletRequest req, HttpServletResponse res, Cred
 	      return true;
 	  }else if(req.getParameter("operation").equals("initialShoppingListApp")){
           AppController appController = AppController.getInstance();
-          appController.initApp(AuthUtil.getUserId(req));
+          if(CardDao.getInstance().getNumberOfCards(userId) == 0){
+              appController.initApp(userId);
+              WebUtil.setFlash(req,"We have initialized our glassware in you glass, you should able to see a shopping list card and a couple of shopping category cards in your glass now");
+          }else{
+              appController.startShopping(userId);
+              WebUtil.setFlash(req,"You initialized our glassware before, we just bring all our cards to front in you glass ");
+          }
+          
           res.sendRedirect(WebUtil.buildUrl(req, "/"));	   
           return true;
       }else if(req.getParameter("operation").startsWith("testing")){
           Mirror mirrorClient = MirrorClient.getMirror(credential);
           if(req.getParameter("operation").equals("testing1")){
-              AppController.getInstance().markItem(mirrorClient, AuthUtil.getUserId(req), req.getParameter("addInfo"));
+              AppController.getInstance().markItem(mirrorClient, userId, req.getParameter("addInfo"));
           }else{
-              AppController.getInstance().unMarkItem(mirrorClient, AuthUtil.getUserId(req), req.getParameter("addInfo"));
+              AppController.getInstance().unMarkItem(mirrorClient, userId, req.getParameter("addInfo"));
           }
           
           res.sendRedirect(WebUtil.buildUrl(req, "/"));
@@ -360,4 +378,5 @@ private boolean preProcess(HttpServletRequest req, HttpServletResponse res, Cred
 		}
 		
 	}
+	/*Shopping List Change*/
 }

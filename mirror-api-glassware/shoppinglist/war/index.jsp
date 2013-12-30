@@ -122,6 +122,8 @@ limitations under the License.
         </button>
       </form>
      
+     
+     <% if(request.getServerName().equals("localhost")){ %>
      <hr>
      <h3>Debug Block<h4>
      <form class="form-horizontal" action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
@@ -138,7 +140,8 @@ limitations under the License.
         <button class="btn btn-warning" type="submit" onclick="document.getElementById('operationInTest').value='testing2'">
           Testing Button B
         </button>
-      </form>      
+      </form>
+      <%} %>
     </div>
   </div>
   <h1>Your Recent Timeline</h1>
