@@ -4,13 +4,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.apache.jsp.ah.inboundMailBody_jsp;
 
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.rightcode.shoppinglist.glass.Constants;
 
 public class ReferenceDataManager {
 	
@@ -27,7 +25,7 @@ public class ReferenceDataManager {
 					null);
 		} catch (IOException e) {
 			LOG.severe("Can not init category data");
-			e.printStackTrace();
+			LOG.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
 	
@@ -47,11 +45,11 @@ public class ReferenceDataManager {
 	}
 	
 	public Map<String, String> getCategoryTitleMap(){
-	    Map titleMap = new HashMap<String, String>();
+	    Map<String,String> titleMap = new HashMap<String, String>();
 	    Iterator<String> iter  = categorySetting.keySet().iterator();
 	    while (iter.hasNext()) {
           String categoryId = (String) iter.next();
-          titleMap.put(categoryId, categorySetting.get(categoryId).get("title"));
+          titleMap.put(categoryId, (String)categorySetting.get(categoryId).get("title"));
         }
 	    return titleMap;
 	}

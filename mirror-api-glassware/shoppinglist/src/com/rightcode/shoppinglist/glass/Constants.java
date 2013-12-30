@@ -11,7 +11,7 @@ public class Constants {
 	public final static String ITEM_COL_PURCHASED="purchased";
 	public final static String ITEM_COL_CATEGORY="category";
 	
-	
+
 	public final static String ITEM_PARM_MAXITEM = "maxItems";
 	
 	public final static String VELOCICY_PARM_AllPRODUCTS = "allProducts";

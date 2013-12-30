@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.api.client.auth.oauth2.Credential;
@@ -82,54 +83,25 @@ public class AppController {
 			createItemConverCard(mirrorClient, bundleConverViewbean, bundleId, userId);
 			
 			for (Iterator<Map<String,Object>> iterator = productList.iterator(); iterator.hasNext();) {
-				Map<String,Object> viewbean = ((ArrayMap) iterator.next()).clone();
-				//Eric.TODO, depends on the card design, might not need to put this
-				viewbean.put(Constants.VELOCITY_PARM_SUBTOTOAL, productList.size());
+				Map<String,Object> viewbean = iterator.next();
 				createItemInfoCard(mirrorClient, viewbean,bundleId, userId);
 			}
 		}
-
-/*		Map<String, String> bundlesMap = new HashMap<String, String>();
-		Map<String, Integer> bundleItemsCount = new HashMap<String, Integer>();
-		for (int i = 0; i < shoppingList.size(); i++) {
-			Map<String, Object> viewbean = null;
-			
-			String category = (String)viewbean.get(Constants.ITEM_COL_CATEGORY);
-			if(category == null || category.isEmpty()){
-				category = Constants.CATEGORY_DFT;
-			}
-			
-			if(bundlesMap.containsKey(category)){
-				viewbean = ((ArrayMap) shoppingList.get(i)).clone();
-				String bundleId = bundlesMap.get(category);
-				viewbean.put(Constants.ITEM_PARM_MAXITEM, shoppingList.size());
-				createItemInfoCard(mirrorClient, viewbean,bundleId, userId);
-				bundleItemsCount.put(category, bundleItemsCount.get(category) + 1);
-			}else{
-				String bundleId = getBundleId(viewbean);
-				
-				ReferenceDataManager refDataManager = ReferenceDataManager.getInstance();
-				
-				viewbean = ((ArrayMap)refDataManager.getCategorySetting(category)).clone();
-				createItemConverCard(mirrorClient, viewbean, bundleId, userId);
-				bundlesMap.put(category, bundleId);
-				bundleItemsCount.put(category, 0);
-			}
-		}*/
 		
 		createShoppingListCard(mirrorClient, buildShoppingListViewBean(shoppingList), userId);
 	}
 
 
     private Map<String, Object> buildBundleConverViewBean(String category, int subTotoal, int numOfCompleted) {
-        Map<String,Object> bundleConverViewbean = ((ArrayMap)refDataManager.getCategorySetting(category)).clone();
+        //Eric.TODO Try to remove the dependence on ArrayMap later
+        Map<String,Object> bundleConverViewbean = ((ArrayMap<String,Object>)refDataManager.getCategorySetting(category)).clone();
         
         bundleConverViewbean.put(Constants.VELOCITY_PARM_SUBTOTOAL, subTotoal);
         bundleConverViewbean.put(Constants.VELOCITY_PARM_COMPLETED_IN_CATEGORY, numOfCompleted);
         return bundleConverViewbean;
     }
 
-	private void createShoppingListCard(Mirror mirrorClient, Map items, String userId) {
+	private void createShoppingListCard(Mirror mirrorClient, Map<String,Object> items, String userId) {
 		String html = VelocityHelper.getFinalStr(items, "shoppingList.vm");
 
 		TimelineItem timelineItem = new TimelineItem();
@@ -153,11 +125,11 @@ public class AppController {
 			LOG.info("Shopping List card created:[" + item.getId() + "] ["+ userId + "]");
 		} catch (IOException e) {
 			LOG.severe("Error when create item info card, data:" + items);
-			e.printStackTrace();
+			LOG.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
 
-	private void createItemInfoCard(Mirror mirrorClient, Map itemData, String bundleId,String userId) {
+	private void createItemInfoCard(Mirror mirrorClient, Map<String,Object> itemData, String bundleId,String userId) {
 
 		String html = VelocityHelper.getFinalStr(itemData, "productInfo.vm");
 
@@ -181,7 +153,7 @@ public class AppController {
 			LOG.info("Product card created:[" + item.getId() + "] ["+ userId + "]");
 		} catch (IOException e) {
 			LOG.severe("Error when create item info card, data:" + itemData);
-			e.printStackTrace();
+			LOG.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
 	
@@ -192,7 +164,7 @@ public class AppController {
             markOrUnMarkProduct(mirrorClient, userId, timelineItem,true);
         } catch (IOException e) {
             LOG.severe("Error when mark item:" + cardId);
-            e.printStackTrace();
+            LOG.log(Level.SEVERE, e.getMessage(), e);
         }
     }
     
@@ -203,7 +175,7 @@ public class AppController {
             markOrUnMarkProduct(mirrorClient, userId, timelineItem, false);
         } catch (IOException e) {
             LOG.severe("Error when mark item:" + cardId);
-            e.printStackTrace();
+            LOG.log(Level.SEVERE, e.getMessage(), e);
         }
     }
     
@@ -238,7 +210,8 @@ public class AppController {
 			LOG.info("Item[" +timelineItem.getId() +  "] is updated to------------purchased:" + isMark);
 		} catch (IOException e) {
 			LOG.severe("Error when update prodcut purchase status:" + timelineItem.getId());
-			e.printStackTrace();
+			LOG.log(Level.SEVERE, e.getMessage(), e);
+			LOG.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
 	
@@ -252,18 +225,18 @@ public class AppController {
             mirrorClient.timeline().update(cardId, timelineItem).execute();
         } catch (IOException e) {
             LOG.severe("Error occur while updating the shopping list card for:" + userId);
-            e.printStackTrace();
+            LOG.log(Level.SEVERE, e.getMessage(), e);
         }
 	}
 	
     private void updateCategoryCoverCard(Mirror mirrorClient, String userId,String bundleId, String category){
         String cardId = cardDao.getBundleCoverCardId(userId, bundleId);
         
-        List subShoppingList = shoppingListProvider.getShoppingList(userId, category);
+        List<Map<String,Object>> subShoppingList = shoppingListProvider.getShoppingList(userId, category);
         
         int[] completedStatus = calculateCompletedStatus(subShoppingList);
         
-        Map viewBean = buildBundleConverViewBean(category, completedStatus[0], completedStatus[1]);
+        Map<String,Object> viewBean = buildBundleConverViewBean(category, completedStatus[0], completedStatus[1]);
                 
         try {
 
@@ -280,7 +253,7 @@ public class AppController {
         }
     }	
 	
-	private TimelineItem createItemConverCard(Mirror mirrorClient, Map itemData,String bundleId, String userId) {
+	private TimelineItem createItemConverCard(Mirror mirrorClient, Map<String,Object> itemData,String bundleId, String userId) {
 
 		TimelineItem returnItem = null;
 		String html = VelocityHelper.getFinalStr(itemData, "bundleConver.vm");
@@ -298,7 +271,7 @@ public class AppController {
 			LOG.info("Bundle cover card created:[" + returnItem.getId() + "] ["+ userId + "]");
 		} catch (IOException e) {
 			LOG.severe("Error when create item conver card, data:" + itemData);
-			e.printStackTrace();
+			LOG.log(Level.SEVERE, e.getMessage(), e);
 		}
 		return returnItem;
 
@@ -334,7 +307,7 @@ public class AppController {
         int[] result = new int[]{0,0};
         
         for (int i = 0; i < subShoppingList.size(); i++) {
-            Map product = subShoppingList.get(i);
+            Map<String,Object> product = subShoppingList.get(i);
             boolean isPurchased = (Boolean)product.get(Constants.ITEM_COL_PURCHASED);
             if(isPurchased){
                 result[1] ++;

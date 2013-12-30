@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.api.client.json.JsonFactory;
@@ -29,7 +30,7 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
 			productData = jsonFactory.fromInputStream(DemoShoppingListProvider.class.getResourceAsStream("/productData.json"),null);
 		} catch (IOException e) {
 			LOG.severe("Can not init product data");
-			e.printStackTrace();
+			LOG.log(Level.SEVERE, e.getMessage(), e);
 		}
 	};
 

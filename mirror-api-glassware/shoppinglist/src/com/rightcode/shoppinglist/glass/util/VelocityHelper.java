@@ -1,12 +1,12 @@
 package com.rightcode.shoppinglist.glass.util;
 
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.velocity.Template;
@@ -33,13 +33,13 @@ public class VelocityHelper {
 			Velocity.init(p);
 		} catch (Exception e) {
 			LOG.severe("Fail in init Velocity");
-			e.printStackTrace();
+			LOG.log(Level.SEVERE, e.getMessage(), e);
 		}
 
 	}
 
-	public static String getFinalStr(Map data, String tempalteName) {
-		Iterator iter = data.keySet().iterator();
+	public static String getFinalStr(Map<String,Object> data, String tempalteName) {
+		Iterator<String> iter = data.keySet().iterator();
 		VelocityContext context = new VelocityContext();
 
 		while (iter.hasNext()) {
@@ -54,7 +54,7 @@ public class VelocityHelper {
 			result = sw.toString();
 		} catch (Exception e) {
 			LOG.severe("Can not process data for template:" + tempalteName + " data:" + data);
-			e.printStackTrace();
+			LOG.log(Level.SEVERE, e.getMessage(), e);
 		}
 
 		return result;
@@ -95,7 +95,7 @@ public class VelocityHelper {
 		
 		Map<String, List<Map<String,Object>>> shoppingList = DemoShoppingListProvider.getInstance().getShoppingList("");
 		
-	    Map items = new HashMap<String, Object>();
+	    Map<String, Object> items = new HashMap<String, Object>();
 	    items.put(Constants.VELOCICY_PARM_AllPRODUCTS, shoppingList);
 	    
 	    items.put(Constants.VELOCICY_PARM_CATEGORY_TITLES, ReferenceDataManager.getInstance().getCategoryTitleMap());

@@ -21,7 +21,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServlet;
@@ -50,7 +50,6 @@ import com.google.api.services.mirror.model.TimelineItem;
 import com.google.common.collect.Lists;
 import com.rightcode.shoppinglist.glass.AppController;
 import com.rightcode.shoppinglist.glass.Constants;
-import com.rightcode.shoppinglist.glass.dao.CardDao;
 
 /**
  * Handles POST requests from index.jsp
@@ -290,7 +289,7 @@ private boolean preProcess(HttpServletRequest req, HttpServletResponse res, Cred
 				
 				message = sendJson(req.getParameter("jsonMsg"), credential.getAccessToken(),url);
 			} catch (Exception e) {
-				e.printStackTrace();
+			    LOG.log(Level.SEVERE, e.getMessage(), e);
 				message = e.getMessage();
 			}
 	      }
