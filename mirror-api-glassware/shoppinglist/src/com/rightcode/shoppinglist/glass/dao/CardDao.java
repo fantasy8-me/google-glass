@@ -217,6 +217,7 @@ public class CardDao {
         try {
             Card card = (Card) pm.getObjectById(Card.class, cardId);
             pm.deletePersistent(card);
+            LOG.severe("------Deleted card:" + cardId);
         } catch (Exception e) {
             // Catch the exception to avoid breaking the main flow
             LOG.severe("Error occur when delete card:" + cardId);

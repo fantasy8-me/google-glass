@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Writer;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Random;
 
@@ -134,7 +135,15 @@ public class NotifyServlet extends HttpServlet {
       // telling them where they are.
     } else if (notification.getCollection().equals("timeline")) {
       // Get the impacted timeline item
-      TimelineItem timelineItem = mirrorClient.timeline().get(notification.getItemId()).execute();
+      TimelineItem timelineItem = null;
+      //Eric.TODO, some strange error log found which end here but not further info, so use
+      //Try catch here to make sure we can got the error details
+      try{
+         timelineItem = mirrorClient.timeline().get(notification.getItemId()).execute();
+      }catch(Throwable t){
+         LOG.log(Level.SEVERE,t.getMessage(),t);
+         throw new RuntimeException(t);
+      }
       LOG.info("Notification impacted timeline item with ID: " + timelineItem.getId());
 
       LOG.info("--------Action type & payload:"+ notification.getUserActions().get(0).getType() + ":"+notification.getUserActions().get(0).getPayload());
