@@ -13,6 +13,9 @@ public class Card {
 
   @Persistent
   private String userId;
+  
+  @Persistent
+  private String projectClientId;  
 
   /**
    * Refer to Constants.CARD_TYPE_MAIN Constants.CARD_TYPE_BUNDLE
@@ -32,8 +35,9 @@ public class Card {
   @Persistent
   private boolean isPurchased = false; //Eric.TODO double check whether it is required
 
-  public Card(String cardId, String userId, String type, String ref) {
+  public Card(String cardId, String userId, String projectClientId,String type, String ref) {
     this.cardId = cardId;
+    this.projectClientId = projectClientId;
     this.userId = userId;
     this.type = type;
     this.ref = ref;
