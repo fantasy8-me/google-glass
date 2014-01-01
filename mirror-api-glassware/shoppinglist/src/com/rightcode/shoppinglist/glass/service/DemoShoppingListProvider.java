@@ -27,6 +27,7 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
 		JsonFactory jsonFactory = new JacksonFactory();
 		cardDao = CardDao.getInstance();
 		try {
+		    //Shopping list will be cached when initialize DemoShoppingListProvider
 			productData = jsonFactory.fromInputStream(DemoShoppingListProvider.class.getResourceAsStream("/productData.json"),null);
 		} catch (IOException e) {
 			LOG.severe("Can not init product data");
@@ -43,8 +44,7 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
 	}
 	
 	public List<Map<String,Object>> getShoppingList(String userId, String category) {
-		// TODO.Eric before the implementaion of local json db, we need to hard
-		// the dummy user id
+		// Use the dummy user id which is defined in productData.json
 	    mergePurchaseStatus(userId);
 		return productData.get("dummyusrId1").get(category);
 		// return productData.get(userId);
@@ -81,7 +81,7 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
             Map<String,Object> prodcutData = null;
             for (int i = 0; i < subShoppingList.size(); i++) {
                 prodcutData = subShoppingList.get(i);
-                //Eric.TODO BigDecimal a little bit risk here
+                //BigDecimal is used by google JSON library to represent a number
                 if(((BigDecimal)prodcutData.get(Constants.ITEM_COL_PRDNUM)).intValue() == productNum){
                     return prodcutData;
                 }
@@ -90,6 +90,12 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
         return null;
     }
 
+    /**
+     * The product purchase status is store in our Card table, we need to merge the status
+     * to the cached shopping list
+     * 
+     * @param userId
+     */
     private void mergePurchaseStatus(String userId) {
         Map<String, List<Map<String,Object>>> shoppingList = productData.get("dummyusrId1");
         

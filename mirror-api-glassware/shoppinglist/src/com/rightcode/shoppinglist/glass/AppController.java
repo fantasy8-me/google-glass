@@ -68,7 +68,7 @@ public class AppController {
         Mirror mirrorClient = MirrorClient.getMirror(credential);
 
         MirrorUtil.touchCard(mirrorClient, cardDao.getShoppingListCardId(userId));
-        
+
         List<String> bundleCovers = cardDao.getAllBundleConvers(userId);
         for (int i = 0; i < bundleCovers.size(); i++) {
             MirrorUtil.touchCard(mirrorClient, bundleCovers.get(i));
@@ -100,9 +100,9 @@ public class AppController {
     }
 
     private Map<String, Object> buildBundleConverViewBean(String category, int subTotoal, int numOfCompleted) {
-        // Eric.TODO Try to remove the dependence on ArrayMap later
-        Map<String, Object> bundleConverViewbean = ((ArrayMap<String, Object>) refDataManager
-                .getCategorySetting(category)).clone();
+
+        Map<String, Object> bundleConverViewbean = new HashMap<String, Object>(refDataManager
+                .getCategorySetting(category));
 
         bundleConverViewbean.put(Constants.VELOCITY_PARM_SUBTOTOAL, subTotoal);
         bundleConverViewbean.put(Constants.VELOCITY_PARM_COMPLETED_IN_CATEGORY, numOfCompleted);
@@ -166,6 +166,13 @@ public class AppController {
         }
     }
 
+    /**
+     * For local testing only, used to trigger the mark processing
+     * 
+     * @param mirrorClient
+     * @param userId
+     * @param cardId
+     */
     public void markItem(Mirror mirrorClient, String userId, String cardId) {
         TimelineItem timelineItem = null;
         try {
@@ -177,6 +184,13 @@ public class AppController {
         }
     }
 
+    /**
+     * For local testing only, used to trigger the unMark processing
+     * 
+     * @param mirrorClient
+     * @param userId
+     * @param cardId
+     */
     public void unMarkItem(Mirror mirrorClient, String userId, String cardId) {
         TimelineItem timelineItem = null;
         try {
@@ -189,24 +203,25 @@ public class AppController {
     }
 
     public void markOrUnMarkProduct(Mirror mirrorClient, String userId, TimelineItem timelineItem, boolean isMark) {
-        String productCardId = timelineItem.getId();//Eric.TODO not required if the PATCH works
-        String bundleId = timelineItem.getBundleId();//Eric.TODO not required if the PATCH works
-        int itemNub = Integer.parseInt(cardDao.getProdutNumByCardId(userId, timelineItem.getId()));
+        String productCardId = timelineItem.getId();
+        String bundleId = timelineItem.getBundleId();
+
+        // Create an empty timeline item for patch
+        timelineItem = new TimelineItem(); 
+
+        int itemNub = Integer.parseInt(cardDao.getProdutNumByCardId(userId, productCardId));
 
         // Update the model
         if (isMark)
-            shoppingListProvider.markProduct(userId, itemNub, timelineItem.getId());
+            shoppingListProvider.markProduct(userId, itemNub, productCardId);
         else
-            shoppingListProvider.unMarkProduct(userId, itemNub, timelineItem.getId());
+            shoppingListProvider.unMarkProduct(userId, itemNub, productCardId);
 
-        
-        timelineItem = new TimelineItem(); //Eric.TODO If the patch approach work for menu item, then remove the timeline item from params list
-        
-        //timelineItem.getMenuItems().clear();
-        
+        // timelineItem.getMenuItems().clear();
+
         List<MenuItem> menuItemList = new ArrayList<MenuItem>();
         timelineItem.setMenuItems(menuItemList);
-        
+
         List<MenuValue> menuValues = new ArrayList<MenuValue>();
         if (isMark) {
             menuValues.add(new MenuValue().setIconUrl(Constants.MENU_ICON_UNMARK).setDisplayName("UnMark"));
@@ -224,11 +239,10 @@ public class AppController {
 
         try {
             mirrorClient.timeline().patch(productCardId, timelineItem).execute();
-            updateCategoryCoverCard(mirrorClient, userId, bundleId,
-                    (String) viewBean.get(Constants.ITEM_COL_CATEGORY));
+            updateCategoryCoverCard(mirrorClient, userId, bundleId, (String) viewBean.get(Constants.ITEM_COL_CATEGORY));
             updateShoppingListCard(mirrorClient, userId);
 
-            LOG.info("Item[" + productCardId + "] is updated to------------purchased:" + isMark);
+            LOG.info("--------Purchase status of item[" + productCardId + "] is updated to:" + isMark);
         } catch (IOException e) {
             LOG.severe("Error when update prodcut purchase status:" + productCardId);
             LOG.log(Level.SEVERE, e.getMessage(), e);
@@ -239,7 +253,6 @@ public class AppController {
         try {
             String cardId = cardDao.getShoppingListCardId(userId);
             String html = VelocityHelper.getFinalStr(buildShoppingListViewBean(userId), "shoppingList.vm");
-            //TimelineItem timelineItem = mirrorClient.timeline().get(cardId).execute();
             TimelineItem timelineItem = new TimelineItem();
             timelineItem.setHtml(html);
 
@@ -261,8 +274,6 @@ public class AppController {
 
         try {
 
-//            TimelineItem timelineItem = mirrorClient.timeline().get(cardId).execute();
-            
             TimelineItem timelineItem = new TimelineItem();
 
             String html = VelocityHelper.getFinalStr(viewBean, "bundleConver.vm");
@@ -304,7 +315,6 @@ public class AppController {
     private String getBundleId(String category) {
         // Add current time stamp to separate the cards created in different
         // time
-        // Eric.TODO check if required later
         return "bundle_" + category + "_" + bundleIdSuffix;
     }
 

@@ -33,7 +33,7 @@ public class Card {
   private String ref;
 
   @Persistent
-  private boolean isPurchased = false; //Eric.TODO double check whether it is required
+  private boolean isPurchased = false; //Required if we don't have external service to store the purchase status
 
   public Card(String cardId, String userId, String projectClientId,String type, String ref) {
     this.cardId = cardId;

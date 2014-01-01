@@ -114,7 +114,12 @@ public class NotifyServlet extends HttpServlet {
     Credential credential = AuthUtil.getCredential(userId);
     Mirror mirrorClient = MirrorClient.getMirror(credential);
     
-    LOG.info("----------access token[" + credential.getAccessToken() + "]--------------------");
+    if(credential != null){
+        LOG.info("-----Access token[" + credential.getAccessToken() + "], Expires In " + credential.getExpiresInSeconds());
+    }else{
+        LOG.severe("-----Credential object is null for user:"+ userId);
+        LOG.info("-----All user in credential store: " + AuthUtil.getAllUserIds());
+    }
 
     if (notification.getCollection().equals("locations")) {
       LOG.info("Notification of updated location");
@@ -138,6 +143,7 @@ public class NotifyServlet extends HttpServlet {
       TimelineItem timelineItem = null;
       //Eric.TODO, some strange error log found which end here but not further info, so use
       //Try catch here to make sure we can got the error details
+      //2014-1-1, Event the timeline is deleted from timeline. below method won't return error but a incomplete timeline item(with id and bundle_id, but not html, text)
       try{
          timelineItem = mirrorClient.timeline().get(notification.getItemId()).execute();
       }catch(Throwable t){

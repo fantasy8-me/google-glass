@@ -15,20 +15,15 @@
  */
 package com.rightcode.shoppinglist.glass.ref;
 
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.googleapis.json.GoogleJsonResponseException;
-import com.google.api.services.mirror.model.Command;
-import com.google.api.services.mirror.model.Contact;
-import com.google.api.services.mirror.model.NotificationConfig;
-import com.google.api.services.mirror.model.Subscription;
-import com.google.api.services.mirror.model.TimelineItem;
-import com.google.common.collect.Lists;
-import com.rightcode.shoppinglist.glass.Constants;
-
 import java.io.IOException;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
+
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.google.api.services.mirror.model.Subscription;
+import com.rightcode.shoppinglist.glass.util.Util;
 
 /**
  * Utility functions used when users first authenticate with this service
@@ -62,12 +57,13 @@ public class NewUserBootstrapper {
 
     try {
     	/*Shopping List Code*/
+      String subscription_callback = Util.buildSubscriptionCallBack(req);
       // Subscribe to timeline updates
 //      Subscription subscription =
 //          MirrorClient.insertSubscription(credential, WebUtil.buildUrl(req, "/notify"), userId,
 //              "timeline");
       Subscription subscription =
-              MirrorClient.insertSubscription(credential, Constants.SUBSCRIPTION_CALLBACK, userId,
+              MirrorClient.insertSubscription(credential, subscription_callback, userId,
                   "timeline");
       /*Shopping List Code*/
       LOG.info("Bootstrapper inserted subscription " + subscription
@@ -86,4 +82,5 @@ public class NewUserBootstrapper {
     LOG.info("Bootstrapper inserted welcome message " + insertedItem.getId() + " for user "
         + userId);*/
   }
+
 }

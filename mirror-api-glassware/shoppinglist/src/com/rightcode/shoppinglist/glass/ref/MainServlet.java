@@ -51,6 +51,7 @@ import com.google.common.collect.Lists;
 import com.rightcode.shoppinglist.glass.AppController;
 import com.rightcode.shoppinglist.glass.Constants;
 import com.rightcode.shoppinglist.glass.dao.CardDao;
+import com.rightcode.shoppinglist.glass.util.Util;
 
 /**
  * Handles POST requests from index.jsp
@@ -122,7 +123,8 @@ public class MainServlet extends HttpServlet {
     	 /*Shopping List Code*/
 //        MirrorClient.insertSubscription(credential, WebUtil.buildUrl(req, "/notify"), userId,
 //            req.getParameter("collection"));
-        MirrorClient.insertSubscription(credential, Constants.SUBSCRIPTION_CALLBACK, userId,
+        String subscription_callback = Util.buildSubscriptionCallBack(req);
+        MirrorClient.insertSubscription(credential, subscription_callback, userId,
                 req.getParameter("collection"));    
         /*Shopping List Code*/        
         message = "Application is now subscribed to updates.";

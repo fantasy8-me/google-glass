@@ -30,11 +30,11 @@ public class Constants {
 	public final static String MENU_ID_UNMARK = "unmark";
 	
 	public final static String MENU_ICON_MARK = "http://i.imgur.com/IDQZwYS.png";
-	public final static String MENU_ICON_UNMARK = "http://i.imgur.com/IDQZwYS.png"; //Eric.TODO update image
+	public final static String MENU_ICON_UNMARK = "http://i.imgur.com/IDQZwYS.png"; //Eric.TODO check whether unmark has another icon
 	public final static String MENU_ID_STARTSHOPPING = "startShopping";
 	public final static String MENU_ICON_STARTSHOPPING = "http://i.imgur.com/RiO9mCR.png";
 	
-	public final static String SUBSCRIPTION_CALLBACK = "https://glassshoppinglist.appspot.com/notify";
+//	public final static String SUBSCRIPTION_CALLBACK = "https://glassshoppinglist.appspot.com/notify";
 //	public final static String SUBSCRIPTION_CALLBACK = "https://shoppinglistforglass.appspot.com/notify";
 	
 	
@@ -42,10 +42,5 @@ public class Constants {
 	public final static String CARD_TYPE_BUNDLE="B";
 	public final static String CARD_TYPE_PRODUCT="P";
 	
-//	public final static String CATEGORY_MEAT="meat";
-//	public final static String CATEGORY_DAIRY="dairy";
-//	public final static String CATEGORY_VEGTABLES="vegtables";
-//	
-//	public final static String CATEGORY_DFT="misc";
 	
 }

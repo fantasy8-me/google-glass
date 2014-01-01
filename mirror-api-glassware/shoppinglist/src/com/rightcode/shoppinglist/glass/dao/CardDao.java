@@ -2,7 +2,6 @@ package com.rightcode.shoppinglist.glass.dao;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -11,14 +10,13 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
 
 import com.rightcode.shoppinglist.glass.Constants;
 import com.rightcode.shoppinglist.glass.model.Card;
-import com.rightcode.shoppinglist.glass.ref.AuthUtil;
-import com.rightcode.shoppinglist.glass.util.MirrorUtil;
 import com.rightcode.shoppinglist.glass.util.PMF;
 
 public class CardDao {
@@ -218,6 +216,8 @@ public class CardDao {
             Card card = (Card) pm.getObjectById(Card.class, cardId);
             pm.deletePersistent(card);
             LOG.severe("------Deleted card:" + cardId);
+        }catch (JDOObjectNotFoundException e){
+            LOG.warning("Can not find the card [" + cardId + "] in db, this might not be an error if you are deleting a non-shoppinglist card, or the data was cleannd up by others");
         } catch (Exception e) {
             // Catch the exception to avoid breaking the main flow
             LOG.severe("Error occur when delete card:" + cardId);
