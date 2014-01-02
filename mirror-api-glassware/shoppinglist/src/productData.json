@@ -3,8 +3,8 @@
         "category1" : [
             {
                 "prdNum":1,
-                "prdName":"Tyson Anitizers Chicken Fries",
-                "imgUrl":"http://i.imgur.com/dxet3lI.jpg",
+                "prdName":"Tyson Anytizers Chicken Fries",
+                "imgUrl":"http://i.imgur.com/5jb56KP.png",
                 "quantity":2,
                 "price": "$4.79",
                 "promo":"Buy 2 Get 1",
@@ -13,7 +13,7 @@
             {
                 "prdNum":2,
                 "prdName":"Boyarde Jumbo",
-                "imgUrl":"http://i.imgur.com/3GLQLdr.gif",
+                "imgUrl":"http://i.imgur.com/ZWChwLu.png",
                 "quantity":3,
                 "price": "$5.00",
                 "promo":"2 Costs $6",
@@ -22,7 +22,7 @@
             {
                 "prdNum":7,
                 "prdName":"Bumble Bee Chunk Light Tuna",
-                "imgUrl":"http://i.imgur.com/ta9B8vO.jpg",
+                "imgUrl":"http://i.imgur.com/lUsTM0q.png",
                 "quantity":2,
                 "price": "$5.00",
                 "category":"category1"
@@ -32,15 +32,15 @@
             {
                 "prdNum":3,
                 "prdName":"Del Monte Peach Halves",
-                "imgUrl":"http://i.imgur.com/nYSu75X.jpg",
+                "imgUrl":"http://i.imgur.com/2ARlTvx.png",
                 "quantity":3,
                 "price": "$2.09",
                 "category":"category2"         
             },  
             {
                 "prdNum":4,
-                "prdName":"Edy’s Fruit Bars",
-                "imgUrl":"http://i.imgur.com/2LmRLzi.jpg",
+                "prdName":"Edy's Fruit Bars",
+                "imgUrl":"http://i.imgur.com/jEga7Gf.png",
                 "quantity":1,
                 "price": "$4.99",
                 "promo": "50% Today",
@@ -49,7 +49,7 @@
             {
                 "prdNum":5,
                 "prdName":"Dole White Blueberries",
-                "imgUrl":"http://i.imgur.com/2xprD9a.jpg",
+                "imgUrl":"http://i.imgur.com/hw7A79V.png",
                 "quantity":1,
                 "price": "$4.39",
                 "category":"category2"
@@ -58,8 +58,8 @@
         "category3" : [
             {
                 "prdNum":6,
-                "prdName":"Entemann’s Crullers Popett",
-                "imgUrl":"http://i.imgur.com/BOJaXWX.jpg",
+                "prdName":"Entemann's Crullers Popett",
+                "imgUrl":"http://i.imgur.com/am4ozDJ.png",
                 "quantity":2,
                 "price": "$3.49",
                 "promo":"Buy 2 Get 2 Free",
@@ -68,7 +68,7 @@
             {
                 "prdNum":8,
                 "prdName":"Post Shredded Wheat",
-                "imgUrl":"http://i.imgur.com/YBG0ozw.jpg",
+                "imgUrl":"http://i.imgur.com/99BzMlu.png",
                 "quantity":3,
                 "price": "$3.79",
                 "promo":"3 For $8",
