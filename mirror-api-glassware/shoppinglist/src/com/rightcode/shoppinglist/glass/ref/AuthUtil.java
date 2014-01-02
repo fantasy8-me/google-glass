@@ -15,13 +15,6 @@
  */
 package com.rightcode.shoppinglist.glass.ref;
 
-import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.http.javanet.NetHttpTransport;
-
-import com.google.api.client.json.jackson2.JacksonFactory;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -35,6 +28,13 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.rightcode.shoppinglist.glass.oath.ListableDBCredentialStore;
+
 /**
  * A collection of utility functions that simplify common authentication and
  * user identity tasks
@@ -42,7 +42,9 @@ import javax.servlet.http.HttpSession;
  * @author Jenny Murphy - http://google.com/+JennyMurphy
  */
 public class AuthUtil {
-  public static ListableMemoryCredentialStore store = new ListableMemoryCredentialStore();
+  //When run the app in GAE container, the access token stored in memory will be lost sometimes
+  public static ListableDBCredentialStore store = new ListableDBCredentialStore();
+//  public static ListableMemoryCredentialStore store = new ListableMemoryCredentialStore();
   public static final String GLASS_SCOPE = "https://www.googleapis.com/auth/glass.timeline "
       + "https://www.googleapis.com/auth/glass.location "
       + "https://www.googleapis.com/auth/userinfo.profile";

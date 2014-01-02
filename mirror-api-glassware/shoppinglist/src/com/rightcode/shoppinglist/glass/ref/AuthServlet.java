@@ -15,18 +15,21 @@
  */
 package com.rightcode.shoppinglist.glass.ref;
 
-import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
-import com.google.api.client.auth.oauth2.TokenResponse;
-import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
-import com.google.api.client.http.GenericUrl;
-import com.rightcode.shoppinglist.glass.AppController;
-
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.auth.oauth2.TokenResponse;
+import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
+import com.google.api.client.http.GenericUrl;
 
 /**
  * This servlet manages the OAuth 2.0 dance
@@ -63,6 +66,16 @@ public class AuthServlet extends HttpServlet {
       // Set it into the session
       AuthUtil.setUserId(req, userId);
       flow.createAndStoreCredential(tokenResponse, userId);
+      
+      //Shopping List Change
+      
+      Credential credential = AuthUtil.getCredential(userId);
+      if(credential != null){
+          LOG.info("------AuthServlet----AccessTokenn:"+credential.getAccessToken() + " ExpiresInSeconds:" + credential.getExpiresInSeconds() + " TokenServerEncodedUrl:" + credential.getTokenServerEncodedUrl());
+          LOG.info("------AuthServlet----AuthUtil.store: " + AuthUtil.store + " identity:" + AuthUtil.store.getIdentity());
+      }
+      
+      //Shopping List Change
 
       // The dance is done. Do our bootstrapping stuff for this user
       NewUserBootstrapper.bootstrapNewUser(req, userId);

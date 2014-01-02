@@ -2,6 +2,7 @@ package com.rightcode.shoppinglist.glass;
 
 import java.io.IOException;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ public class LoggingServlet extends HttpServlet {
 	 */
 	public LoggingServlet() {
 		super();
+		
 	}
 
 	/**
@@ -37,4 +39,12 @@ public class LoggingServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 	}
 
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        //Use this log to see whether GAE reload our app
+        System.out.println("----------------------Servlet is reload---");        
+    }
+
+	
 }

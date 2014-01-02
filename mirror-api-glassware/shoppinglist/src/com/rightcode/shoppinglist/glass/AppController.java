@@ -46,6 +46,8 @@ public class AppController {
 
     public synchronized static AppController getInstance() {
         if (appController == null) {
+            //This log is used to indicate that that our app is reload.
+            LOG.info("*--------------------------AppController inited:" + System.currentTimeMillis());
             appController = new AppController();
         }
         return appController;

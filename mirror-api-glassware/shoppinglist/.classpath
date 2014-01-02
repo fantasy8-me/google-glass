@@ -12,7 +12,7 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/geronimo-spec-jta-1.0.1B-rc4.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/google-api-client-1.17.0-rc.jar" sourcepath="/Users/me/Work/Tools/repository.m2/com/google/api-client/google-api-client/1.17.0-rc/google-api-client-1.17.0-rc-sources.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/google-api-services-mirror-v1-rev26-1.17.0-rc.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/google-http-client-1.17.0-rc.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/google-http-client-1.17.0-rc.jar" sourcepath="/Users/me/Work/Tools/repository.m2/com/google/http-client/google-http-client/1.17.0-rc/google-http-client-1.17.0-rc-sources.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/google-http-client-jackson2-1.17.0-rc.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/google-oauth-client-1.17.0-rc.jar" sourcepath="/Users/me/Work/Tools/repository.m2/com/google/oauth-client/google-oauth-client/1.17.0-rc/google-oauth-client-1.17.0-rc-sources.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/guava-14.0.1.jar"/>

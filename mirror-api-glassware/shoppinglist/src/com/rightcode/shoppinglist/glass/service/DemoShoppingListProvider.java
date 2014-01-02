@@ -1,7 +1,10 @@
 package com.rightcode.shoppinglist.glass.service;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -118,7 +121,37 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
     }
     
     public static void main(String[] args) {
-        System.out.println(DemoShoppingListProvider.getInstance().getShoppingList("", "category1"));
+        JsonFactory jsonFactory = new JacksonFactory();
+        Object data = null;
+        try {
+            //Shopping list will be cached when initialize DemoShoppingListProvider
+            data = jsonFactory.fromInputStream(DemoShoppingListProvider.class.getResourceAsStream("/productData_real.json"),null);
+            System.out.println("data:" + data);
+        } catch (IOException e) {
+            LOG.severe("Can not init product data");
+            LOG.log(Level.SEVERE, e.getMessage(), e);
+        }
+        
+        List<Map<String,Object>> productList = new ArrayList<Map<String,Object>>();
+        Map<String,Object> productMap1 = new HashMap<String, Object>();
+        productMap1.put("prdNum", 1);
+        productMap1.put("prdDes", "Fish");
+        productMap1.put("Price", 1.234);
+        productMap1.put("Purchased", false);
+        productList.add(productMap1);
+        
+        Map<String,Object> productMap2 = new HashMap<String, Object>();
+        productMap2.put("prdNum", 2);
+        productMap2.put("prdDes", "Meat");
+        productMap2.put("Price", 4.234);
+        productMap2.put("Purchased", false);
+        productList.add(productMap2);
+        
+        try {
+            System.out.println(jsonFactory.toString(productList));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
