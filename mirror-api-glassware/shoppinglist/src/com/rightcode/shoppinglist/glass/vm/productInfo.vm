@@ -1,49 +1,21 @@
-<article>
-  <figure>
-    #if($!purchased)
-    	<img src="http://i.imgur.com/vELmobz.png">
-    #{else}
-    	<img src="$!{imgUrl}">
-    #end
-  </figure>
+<article style="background-image:url(&#39;http://i.imgur.com/0p90kPs.png&#39;);color:black;font-family:&#39;Lucida Sans Unicode&#39;,&#39;Lucida Grande&#39;,sans-serif">
   <section>
-    <table class="text-x-small align-justify">
-      <tbody>
-        <tr>
-          <td>
-            Quantity
-          </td>
-          <td>
-            $!{quantity}
-          </td>
-        </tr>
-        <tr>
-          <td>
-            Price
-          </td>
-          <td>
-            $!{price}
-          </td>
-        </tr>
-      </tbody>
-    </table>
-	#if($!purchased)
-		<p style="color:green">* Item Purchased</p>
-	#{else}
-	    <p style="color:red">
-     	$!{promo}
-    	</p>
-	#end
+    <div class="layout-two-column">
+      <div class="align-center">
+<p style="font-size:25px">$!{quantity} $!{prdName}</p>
+<img src="$!{imgUrl}">
+      </div>
+      <div class="text-auto-size">
+		<p class="align-center" style="font-size:27px"><i><b><u>Next on your list:</u></b></i></p>
+			<ul>
+				<li>Next Item in category</li>
+				<li>Next Item in category + 1 (max 2)</li>
+			</ul>
+		<br><br><p class="align-right" style="font-size:25px">$!{prdNum}/8</p>
+      </div>
+    </div>
   </section>
   <footer>
-  #if($!purchased)
-    <p style="color:green">store notice</p>
-  #{else}
-  	#if($!{promo}!="")
-    <p style="color:red">store notice</p>
-    #{else}
-    
-    #end
-  #end  
+    <p>$!{price}</p>
   </footer>
 </article>
