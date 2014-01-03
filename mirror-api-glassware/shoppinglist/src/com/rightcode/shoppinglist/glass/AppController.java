@@ -23,6 +23,7 @@ import com.rightcode.shoppinglist.glass.dao.CardDao;
 import com.rightcode.shoppinglist.glass.ref.AuthUtil;
 import com.rightcode.shoppinglist.glass.ref.MirrorClient;
 import com.rightcode.shoppinglist.glass.service.DemoShoppingListProvider;
+import com.rightcode.shoppinglist.glass.service.ExternalShoppingListProvider;
 import com.rightcode.shoppinglist.glass.service.ShoppingListProvider;
 import com.rightcode.shoppinglist.glass.util.MirrorUtil;
 import com.rightcode.shoppinglist.glass.util.ReferenceDataManager;
@@ -35,12 +36,12 @@ public class AppController {
     ReferenceDataManager refDataManager = null;
 
     private CardDao cardDao = null;
-    private String bundleIdSuffix = ""; // used for testing
+    private String bundleIdSuffix = ""; 
 
     private static final Logger LOG = Logger.getLogger(AppController.class.getSimpleName());
 
     /**
-     * Call back used by clean up bacth call.
+     * Call back used by clean up batch call.
      * Eric.TODO, can be further enhanced
      * @author me
      *
@@ -90,7 +91,13 @@ public class AppController {
     }
 
     private AppController() {
-        shoppingListProvider = DemoShoppingListProvider.getInstance();
+        //Eric.TODO, move following logic to a serviceProiderFactory later
+        try{
+            shoppingListProvider = ExternalShoppingListProvider.getInstance();
+        }catch(Throwable t){
+            LOG.log(Level.SEVERE,t.getMessage(),t);
+            shoppingListProvider = DemoShoppingListProvider.getInstance();
+        } 
         cardDao = CardDao.getInstance();
         refDataManager = ReferenceDataManager.getInstance();
         VelocityHelper.initVelocity();
