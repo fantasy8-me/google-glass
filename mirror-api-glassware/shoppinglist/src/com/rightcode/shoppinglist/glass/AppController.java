@@ -10,7 +10,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.util.ArrayMap;
+import com.google.api.client.googleapis.batch.BatchRequest;
+import com.google.api.client.googleapis.batch.json.JsonBatchCallback;
+import com.google.api.client.googleapis.json.GoogleJsonError;
+import com.google.api.client.http.HttpHeaders;
 import com.google.api.services.mirror.Mirror;
 import com.google.api.services.mirror.model.MenuItem;
 import com.google.api.services.mirror.model.MenuValue;
@@ -36,6 +39,56 @@ public class AppController {
 
     private static final Logger LOG = Logger.getLogger(AppController.class.getSimpleName());
 
+    /**
+     * Call back used by clean up bacth call.
+     * Eric.TODO, can be further enhanced
+     * @author me
+     *
+     */
+    private final static class CleanUpBatchCallback extends JsonBatchCallback<Void> {
+        
+        private String cardId = null;
+        private CardDao cardDao = null;
+        
+        /**
+         * Used to record down the result.
+         * 
+         */
+        private static boolean allSuccess = true;
+        
+        @Override
+        public void onSuccess(Void t, HttpHeaders responseHeaders) throws IOException {
+            cardDao.deleteCard(cardId);
+        }
+        @Override
+        public void onFailure(GoogleJsonError e, HttpHeaders responseHeaders) throws IOException {
+            allSuccess = false;
+            LOG.severe("Fail to delete card:"+cardId + " Reason:" + e.getMessage());
+        }
+        
+        public CleanUpBatchCallback setId(String cardId){
+            this.cardId = cardId;
+            return this;
+        }
+        public CleanUpBatchCallback setDao(CardDao cardDao){
+            this.cardDao = cardDao;
+            return this;
+        }
+        
+        public static boolean isAllSuccess(){
+            return allSuccess;
+        }
+        
+        /**
+         * Must be call after each clean up
+         * @param resetValue
+         */
+        public static void resetAllSuccess(){
+            allSuccess = true;
+        }
+ 
+    }
+
     private AppController() {
         shoppingListProvider = DemoShoppingListProvider.getInstance();
         cardDao = CardDao.getInstance();
@@ -46,7 +99,7 @@ public class AppController {
 
     public synchronized static AppController getInstance() {
         if (appController == null) {
-            //This log is used to indicate that that our app is reload.
+            // This log is used to indicate that that our app is reload.
             LOG.info("*--------------------------AppController inited:" + System.currentTimeMillis());
             appController = new AppController();
         }
@@ -78,6 +131,47 @@ public class AppController {
         LOG.info("Starting shopping done, all cards are move to front of your timeline");
     }
 
+    public boolean cleanUpCards(String userId) throws IOException {
+        Credential credential;
+        credential = AuthUtil.getCredential(userId);
+
+        BatchRequest batch = MirrorClient.getMirror(null).batch();
+
+        List<String> allCards = cardDao.getAllCards(userId);
+        for (int i = 0; i < allCards.size(); i++) {
+            MirrorClient.getMirror(credential).timeline().delete(allCards.get(i)).queue(batch, new CleanUpBatchCallback().setId(allCards.get(i)).setDao(cardDao));
+        }
+        if(allCards.size() != 0)
+            batch.execute();
+        
+        if(CleanUpBatchCallback.isAllSuccess()){
+            LOG.info("All cards have been removed to front of your timeline");
+            CleanUpBatchCallback.resetAllSuccess();
+            return true;
+        }else{
+            CleanUpBatchCallback.resetAllSuccess();
+            return false;
+        }
+    }
+    
+    public void cleanUpToken() throws IOException {
+        List<String> users =  AuthUtil.getAllUserIds();
+        for (int i = 0; i < users.size(); i++) {
+            AuthUtil.clearUserId(users.get(i));
+        }
+    }
+    
+    public void insertCoupon(String userId, String couponContent) throws IOException{
+        Credential credential;
+        credential = AuthUtil.getCredential(userId);
+        TimelineItem couponItem = new TimelineItem();
+        couponItem.setHtml(couponContent);
+        
+        Mirror mirrorClient = MirrorClient.getMirror(credential);
+        mirrorClient.timeline().insert(couponItem).execute();
+        LOG.info("Coupon is created");
+    }
+
     private void initGlass(String userId, Mirror mirrorClient) {
         Map<String, List<Map<String, Object>>> shoppingList = shoppingListProvider.getShoppingList(userId);
 
@@ -103,8 +197,8 @@ public class AppController {
 
     private Map<String, Object> buildBundleConverViewBean(String category, int subTotoal, int numOfCompleted) {
 
-        Map<String, Object> bundleConverViewbean = new HashMap<String, Object>(refDataManager
-                .getCategorySetting(category));
+        Map<String, Object> bundleConverViewbean = new HashMap<String, Object>(
+                refDataManager.getCategorySetting(category));
 
         bundleConverViewbean.put(Constants.VELOCITY_PARM_SUBTOTOAL, subTotoal);
         bundleConverViewbean.put(Constants.VELOCITY_PARM_COMPLETED_IN_CATEGORY, numOfCompleted);
@@ -209,7 +303,7 @@ public class AppController {
         String bundleId = timelineItem.getBundleId();
 
         // Create an empty timeline item for patch
-        timelineItem = new TimelineItem(); 
+        timelineItem = new TimelineItem();
 
         int itemNub = Integer.parseInt(cardDao.getProdutNumByCardId(userId, productCardId));
 

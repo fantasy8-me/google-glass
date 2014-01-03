@@ -184,7 +184,7 @@ public class CardDao {
     /**
      * 
      * To get the number of card for specified user, can be used to determine
-     * whether the app is initilzed for the user
+     * whether the app is initialized for the user
      * 
      * @param userId
      * @return number of cards for user
@@ -205,6 +205,30 @@ public class CardDao {
         return result.size();
     }
 
+    /**
+     * 
+     * To get all created card for specified user
+     * 
+     * @param userId
+     * @return number of cards for user
+     */
+    public List<String> getAllCards(String userId) {
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+        // Eric.TODO, can not find the proper count approach in JDO, will double
+        // check later
+        Query q = pm.newQuery("select cardId from " + Card.class.getName());
+        q.setFilter("userId == userIdParm && projectClientId=='" + this.projectClientId + "'");
+        q.declareParameters("String userIdParm");
+        List<String> result = null;
+        try {
+            result = (List<String>) q.execute(userId);
+        } finally {
+            pm.close();
+        }
+        return result;
+    }
+    
+    
     /**
      * Delete a card
      * 

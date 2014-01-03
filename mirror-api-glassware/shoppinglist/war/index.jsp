@@ -82,6 +82,7 @@ limitations under the License.
   <% } %>
   <div class="row">
     <div class="span6">
+    <!-- 
       <form class="form-horizontal" action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
       	<input type="hidden" name="operation" value="rawhttp">
 		  <div class="control-group">
@@ -113,6 +114,29 @@ limitations under the License.
             Insert the above json message
           </button>
       </form>
+       -->
+      <form class="form-horizontal" action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
+      	<input type="hidden" name="operation" value="insertCoupon">
+    	  <div class="control-group">
+		    <label class="control-label">Coupon HTML Content</label>
+		    <div class="controls">
+		    	<textarea class="span4" name="couponContent" id="couponContent" style="height:250px"></textarea>
+		    </div>
+		  </div> 
+    	  <div class="control-group">
+		    <label class="control-label">Coupon Template</label>
+		    <div class="controls">
+		        <select onchange="insertCouponTemplate(this)">
+		        	<option selected>Select A Template</option>
+					<option value="simple">Simple Coupon</option>
+					<option value="complex">Complex Coupon</option>
+				</select>
+		    </div>
+		  </div>        
+          <button class="btn btn-block" type="submit">
+            Insert Coupon
+          </button>
+      </form>       
     </div>
     <div class="span5 offset1">
       <form action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
@@ -121,7 +145,19 @@ limitations under the License.
           Initial Shopping List Glassware
         </button>
       </form>
-     
+      
+     <hr>
+     <h3>Admin Block<h4>
+     <form class="form-horizontal" action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
+      	<input type="hidden" id="adminOperation" name="operation" value="">
+        <button class="btn btn-block btn-danger" type="submit" onclick="document.getElementById('adminOperation').value='admin_cleanToken'">
+          Whenever you re-deploy the app with another project id, click this button before any operations
+        </button>              	
+        <button class="btn btn-block btn-warning" type="submit" onclick="document.getElementById('adminOperation').value='admin_cleanCards'">
+          Clean Shopping List Cards
+        </button>
+
+      </form>     
      
      <% if(request.getServerName().equals("localhost")){ %>
      <hr>
@@ -383,6 +419,25 @@ var jsonTemplates = {
 			document.getElementById("jsonMsg").value = jsonTemplates[templates[templates.selectedIndex].value];
 		}
 	}
+	
+	var couponTemplates = {
+		"simple" : '<article><strong class="blue">HTML</strong></article>',
+		"complex" : '<article class="photo">\
+		  <img src="http://i.imgur.com/UEDiKQZ.jpg" width="100%" height="100%">\
+		  <div class="photo-overlay">\
+		  </div>\
+		  <section>\
+		    <p class="text-auto-size">Bakery Coupon</p>\
+		  </section>\
+		  <footer></footer>\
+		</article>'
+	};
+	function insertCouponTemplate(templates){
+		if(templates.selectedIndex !== 0){
+			console.log(templates.selectedIndex)
+			document.getElementById("couponContent").value = couponTemplates[templates[templates.selectedIndex].value];
+		}
+	}	
 </script>
 </body>
 </html>

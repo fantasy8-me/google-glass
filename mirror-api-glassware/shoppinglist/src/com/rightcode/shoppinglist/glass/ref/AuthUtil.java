@@ -114,4 +114,8 @@ public class AuthUtil {
   public static List<String> getAllUserIds() {
     return store.listAllUsers();
   }
+  
+  public static void clearUserId(String userId) throws IOException {
+      store.delete(userId, getCredential(userId));
+    }
 }

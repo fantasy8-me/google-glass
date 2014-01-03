@@ -293,6 +293,7 @@ public class MainServlet extends HttpServlet {
 private boolean preProcess(HttpServletRequest req, HttpServletResponse res, Credential credential) throws IOException{
     
       String userId = AuthUtil.getUserId(req);
+      AppController appController = AppController.getInstance();
 	  if (req.getParameter("operation").equals("rawhttp")) {
 		  String message = null;
 	      if (!req.getParameter("jsonMsg").isEmpty()) {
@@ -310,7 +311,6 @@ private boolean preProcess(HttpServletRequest req, HttpServletResponse res, Cred
           res.sendRedirect(WebUtil.buildUrl(req, "/"));	      
 	      return true;
 	  }else if(req.getParameter("operation").equals("initialShoppingListApp")){
-          AppController appController = AppController.getInstance();
           if(CardDao.getInstance().getNumberOfCards(userId) == 0){
               appController.initApp(userId);
               WebUtil.setFlash(req,"We have initialized our glassware in you glass, you should able to see a shopping list card and a couple of shopping category cards in your glass now");
@@ -318,8 +318,32 @@ private boolean preProcess(HttpServletRequest req, HttpServletResponse res, Cred
               appController.startShopping(userId);
               WebUtil.setFlash(req,"You initialized our glassware before, we just bring all our cards to front in you glass ");
           }
-          
           res.sendRedirect(WebUtil.buildUrl(req, "/"));	   
+          return true;
+      }else if(req.getParameter("operation").equals("insertCoupon")){
+           appController.insertCoupon(userId, req.getParameter("couponContent"));
+           WebUtil.setFlash(req,"Coupon is created");
+           res.sendRedirect(WebUtil.buildUrl(req, "/"));
+           return true;
+      }else if(req.getParameter("operation").startsWith("admin")){
+          String msg = "";
+          try{
+              if(req.getParameter("operation").equals("admin_cleanCards")){
+                 if(appController.cleanUpCards(userId))
+                     msg = "All your shopping list cards have been removed from your timeline, as well as the data in our application database";
+                 else
+                     msg = "Fail to clean up all cards, pleaes check log for details";             
+              }else if(req.getParameter("operation").equals("admin_cleanToken")){
+                  appController.cleanUpToken(); //after token clean, user will be redirected to login page
+                  req.getSession().removeAttribute("userId");
+              }
+          }catch(Throwable t){//try catch all exception from admin function to avoid impact the normal flow 
+              msg = t.getMessage();
+              LOG.log(Level.SEVERE,t.getMessage(),t);
+          }
+          
+          WebUtil.setFlash(req,msg);
+          res.sendRedirect(WebUtil.buildUrl(req, "/"));
           return true;
       }else if(req.getParameter("operation").startsWith("testing")){
           Mirror mirrorClient = MirrorClient.getMirror(credential);
@@ -328,7 +352,6 @@ private boolean preProcess(HttpServletRequest req, HttpServletResponse res, Cred
           }else{
               AppController.getInstance().unMarkItem(mirrorClient, userId, req.getParameter("addInfo"));
           }
-          
           res.sendRedirect(WebUtil.buildUrl(req, "/"));
           return true;
       }else{
