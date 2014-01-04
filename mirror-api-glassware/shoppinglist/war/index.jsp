@@ -74,11 +74,6 @@ limitations under the License.
 </div>
  
 <div class="container">
- 
-  <% String flash = WebUtil.getClearFlash(request);
-    if (flash != null) { %>
-  <div class="alert alert-info"><%= StringEscapeUtils.escapeHtml4(flash) %></div>
-  <% } %>
     <div class="row" align="center">
           <img src="http://i.imgur.com/kpZmaxp.png" /><br/>
           <h1>Glass Shopping List</h1>
@@ -141,7 +136,15 @@ limitations under the License.
         </button>
       </form>
       <% } %>
-      </td></tr></table>
+      </td></tr>
+      </table>
+    </div>
+    <div class="row">
+    <h5>Admin Logs:</h5>
+      <% String flash = WebUtil.getClearFlash(request);
+      if (flash != null) { %>
+  	  	<div class="alert alert-info"><%= StringEscapeUtils.escapeHtml4(flash) %></div>
+  	  <% } %>
     </div>
     <hr/>
 <!-- footer -->

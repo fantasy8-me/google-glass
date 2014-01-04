@@ -1,33 +1,44 @@
-<article style="background-image:url(&#39;http://i.imgur.com/0p90kPs.png&#39;);color:black;font-family:&#39;Lucida Sans Unicode&#39;,&#39;Lucida Grande&#39;,sans-serif">
-  <h3>
-    $listName:
-  </h3>
-  #if($isSimple)
-   	 
-  #else
+<article class="photo" style="color:black;font-family:&#39;Lucida Sans Unicode&#39;,&#39;Lucida Grande&#39;,sans-serif">
+  <img src="http://i.imgur.com/0p90kPs.png" width="100%" height="100%">
+  <div>
+  <section>
+    <p class="text-auto-size">$listName</p>
+  </section>
+  <footer>
+	<p>
+	    $ShoppingStatus
+	</p>
+  </footer>
+</article>
 	  #foreach( $category in $allProducts.keySet())
 	  	#set( $productsForCategory = $allProducts.get($category))
-	  	<h4>$categoryTitles.get($category)</h4>
+		<article style="background-image:url(&#39;http://i.imgur.com/0p90kPs.png&#39;);color:black;font-family:&#39;Lucida Sans Unicode&#39;,&#39;Lucida Grande&#39;,sans-serif">
+	  	<section>
+	  	<h3>$categoryTitles.get($category)</h3>
 	    <ul class="text-x-small">
+	    #set( $numofproducts = 0 )
+	    #set( $numofpurchased = 0 )
 	  	  #foreach( $product in $productsForCategory)
 	  	    #if($!{product.purchased})
 	  	        <li>
-	  	        	<strike>
+	  	          <strike>
 	      	  	  $product.quantity $product.prdName
+	      	  	  #set( $numofpurchased = $numofpurchased + 1 )
 	      	  	  </strike> 
 	    	    </li>
 		    #{else}
 	  	        <li>
 	      	   		$product.quantity $product.prdName 
 	    	    </li>
-		    #end			
+		    #end	
+		    #set( $numofproducts = $numofproducts + 1 )		
 		  #end
 	    </ul>
+	    </section>
+	    <footer>
+	    <p>
+	    	$!{numofpurchased}/$!{numofproducts}
+	    </p>
+	  </footer>
+	  </article>
 	  #end
-  #end
-  <footer>
-    <p>
-    	$!{completed}/$!{total}
-    </p>
-  </footer>
-</article>

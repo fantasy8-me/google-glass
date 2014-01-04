@@ -4,7 +4,7 @@
   </div>
   <section>
     <p class="text-auto-size">
-      ${title}
+      $listName - ${title}
     </p>
   </section>
   <footer>
