@@ -1,7 +1,6 @@
 <article style="background-image:url(&#39;http://i.imgur.com/0p90kPs.png&#39;);color:black;font-family:&#39;Lucida Sans Unicode&#39;,&#39;Lucida Grande&#39;,sans-serif">
 <section>
-    	<p class="text-auto-size">Shopping List App Demo</p></section>
-  <footer>
-  Rightcode LTD
-  </footer>
+<p class="text-large">My Shopping Lists</p>
+<p class="text-x-small">Tap then move to select</p>
+</section>
 </article>

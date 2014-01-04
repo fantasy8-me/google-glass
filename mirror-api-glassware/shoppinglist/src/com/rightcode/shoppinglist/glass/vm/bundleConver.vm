@@ -1,10 +1,10 @@
-<article class="photo">
-  <img src="$!{imgUrl}" width="100%" height="100%">
-  <div class="photo-overlay">
-  </div>
+<article style="background-image:url(&#39;$!{imgUrl}&#39;);color:white;font-family:&#39;Lucida Sans Unicode&#39;,&#39;Lucida Grande&#39;,sans-serif">
   <section>
+    <p class="text-x-small">
+      $!{listname}
+    </p>
     <p class="text-auto-size">
-      $listName - ${title}
+      ${title}
     </p>
   </section>
   <footer>

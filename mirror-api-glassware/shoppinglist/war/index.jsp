@@ -95,7 +95,7 @@ limitations under the License.
         <iframe width="1040px" height="800px" src="https://mirror-api-playground.appspot.com/"></iframe>
         </div>
         <div class="row">
-                        <h4>Admin Block</h4>
+                        <h4>Admin Block (For Developers Only)</h4>
         <table>
         <tr><td>
                         <form action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
@@ -113,7 +113,7 @@ limitations under the License.
                         </button>  
         </td><td>              
                         <button class="btn btn-block btn-warning" style="height: 200px; width: 200px;" type="submit" onclick="document.getElementById('adminOperation').value='admin_cleanCards'">
-                        Clean Shopping List Cards
+                        Clean Shopping List Cards and Reset Marked Items
                         </button>
            </form>
            </td>
@@ -136,7 +136,13 @@ limitations under the License.
         </button>
       </form>
       <% } %>
-      </td></tr>
+      </td>
+      <td>
+      <button class="btn btn-block btn-primary" style="height: 200px; width: 200px;" onclick="window.open('https://code.google.com/apis/console/b/0/?pli=1#project:989966632667:quotas');">
+          Quota Usage
+        </button>
+      </td>
+      </tr>
       </table>
     </div>
     <div class="row">

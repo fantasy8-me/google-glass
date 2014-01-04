@@ -2,18 +2,18 @@
   <section>
     <div class="layout-two-column">
       <div class="align-center">
-<p style="font-size:25px">$!{quantity} $!{prdName}</p>
-#if($!purchased)
-    	<img src="http://i.imgur.com/JGAb3S9.png">
-    #{else}
+		#if($!purchased)
+			<p style="font-size:25px"><strike>$!{quantity} $!{prdName}</strike></p>
+		#{else}
+			<p style="font-size:25px">$!{quantity} $!{prdName}</p>
+		#end
     	<img src="$!{imgUrl}">
-    #end
       </div>
       <div class="text-auto-size">
 		<p class="align-center" style="font-size:27px"><i><b><u>Next on your list:</u></b></i></p>
 			<ul>
-				<li>Next Item in category</li>
-				<li>Next Item in category + 1 (max 2)</li>
+			<li>Other1 in Cat</li>
+			<li>Other2 in Cat</li>
 			</ul>
 		<br><br><p class="align-right" style="font-size:25px"></p>
       </div>
