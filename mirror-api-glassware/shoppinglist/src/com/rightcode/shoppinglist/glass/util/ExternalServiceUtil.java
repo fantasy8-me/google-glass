@@ -13,7 +13,7 @@ public class ExternalServiceUtil {
     
     private static final Logger LOG = Logger.getLogger(ExternalServiceUtil.class.getSimpleName());
     
-    public static List<Map<String,Object>> getData() throws IOException{
+    public static List<Map<String,Object>> getAllShoppingLists() throws IOException{
         
         JsonFactory jsonFactory = new JacksonFactory();
         List<Map<String,Object>> data = null;
@@ -22,6 +22,10 @@ public class ExternalServiceUtil {
         
         LOG.info("Exteranl data is got successfully, total number of shopping list:" + (data==null ? 0 : data.size()));
         return data;
+    }
+    
+    public static Map<String,Object> getShoppnigList(String userId, String shoppingListId) throws IOException{
+        return null;
     }
 
 }

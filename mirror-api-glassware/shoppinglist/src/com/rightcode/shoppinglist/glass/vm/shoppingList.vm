@@ -1,27 +1,30 @@
 <article style="background-image:url(&#39;http://i.imgur.com/0p90kPs.png&#39;);color:black;font-family:&#39;Lucida Sans Unicode&#39;,&#39;Lucida Grande&#39;,sans-serif">
   <h3>
-    Shopping List:
+    $listName:
   </h3>
-  #foreach( $category in $allProducts.keySet())
-  	#set( $productsForCategory = $allProducts.get($category))
-  	<h4>$categoryTitles.get($category)</h4>
-    <ul class="text-x-small">
-  	  #foreach( $product in $productsForCategory)
-  	    #if($!{product.purchased})
-  	        <li>
-  	        	<strike>
-      	  	  $product.quantity $product.prdName
-      	  	  </strike> 
-    	    </li>
-	    #{else}
-  	        <li>
-      	   		$product.quantity $product.prdName 
-    	    </li>
-	    #end			
+  #if($isSimple)
+   	 
+  #else
+	  #foreach( $category in $allProducts.keySet())
+	  	#set( $productsForCategory = $allProducts.get($category))
+	  	<h4>$categoryTitles.get($category)</h4>
+	    <ul class="text-x-small">
+	  	  #foreach( $product in $productsForCategory)
+	  	    #if($!{product.purchased})
+	  	        <li>
+	  	        	<strike>
+	      	  	  $product.quantity $product.prdName
+	      	  	  </strike> 
+	    	    </li>
+		    #{else}
+	  	        <li>
+	      	   		$product.quantity $product.prdName 
+	    	    </li>
+		    #end			
+		  #end
+	    </ul>
 	  #end
-    </ul>
   #end
-
   <footer>
     <p>
     	$!{completed}/$!{total}

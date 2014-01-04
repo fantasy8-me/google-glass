@@ -24,7 +24,7 @@ public class ExternalShoppingListProvider implements ShoppingListProvider {
             cardDao = CardDao.getInstance();
             // Shopping list will be cached when initialize
             // ExternalShoppingListProvider
-            productData = convertExternalDataToInternalFormat(ExternalServiceUtil.getData());
+            productData = convertExternalDataToInternalFormat(ExternalServiceUtil.getAllShoppingLists());
             
         } catch (IOException e) {
             LOG.log(Level.SEVERE, e.getMessage(), e);
@@ -45,33 +45,46 @@ public class ExternalShoppingListProvider implements ShoppingListProvider {
     }
 
     @Override
-    public List<Map<String, Object>> getShoppingList(String userId, String category) {
+    public Map<String, Map<String, List<Map<String, Object>>>> getAllShoppingLists(String userId) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Map<String, List<Map<String, Object>>> getShoppingList(String userId) {
+    public List<Map<String, Object>> getShoppingList(String userId, String shoppingListId, String category) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Map<String, Object> getProductData(String userId, int productNum) {
+    public Map<String, List<Map<String, Object>>> getShoppingList(String userId, String shoppingListId) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public void markProduct(String userId, int productNum, String cardId) {
+    public Map<String, Object> getProductData(String userId, String shoppingListId, String productId) {
         // TODO Auto-generated method stub
-
+        return null;
     }
 
     @Override
-    public void unMarkProduct(String userId, int productNum, String cardId) {
+    public void markProduct(String userId, String shoppingListId, String productId, String cardId) {
         // TODO Auto-generated method stub
-
+        
     }
+
+    @Override
+    public void unMarkProduct(String userId, String shoppingListId, String productId, String cardId) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public String getShoppingListName(String userId, String shoppingListId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 
 }

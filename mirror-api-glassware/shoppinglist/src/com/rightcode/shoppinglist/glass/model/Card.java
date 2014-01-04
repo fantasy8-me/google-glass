@@ -5,10 +5,18 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+/**
+ * 
+ * @author me
+ *
+ */
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class Card {
 
-  @PrimaryKey
+  /**
+ * Assume cardId would be unique for all users, if not, include userId to create a composite key
+ */
+@PrimaryKey
   private String cardId;
 
   @Persistent
@@ -31,16 +39,24 @@ public class Card {
    */
   @Persistent
   private String ref;
+  
+ /**
+ * CardId of the shopping list card to which this card belongs 
+ * Null for the shopping list card itself
+ */
+@Persistent
+  private String shoppingListCardId;
 
   @Persistent
   private boolean isPurchased = false; //Required if we don't have external service to store the purchase status
 
-  public Card(String cardId, String userId, String projectClientId,String type, String ref) {
+  public Card(String cardId, String userId, String projectClientId,String type, String ref, String shoppinglistCardId) {
     this.cardId = cardId;
     this.projectClientId = projectClientId;
     this.userId = userId;
     this.type = type;
     this.ref = ref;
+    this.shoppingListCardId = shoppinglistCardId;
   }
 
   public String getCardId() {

@@ -201,7 +201,7 @@ public class NotifyServlet extends HttpServlet {
               appController.markOrUnMarkProduct(mirrorClient, userId, timelineItem,false);
     	  }else if(Constants.MENU_ID_STARTSHOPPING.equals(ua.getPayload())){
               AppController appController = AppController.getInstance();
-              appController.startShopping(userId);
+              appController.startShopping(userId,timelineItem.getId());
     	  }
       } else if(notification.getUserActions().contains(new UserAction().setType("REPLY"))) {
     	  LOG.info("I know you just reply my card");

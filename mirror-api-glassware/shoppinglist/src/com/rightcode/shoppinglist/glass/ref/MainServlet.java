@@ -313,10 +313,13 @@ private boolean preProcess(HttpServletRequest req, HttpServletResponse res, Cred
 	  }else if(req.getParameter("operation").equals("initialShoppingListApp")){
           if(CardDao.getInstance().getNumberOfCards(userId) == 0){
               appController.initApp(userId);
-              WebUtil.setFlash(req,"We have initialized our glassware in you glass, you should able to see a shopping list card and a couple of shopping category cards in your glass now");
+              WebUtil.setFlash(req,"We have initialized our glassware in you glass, you should able to see our shopping list cards in your glass now");
           }else{
-              appController.startShopping(userId);
-              WebUtil.setFlash(req,"You initialized our glassware before, we just bring all our cards to front in you glass ");
+              List<String> shoppingListCardIds = CardDao.getInstance().getCardsByType(userId, Constants.CARD_TYPE_MAIN, null);
+              for (int i = 0; i < shoppingListCardIds.size(); i++) {
+                  appController.startShopping(userId,shoppingListCardIds.get(i));  
+              }
+              WebUtil.setFlash(req,"You initialized our glassware before, we just create and bring all of your card to front");
           }
           res.sendRedirect(WebUtil.buildUrl(req, "/"));	   
           return true;

@@ -84,7 +84,7 @@ public class VelocityHelper {
 //		data.put(Constants.ITEM_COL_IMGURL, "imgurl_str");
 //		data.put(Constants.ITEM_COL_NOTES, list);
 //		data.put(Constants.ITEM_COL_PRDNAME, "prdname_str");
-//		data.put(Constants.ITEM_COL_PRDNUM, 1);
+//		data.put(Constants.ITEM_COL_PRD_ID, 1);
 //		data.put(Constants.ITEM_COL_PRICE, 999999.99);
 //		data.put(Constants.ITEM_COL_PROMO, "promo str");
 //		data.put(Constants.ITEM_COL_PURCHASED,true);
@@ -93,7 +93,7 @@ public class VelocityHelper {
 		
 //		System.out.println(VelocityHelper.getFinalStr(data, "itemConver.vm"));
 		
-		Map<String, List<Map<String,Object>>> shoppingList = DemoShoppingListProvider.getInstance().getShoppingList("");
+		Map<String, List<Map<String,Object>>> shoppingList = DemoShoppingListProvider.getInstance().getShoppingList("","d17bb2da-ce13-4eea-99d4-a2a800b68217");
 		
 	    Map<String, Object> items = new HashMap<String, Object>();
 	    items.put(Constants.VELOCICY_PARM_AllPRODUCTS, shoppingList);

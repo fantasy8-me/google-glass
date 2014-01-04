@@ -3,6 +3,7 @@ package com.rightcode.shoppinglist.glass.dao;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,10 @@ import com.rightcode.shoppinglist.glass.Constants;
 import com.rightcode.shoppinglist.glass.model.Card;
 import com.rightcode.shoppinglist.glass.util.PMF;
 
+/**
+ * @author me
+ * 
+ */
 public class CardDao {
 
     private static final Logger LOG = Logger.getLogger(CardDao.class.getSimpleName());
@@ -37,15 +42,15 @@ public class CardDao {
             FileInputStream authPropertiesStream = new FileInputStream(propertiesFile);
             authProperties = new Properties();
             authProperties.load(authPropertiesStream);
-            
+
         } catch (Exception e) {
             LOG.severe("Can not load oauth in DAO");
             LOG.log(Level.SEVERE, e.getMessage(), e);
         }
         projectClientId = authProperties.getProperty("client_id");
-        if(projectClientId != null)
+        if (projectClientId != null)
             projectClientId = projectClientId.trim();
-        
+
         LOG.info("Got oauth file and client id is:" + projectClientId);
     }
 
@@ -56,10 +61,10 @@ public class CardDao {
         return cardDao;
     }
 
-    public void insertCard(String cardId, String userId, String type, String ref) {
+    public void insertCard(String cardId, String userId, String type, String ref, String shoppingListCardId) {
         PersistenceManager pm = PMF.get().getPersistenceManager();
 
-        Card c = new Card(cardId, userId, this.projectClientId, type, ref);
+        Card c = new Card(cardId, userId, this.projectClientId, type, ref, shoppingListCardId);
         try {
             pm.makePersistent(c);
         } finally {
@@ -67,7 +72,7 @@ public class CardDao {
         }
     }
 
-    public String getProdutNumByCardId(String userId, String cardId) {
+    public String getCardRefById(String userId, String cardId) {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Query q = pm.newQuery("select ref from " + Card.class.getName());
         q.setFilter("userId == userIdParm && cardId == cardIdParm && projectClientId=='" + this.projectClientId + "'");
@@ -85,15 +90,14 @@ public class CardDao {
         }
     }
 
-    public String getShoppingListCardId(String userId) {
+    public String getShoppingListCardByProductCard(String userId, String cardId) {
         PersistenceManager pm = PMF.get().getPersistenceManager();
-        Query q = pm.newQuery("select cardId from " + Card.class.getName());
-        q.setFilter("userId == userIdParm && type == '" + Constants.CARD_TYPE_MAIN + "' && projectClientId=='"
-                + this.projectClientId + "'");
-        q.declareParameters("String userIdParm");
+        Query q = pm.newQuery("select shoppingListCardId from " + Card.class.getName());
+        q.setFilter("userId == userIdParm && cardId == cardIdParm && projectClientId=='" + this.projectClientId + "'");
+        q.declareParameters("String userIdParm, String cardIdParm");
         List<String> result = null;
         try {
-            result = (List<String>) q.execute(userId);
+            result = (List<String>) q.executeWithArray(new String[] { userId, cardId });
         } finally {
             pm.close();
         }
@@ -104,15 +108,15 @@ public class CardDao {
         }
     }
 
-    public String getBundleCoverCardId(String userId, String bundleId) {
+    public String getBundleCoverCardId(String userId, String bundleId, String shoppingListCardId) {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Query q = pm.newQuery("select cardId from " + Card.class.getName());
-        q.setFilter("userId == userIdParm && ref == bundleIdParm && type == '" + Constants.CARD_TYPE_BUNDLE
-                + "' && projectClientId=='" + this.projectClientId + "'");
-        q.declareParameters("String userIdParm, String bundleIdParm");
+        q.setFilter("userId == userIdParm && ref == bundleIdParm && shoppingListCardId == shoppingListCardIdParam && type == '"
+                + Constants.CARD_TYPE_BUNDLE + "' && projectClientId=='" + this.projectClientId + "'");
+        q.declareParameters("String userIdParm, String bundleIdParm, String shoppingListCardIdParam");
         List<String> result = null;
         try {
-            result = (List<String>) q.executeWithArray(new String[] { userId, bundleId });
+            result = (List<String>) q.executeWithArray(new String[] { userId, bundleId, shoppingListCardId });
         } finally {
             pm.close();
         }
@@ -165,21 +169,22 @@ public class CardDao {
      * @param userId
      * @return list of bundle cover card id for specified user
      */
-    public List<String> getAllBundleConvers(String userId) {
-        PersistenceManager pm = PMF.get().getPersistenceManager();
-        Query q = pm.newQuery("select cardId from " + Card.class.getName());
-        q.setFilter("userId == userIdParm && type == '" + Constants.CARD_TYPE_BUNDLE + "' && projectClientId=='"
-                + this.projectClientId + "'");
-        q.declareParameters("String userIdParm");
-
-        List<String> result = null;
-        try {
-            result = (List<String>) q.execute(userId);
-        } finally {
-            pm.close();
-        }
-        return result;
-    }
+    // public List<String> getAllBundleConvers(String userId) {
+    // PersistenceManager pm = PMF.get().getPersistenceManager();
+    // Query q = pm.newQuery("select cardId from " + Card.class.getName());
+    // q.setFilter("userId == userIdParm && type == '" +
+    // Constants.CARD_TYPE_BUNDLE + "' && projectClientId=='"
+    // + this.projectClientId + "'");
+    // q.declareParameters("String userIdParm");
+    //
+    // List<String> result = null;
+    // try {
+    // result = (List<String>) q.execute(userId);
+    // } finally {
+    // pm.close();
+    // }
+    // return result;
+    // }
 
     /**
      * 
@@ -206,29 +211,44 @@ public class CardDao {
     }
 
     /**
-     * 
-     * To get all created card for specified user
+     * To get cards for specified user by type
      * 
      * @param userId
-     * @return number of cards for user
+     * @param type
+     * @return
      */
-    public List<String> getAllCards(String userId) {
+    public List<String> getCardsByType(String userId, String type, String shoppingListCardId) {
         PersistenceManager pm = PMF.get().getPersistenceManager();
-        // Eric.TODO, can not find the proper count approach in JDO, will double
-        // check later
+
         Query q = pm.newQuery("select cardId from " + Card.class.getName());
-        q.setFilter("userId == userIdParm && projectClientId=='" + this.projectClientId + "'");
-        q.declareParameters("String userIdParm");
+
+        String filterStr = "userId == userIdParm && projectClientId=='" + this.projectClientId +"'";
+        String declareParamStr = "String userIdParm";
+        List<String> params = new ArrayList<String>();
+        params.add(userId);
+
+        if (type != null) {
+            filterStr += " && type == typeParm";
+            declareParamStr += ", String typeParm";
+            params.add(type);
+        }
+        if (shoppingListCardId != null) {
+            filterStr += " && shoppingListCardId == shoppingListCardIdParm";
+            declareParamStr += ", String shoppingListCardIdParm";
+            params.add(shoppingListCardId);
+        }
+        q.setFilter(filterStr);
+        q.declareParameters(declareParamStr);
+
         List<String> result = null;
         try {
-            result = (List<String>) q.execute(userId);
+            result = (List<String>) q.executeWithArray(params.toArray());
         } finally {
             pm.close();
         }
         return result;
     }
-    
-    
+
     /**
      * Delete a card
      * 
@@ -240,8 +260,10 @@ public class CardDao {
             Card card = (Card) pm.getObjectById(Card.class, cardId);
             pm.deletePersistent(card);
             LOG.severe("------Deleted card:" + cardId);
-        }catch (JDOObjectNotFoundException e){
-            LOG.warning("Can not find the card [" + cardId + "] in db, this might not be an error if you are deleting a non-shoppinglist card, or the data was cleannd up by others");
+        } catch (JDOObjectNotFoundException e) {
+            LOG.warning("Can not find the card ["
+                    + cardId
+                    + "] in db, this might not be an error if you are deleting a non-shoppinglist card, or the data was cleannd up by others");
         } catch (Exception e) {
             // Catch the exception to avoid breaking the main flow
             LOG.severe("Error occur when delete card:" + cardId);
@@ -250,4 +272,5 @@ public class CardDao {
             pm.close();
         }
     }
+
 }

@@ -1,8 +1,6 @@
 package com.rightcode.shoppinglist.glass.service;
 
 import java.io.IOException;
-import java.io.StringWriter;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -18,6 +16,9 @@ import com.rightcode.shoppinglist.glass.dao.CardDao;
 
 public class DemoShoppingListProvider implements ShoppingListProvider {
 
+	/**
+	 * First Level Key is shopping list, Second Level Key is category 
+	 */
 	private Map<String, Map<String,List<Map<String, Object>>>> productData = null;
 
 	private static DemoShoppingListProvider demoShoppingListProvider = null;
@@ -25,10 +26,14 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
 	private static final Logger LOG = Logger.getLogger(DemoShoppingListProvider.class.getSimpleName());
 	
 	private CardDao cardDao = null;
+	
+	private Map<String,String> shoppingListNameMap = new HashMap<String, String>();
 
 	private DemoShoppingListProvider() {
 		JsonFactory jsonFactory = new JacksonFactory();
 		cardDao = CardDao.getInstance();
+		shoppingListNameMap.put("d17bb2da-ce13-4eea-99d4-a2a800b68217", "Household List");
+		shoppingListNameMap.put("61c368e0-4951-446c-9857-a291015149c2", "Sunday's List");
 		try {
 		    //Shopping list will be cached when initialize DemoShoppingListProvider
 			productData = jsonFactory.fromInputStream(DemoShoppingListProvider.class.getResourceAsStream("/productData.json"),null);
@@ -46,36 +51,46 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
 
 	}
 	
-	public List<Map<String,Object>> getShoppingList(String userId, String category) {
+    @Override
+    public Map<String,Map<String, List<Map<String, Object>>>> getAllShoppingLists(String userId) {
+        Iterator<String> iter = productData.keySet().iterator();
+        while (iter.hasNext()) {
+            String shoppingListId = (String) iter.next();
+            mergePurchaseStatus(userId, shoppingListId);
+        }
+        return productData;
+    }
+    
+	public List<Map<String,Object>> getShoppingList(String userId, String shoppingListId, String category) {
 		// Use the dummy user id which is defined in productData.json
-	    mergePurchaseStatus(userId);
-		return productData.get("dummyusrId1").get(category);
+	    mergePurchaseStatus(userId, shoppingListId);
+		return productData.get(shoppingListId).get(category);
 		// return productData.get(userId);
 	}
 
 	@Override
-	public Map<String, List<Map<String,Object>>> getShoppingList(String userId) {
-	    mergePurchaseStatus(userId);
-	    Map<String, List<Map<String,Object>>> shoppingList = productData.get("dummyusrId1");
+	public Map<String, List<Map<String,Object>>> getShoppingList(String userId, String shoppingListId) {
+	    mergePurchaseStatus(userId,shoppingListId);
+	    Map<String, List<Map<String,Object>>> shoppingList = productData.get(shoppingListId);
 	    
 	    return shoppingList;
 	}
 	
 	
     @Override
-    public void markProduct(String userId, int prdNum, String cardId) {
+    public void markProduct(String userId, String shoppingListId, String productId, String cardId) {
         cardDao.markPurchaseStatus(userId, cardId, true);
     }
 
     @Override
-    public void unMarkProduct(String userId, int productNum, String cardId) {
+    public void unMarkProduct(String userId, String shoppingListId, String productId, String cardId) {
         cardDao.markPurchaseStatus(userId, cardId, false);
     }
     
     @Override
-    public Map<String, Object> getProductData(String userId, int productNum) {
-      mergePurchaseStatus(userId);
-      Map<String, List<Map<String,Object>>> shoppingList = productData.get("dummyusrId1");
+    public Map<String, Object> getProductData(String userId, String shoppingListId, String productId) {
+      mergePurchaseStatus(userId,shoppingListId);
+      Map<String, List<Map<String,Object>>> shoppingList = productData.get(shoppingListId);
         
         Iterator<String> iter = shoppingList.keySet().iterator();
         
@@ -85,7 +100,7 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
             for (int i = 0; i < subShoppingList.size(); i++) {
                 prodcutData = subShoppingList.get(i);
                 //BigDecimal is used by google JSON library to represent a number
-                if(((BigDecimal)prodcutData.get(Constants.ITEM_COL_PRDNUM)).intValue() == productNum){
+                if(productId.equals(prodcutData.get(Constants.ITEM_COL_PRD_ID))){
                     return prodcutData;
                 }
             }
@@ -99,10 +114,15 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
      * 
      * @param userId
      */
-    private void mergePurchaseStatus(String userId) {
-        Map<String, List<Map<String,Object>>> shoppingList = productData.get("dummyusrId1");
+    private void mergePurchaseStatus(String userId, String shoppingListId) {
+        Map<String, List<Map<String,Object>>> shoppingList = productData.get(shoppingListId);
         
         Iterator<String> iter = shoppingList.keySet().iterator();
+        //As we can tell which shopping list a product card belongs to, so we have to get purchase status for all cards in all shopping list
+        //Two long term soltion
+        //1. Enhance the app db to maintain the relationship between shopping list and product card
+        //2. Enhance the criteria, use something like in (cardId1, cardId2, cardId3 ...) to build up a efficient sql
+        //3. Instead of getting all the status in one sql, execute a sql get the the status for one card only(but we have to make many sql call by using this approach)
         Map<String,Boolean> purchaseStatus = cardDao.getPurchaseStatus(userId);
         
         while (iter.hasNext()) {
@@ -115,9 +135,14 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
     private void enrichPurchaseStatus(Map<String, Boolean> purchaseStatus, List<Map<String, Object>> shoppingList) {
         for (int i = 0; i < shoppingList.size(); i++) {
            Map<String,Object> product = shoppingList.get(i);
-           Boolean purchased = purchaseStatus.get(String.valueOf(product.get(Constants.ITEM_COL_PRDNUM)));
+           Boolean purchased = purchaseStatus.get(product.get(Constants.ITEM_COL_PRD_ID));
            product.put(Constants.ITEM_COL_PURCHASED, purchased == null ? false : purchased); //set initial value as false;
         }
+    }
+    
+    @Override
+    public String getShoppingListName(String userId, String shoppingListId) {
+        return shoppingListNameMap.get(shoppingListId);
     }
     
     public static void main(String[] args) {
@@ -153,5 +178,6 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
             e.printStackTrace();
         }
     }
+
 
 }

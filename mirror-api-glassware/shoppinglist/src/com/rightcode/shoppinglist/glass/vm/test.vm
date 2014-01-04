@@ -1,4 +1,4 @@
-${prdNum}
+${prdId}
 ${prdName}
 ${imgUrl}
 ${quantity}

@@ -1,12 +1,12 @@
 <!--
 Copyright (C) 2013 Google Inc.
-
+ 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
-
+ 
 http://www.apache.org/licenses/LICENSE-2.0
-
+ 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,26 +23,26 @@ limitations under the License.
 <%@ page import="com.google.api.services.mirror.model.Attachment" %>
 <%@ page import="com.rightcode.shoppinglist.glass.ref.MainServlet" %>
 <%@ page import="org.apache.commons.lang3.StringEscapeUtils" %>
-
+ 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
+ 
 <!doctype html>
 <%
-	String userId = com.rightcode.shoppinglist.glass.ref.AuthUtil.getUserId(request);
+        String userId = com.rightcode.shoppinglist.glass.ref.AuthUtil.getUserId(request);
   String appBaseUrl = WebUtil.buildUrl(request, "/");
-
+ 
   Credential credential = com.rightcode.shoppinglist.glass.ref.AuthUtil.getCredential(userId);
-
+ 
   Contact contact = MirrorClient.getContact(credential, MainServlet.CONTACT_ID);
-
+ 
   List<TimelineItem> timelineItems = MirrorClient.listItems(credential, 3L).getItems();
-
-
+ 
+ 
   List<Subscription> subscriptions = MirrorClient.listSubscriptions(credential).getItems();
   boolean timelineSubscriptionExists = false;
   boolean locationSubscriptionExists = false;
-
-
+ 
+ 
   if (subscriptions != null) {
     for (Subscription subscription : subscriptions) {
       if (subscription.getId().equals("timeline")) {
@@ -57,305 +57,78 @@ limitations under the License.
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Yet another Glassware Starter Project</title>
+  <title>Rightcode Shopping List Google Glass App Administration Panel</title>
   <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet"
         media="screen">
   <link href="/static/bootstrap/css/bootstrap-responsive.min.css"
         rel="stylesheet" media="screen">
   <link href="/static/main.css" rel="stylesheet" media="screen">
 </head>
-<body>
+<body style="background-image:url('http://www.somersetdesign.co.uk/blog/wp-content/uploads/2013/05/google-glass-.jpg'); background-color:#ffffff; background-size:100%; background-repeat: no-repeat;">
 <div class="navbar navbar-inverse navbar-fixed-top">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="#">Yet another Glassware Starter Project: Java Edition, subscription & bundle support</a>
+      <a class="brand" href="#">Rightcode Shopping List Google Glass App Administration Panel</a>
     </div>
   </div>
 </div>
-
+ 
 <div class="container">
-	
-
+ 
   <% String flash = WebUtil.getClearFlash(request);
     if (flash != null) { %>
   <div class="alert alert-info"><%= StringEscapeUtils.escapeHtml4(flash) %></div>
   <% } %>
-  <div class="row">
-    <div class="span6">
-    <!-- 
-      <form class="form-horizontal" action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
-      	<input type="hidden" name="operation" value="rawhttp">
-		  <div class="control-group">
-		    <label class="control-label">Service Endpoint</label>
-		    <div class="controls">
-			    <select name="url">
-			       	<option selected value="timeline">timeline url</option>
-					<option value="subscriptions">Subscriptions url</option>
-				</select>   
-		    </div>
-		  </div>      
-    	  <div class="control-group">
-		    <label class="control-label">Json Message</label>
-		    <div class="controls">
-		    	<textarea class="span4" name="jsonMsg" id="jsonMsg" style="height:250px"></textarea>
-		    </div>
-		  </div> 
-    	  <div class="control-group">
-		    <label class="control-label">Message Template</label>
-		    <div class="controls">
-		        <select onchange="insertTemplate(this)">
-		        	<option selected>Select A Template</option>
-					<option value="simpleText">Simple Text Card</option>
-					<option value="html">Html Card</option>
-				</select>
-		    </div>
-		  </div>        
-          <button class="btn btn-block" type="submit">
-            Insert the above json message
-          </button>
-      </form>
-       -->
-      <form class="form-horizontal" action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
-      	<input type="hidden" name="operation" value="insertCoupon">
-    	  <div class="control-group">
-		    <label class="control-label">Coupon HTML Content</label>
-		    <div class="controls">
-		    	<textarea class="span4" name="couponContent" id="couponContent" style="height:250px"></textarea>
-		    </div>
-		  </div> 
-    	  <div class="control-group">
-		    <label class="control-label">Coupon Template</label>
-		    <div class="controls">
-		        <select onchange="insertCouponTemplate(this)">
-		        	<option selected>Select A Template</option>
-					<option value="simple">Simple Coupon</option>
-					<option value="complex">Complex Coupon</option>
-				</select>
-		    </div>
-		  </div>        
-          <button class="btn btn-block" type="submit">
-            Insert Coupon
-          </button>
-      </form>       
-    </div>
-    <div class="span5 offset1">
-      <form action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
-      	<input type="hidden" name="operation" value="initialShoppingListApp">
-        <button class="btn btn-block btn-primary" type="submit">
-          Initial Shopping List Glassware
-        </button>
-      </form>
-      
-     <hr>
-     <h3>Admin Block<h4>
-     <form class="form-horizontal" action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
-      	<input type="hidden" id="adminOperation" name="operation" value="">
-        <button class="btn btn-block btn-danger" type="submit" onclick="document.getElementById('adminOperation').value='admin_cleanToken'">
-          Whenever you re-deploy the app with another project id, click this button before any operations
-        </button>              	
-        <button class="btn btn-block btn-warning" type="submit" onclick="document.getElementById('adminOperation').value='admin_cleanCards'">
-          Clean Shopping List Cards
-        </button>
-
-      </form>     
-     
-     <% if(request.getServerName().equals("localhost")){ %>
-     <hr>
-     <h3>Debug Block<h4>
-     <form class="form-horizontal" action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
-      	<input type="hidden" id="operationInTest" name="operation" value="">
-      	<div class="control-group">
-		    <label class="control-label">Additional Info</label>
-		    <div class="controls">
-		       <input type="text" class="input-lg" name="addInfo"/>
-		    </div>
-		</div>  
-        <button class="btn btn-warning" type="submit" onclick="document.getElementById('operationInTest').value='testing1'">
-          Testing Button A
-        </button>
-        <button class="btn btn-warning" type="submit" onclick="document.getElementById('operationInTest').value='testing2'">
-          Testing Button B
-        </button>
-      </form>
-      <%} %>
-    </div>
-  </div>
-  <h1>Your Recent Timeline</h1>
-  <div class="row">
-
-    <div style="margin-top: 5px;">
-
-      <% if (timelineItems != null && !timelineItems.isEmpty()) {
-        for (TimelineItem timelineItem : timelineItems) { %>
-      <div class="span4">
-        <table class="table table-bordered">
-          <tbody>
-            <tr>
-              <th>ID</th>
-              <td><%= timelineItem.getId() %></td>
-            </tr>
-            <tr>
-              <th>Text</th>
-              <td><%= StringEscapeUtils.escapeHtml4(timelineItem.getText()) %></td>
-            </tr>
-            <tr>
-              <th>HTML</th>
-              <td><%= StringEscapeUtils.escapeHtml4(timelineItem.getHtml()) %></td>
-            </tr>
-            <tr>
-              <th>Attachments</th>
-              <td>
-                <%
-                if (timelineItem.getAttachments() != null) {
-                  for (Attachment attachment : timelineItem.getAttachments()) {
-                    if (MirrorClient.getAttachmentContentType(credential, timelineItem.getId(), attachment.getId()).startsWith("")) { %>
-                <img src="<%= appBaseUrl + "attachmentproxy?attachment=" +
-                  attachment.getId() + "&timelineItem=" + timelineItem.getId() %>">
-                <%  } else { %>
-                <a href="<%= appBaseUrl + "attachmentproxy?attachment=" +
-                  attachment.getId() + "&timelineItem=" + timelineItem.getId() %>">
-                  Download</a>
-                <%  }
-                  }
-                } else { %>
-                <span class="muted">None</span>
-                <% } %>
-              </td>
-            </tr>
-            <tr>
-              <td colspan="2">
-                <form class="form-inline"
-                      action="<%= WebUtil.buildUrl(request, "/main") %>"
-                      method="post">
-                  <input type="hidden" name="itemId"
-                         value="<%= timelineItem.getId() %>">
-                  <input type="hidden" name="operation"
-                         value="deleteTimelineItem">
-                  <button class="btn btn-block btn-danger"
-                          type="submit">Delete</button>
-                </form>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <% }
-      } else { %>
-      <div class="span12">
-        <div class="alert alert-info">
-          You haven't added any items to your timeline yet. Use the controls
-          below to add something!
+    <div class="row" align="center">
+          <img src="http://i.imgur.com/kpZmaxp.png" /><br/>
+          <h1>Glass Shopping List</h1>
         </div>
-      </div>
-      <% } %>
-    </div>
-    <div style="clear:both;"></div>
-  </div>
-
-  <hr/>
-
-  <div class="row">
-    <div class="span4">
-      <h2>Timeline</h2>
-
-      <p>When you first sign in, this Glassware inserts a welcome message. Use
-        these controls to insert more items into your timeline. Learn more
-        about the timeline APIs
-        <a href="https://developers.google.com/glass/timeline">here</a>.</p>
-
-
-      <form action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
-        <input type="hidden" name="operation" value="insertItem">
-        <textarea class="span4" name="message">Hello World!</textarea><br/>
-        <button class="btn btn-block" type="submit">
-          Insert the above message
-        </button>
-      </form>
-
-      <form action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
-        <input type="hidden" name="operation" value="insertItem">
-        <input type="hidden" name="message" value="Chipotle says 'hi'!">
-        <input type="hidden" name="imageUrl" value="<%= appBaseUrl +
-               "static/images/chipotle-tube-640x360.jpg" %>">
-        <input type="hidden" name="contentType" value="image/jpeg">
-
-        <button class="btn btn-block" type="submit">Insert a picture
-          <img class="button-icon" src="<%= appBaseUrl +
-               "static/images/chipotle-tube-640x360.jpg" %>">
-        </button>
-      </form>
-      <form action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
-        <input type="hidden" name="operation" value="insertPaginatedItem">
-        <button class="btn btn-block" type="submit">
-          Insert a card with long paginated HTML</button>
-      </form>
-      <form action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
-        <input type="hidden" name="operation" value="insertItemWithAction">
-        <button class="btn btn-block" type="submit">
-          Insert a card you can reply to</button>
-      </form>
-      <hr>
-      <form action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
-        <input type="hidden" name="operation" value="insertItemAllUsers">
-        <button class="btn btn-block" type="submit">
-          Insert a card to all users</button>
-      </form>
-    </div>
-
-    <div class="span4">
-      <h2>Contacts</h2>
-
-      <p>By default, this project inserts a single contact that accepts
-        all content types. Learn more about contacts
-        <a href="https://developers.google.com/glass/contacts">here</a>.</p>
-
-      <% if (contact == null) { %>
-      <form action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
-        <input type="hidden" name="operation" value="insertContact">
-        <input type="hidden" name="iconUrl" value="<%= appBaseUrl +
-               "static/images/chipotle-tube-640x360.jpg" %>">
-        <input type="hidden" name="id"
-               value="<%= MainServlet.CONTACT_ID %>">
-        <input type="hidden" name="name"
-               value="<%= MainServlet.CONTACT_NAME %>">
-        <button class="btn btn-block btn-success" type="submit">
-          Insert Java Quick Start Contact
-        </button>
-      </form>
-      <% } else { %>
-      <form action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
-        <input type="hidden" name="operation" value="deleteContact">
-        <input type="hidden" name="id" value="<%= MainServlet.CONTACT_ID %>">
-        <button class="btn btn-block btn-danger" type="submit">
-          Delete Java Quick Start Contact
-        </button>
-      </form>
-      <% } %>
-
-      <h3>Voice Commands</h3>
-      <p>The "Java Quick Start" contact also accepts the <strong>take a
-        note</strong> command. Take a note with the "Java Quick Start" contact
-        and the cat in the server will record your note and reply with one of
-        a few cat utterances.</p>
-    </div>
-
-    <div class="span4">
-      <h2>Subscriptions</h2>
-
-      <p>By default a subscription is inserted for changes to the
-        <code>timeline</code> collection. Learn more about subscriptions
-        <a href="https://developers.google.com/glass/subscriptions">here</a>.
-      </p>
-
-      <p class="alert alert-info">Note: Subscriptions require SSL. They will
-        not work on localhost.</p>
-
+        <div class="row">
+        <h4>App Introduction:</h4>
+          This Glassware is an app specifically designed for Google Glass.</br>
+          The purpose of this Glassware is to manage external shopping list database located on the cloud, from the Google Glass device.</br>
+          This demo will show how to enhance shopping capabilities & shopper experience using Google Glass.</br>
+          <!-- <img src="http://i.imgur.com/1qpjNhu.png" /><br/> -->
+          <!-- <img src="http://i.imgur.com/8CmINwW.png" /><br/> -->
+        </div>
+        <br/><br/><br/><br/><br/><br/>
+        <div class="row">
+        <h4>Playground:</h4>
+        Use this playground to insert cards to Glass, modify existing cards, preview cards and delete cards from Glass timeline.<br/>
+        Insert Client ID - 989966632667@developer.gserviceaccount.com and press the red "Authorize" button.
+        <br/><br/>
+        <iframe width="1040px" height="800px" src="https://mirror-api-playground.appspot.com/"></iframe>
+        </div>
+        <div class="row">
+                        <h4>Admin Block</h4>
+        <table>
+        <tr><td>
+                        <form action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
+                        <input type="hidden" name="operation" value="initialShoppingListApp">
+                        <button class="btn btn-block btn-primary" style="height: 200px; width: 200px;" type="submit">
+                        Initial Shopping List Glassware
+                        </button>
+                </form>
+        </td>
+        <td>   
+                <form class="form-horizontal" action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
+                        <input type="hidden" id="adminOperation" name="operation" value="">
+                        <button class="btn btn-block btn-danger" style="height: 200px; width: 200px;" type="submit" onclick="document.getElementById('adminOperation').value='admin_cleanToken'">
+                        Whenever you re-deploy the app with another project id, click this button before any operations
+                        </button>  
+        </td><td>              
+                        <button class="btn btn-block btn-warning" style="height: 200px; width: 200px;" type="submit" onclick="document.getElementById('adminOperation').value='admin_cleanCards'">
+                        Clean Shopping List Cards
+                        </button>
+           </form>
+           </td>
+        <td>
       <% if (timelineSubscriptionExists) { %>
       <form action="<%= WebUtil.buildUrl(request, "/main") %>"
             method="post">
         <input type="hidden" name="subscriptionId" value="timeline">
         <input type="hidden" name="operation" value="deleteSubscription">
-        <button class="btn btn-block btn-danger" type="submit" class="delete">
+        <button class="btn btn-block btn-danger" style="height: 200px; width: 200px;" type="submit" class="delete">
           Unsubscribe from timeline updates
         </button>
       </form>
@@ -363,48 +136,33 @@ limitations under the License.
       <form action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
         <input type="hidden" name="operation" value="insertSubscription">
         <input type="hidden" name="collection" value="timeline">
-        <button class="btn btn-block btn-success" type="submit">
+        <button class="btn btn-block btn-success" style="height: 200px; width: 200px;" type="submit">
           Subscribe to timeline updates
         </button>
       </form>
       <% } %>
-
-      <% if (locationSubscriptionExists) { %>
-      <form action="<%= WebUtil.buildUrl(request, "/main") %>"
-            method="post">
-        <input type="hidden" name="subscriptionId" value="locations">
-        <input type="hidden" name="operation" value="deleteSubscription">
-        <button class="btn btn-block btn-danger" type="submit" class="delete">
-          Unsubscribe from location updates
-        </button>
-      </form>
-      <% } else { %>
-      <form action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
-        <input type="hidden" name="operation" value="insertSubscription">
-        <input type="hidden" name="collection" value="locations">
-        <button class="btn btn-block btn-success" type="submit">
-          Subscribe to location updates
-        </button>
-      </form>
-      <% } %>
+      </td></tr></table>
     </div>
-  </div>
+    <hr/>
+<!-- footer -->
+<div class="row">
+© Rightcode LTD 2013, All Rights Reserved. No part of this website or any of its contents may be reproduced, copied, modified or adapted, without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 </div>
-
+</div>
 <script
     src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script src="/static/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript">
-
+ 
 var jsonTemplates = {
-"simpleText" : 
+"simpleText" :
 '    {\n\
         "text": "This item auto-resizes according to the text length",\n\
-	    "notification": {\n\
+            "notification": {\n\
             "level": "DEFAULT"\n\
         }\n\
     }',
-"html" : 
+"html" :
 '  {\n\
       "html": "<strong class=\\\"blue\\\">HTML</strong>",\n\
       "notification": {\n\
@@ -412,32 +170,13 @@ var jsonTemplates = {
       }\n\
    }'
 };
-			
-	function insertTemplate(templates){
-		if(templates.selectedIndex !== 0){
-			console.log(templates.selectedIndex)
-			document.getElementById("jsonMsg").value = jsonTemplates[templates[templates.selectedIndex].value];
-		}
-	}
-	
-	var couponTemplates = {
-		"simple" : '<article><strong class="blue">HTML</strong></article>',
-		"complex" : '<article class="photo">\
-		  <img src="http://i.imgur.com/UEDiKQZ.jpg" width="100%" height="100%">\
-		  <div class="photo-overlay">\
-		  </div>\
-		  <section>\
-		    <p class="text-auto-size">Bakery Coupon</p>\
-		  </section>\
-		  <footer></footer>\
-		</article>'
-	};
-	function insertCouponTemplate(templates){
-		if(templates.selectedIndex !== 0){
-			console.log(templates.selectedIndex)
-			document.getElementById("couponContent").value = couponTemplates[templates[templates.selectedIndex].value];
-		}
-	}	
+                       
+        function insertTemplate(templates){
+                if(templates.selectedIndex !== 0){
+                        console.log(templates.selectedIndex)
+                        document.getElementById("jsonMsg").value = jsonTemplates[templates[templates.selectedIndex].value];
+                }
+        }      
 </script>
 </body>
 </html>

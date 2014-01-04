@@ -1,7 +1,7 @@
 package com.rightcode.shoppinglist.glass;
 
 public class Constants {
-	public final static String ITEM_COL_PRDNUM="prdNum";
+	public final static String ITEM_COL_PRD_ID="prdId";
 	public final static String ITEM_COL_PRDNAME="prdName";
 	public final static String ITEM_COL_IMGURL="imgUrl";
 	public final static String ITEM_COL_QUANTITY="quantity";
@@ -10,12 +10,15 @@ public class Constants {
 	public final static String ITEM_COL_NOTES="notes";
 	public final static String ITEM_COL_PURCHASED="purchased";
 	public final static String ITEM_COL_CATEGORY="category";
+	public final static String ITEM_COL_LIST_ID="shopListId";
 	
 
 	public final static String ITEM_PARM_MAXITEM = "maxItems";
 	
 	public final static String VELOCICY_PARM_AllPRODUCTS = "allProducts";
 	public final static String VELOCICY_PARM_CATEGORY_TITLES = "categoryTitles";
+	public final static String VELOCICY_PARM_SHOPPING_LIST_NAME = "listName";
+	public final static String VELOCICY_PARM_SHOPPING_LIST_SIMPLE = "isSimple";
 	
 	
 	/*Param to store sutotal for each category*/
@@ -41,6 +44,7 @@ public class Constants {
 	public final static String CARD_TYPE_MAIN="M";
 	public final static String CARD_TYPE_BUNDLE="B";
 	public final static String CARD_TYPE_PRODUCT="P";
+	public final static String CARD_TYPE_LIST_COVER="LC";
 	
 	
 }

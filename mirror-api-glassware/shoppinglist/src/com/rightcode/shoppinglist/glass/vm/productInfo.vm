@@ -15,7 +15,7 @@
 				<li>Next Item in category</li>
 				<li>Next Item in category + 1 (max 2)</li>
 			</ul>
-		<br><br><p class="align-right" style="font-size:25px">$!{prdNum}/8</p>
+		<br><br><p class="align-right" style="font-size:25px"></p>
       </div>
     </div>
   </section>
