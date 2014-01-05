@@ -37,7 +37,7 @@ public class Constants {
 	public final static String MENU_NAME_UNMARK = "Uncheck";
 	
 	public final static String MENU_ICON_MARK = "http://i.imgur.com/IDQZwYS.png";
-	public final static String MENU_ICON_UNMARK = "http://i.imgur.com/IDQZwYS.png"; //Eric.TODO check whether unmark has another icon
+	public final static String MENU_ICON_UNMARK = "http://i.imgur.com/u8zAsCl.png";
 	public final static String MENU_ID_STARTSHOPPING = "startShopping";
 	public final static String MENU_ICON_STARTSHOPPING = "http://i.imgur.com/RiO9mCR.png";
 	
