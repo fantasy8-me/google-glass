@@ -1,6 +1,6 @@
 <article style="background-image:url(&#39;$!{imgUrl}&#39;);color:white;font-family:&#39;Lucida Sans Unicode&#39;,&#39;Lucida Grande&#39;,sans-serif">
   <section>
-    <p class="text-x-small">
+    <p class="text-x-small" style="background-color: rgba(191,191,191,0.5)">
       $!{listName}
     </p>
     <p class="text-auto-size">

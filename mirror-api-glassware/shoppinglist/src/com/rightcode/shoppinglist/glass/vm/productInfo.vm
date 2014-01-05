@@ -13,13 +13,13 @@
 		<p class="align-center" style="font-size:27px"><i><b><u>Next on your list:</u></b></i></p>
 			<ul>
 			 #foreach($product in $itemsInSameCategory)
-			 	<li>$product.prdId - $product.prdName</li>
+				 #if ($product.prdName == $!{prdName})
+
+			 	#else
+			 		<li style="font-size:15px">$product.prdName</li>
+			 	#end
 			 #end
 			</ul>
-		<br><br><p class="align-right" style="font-size:25px"></p>
-		
-		
-		
       </div>
     </div>
   </section>
