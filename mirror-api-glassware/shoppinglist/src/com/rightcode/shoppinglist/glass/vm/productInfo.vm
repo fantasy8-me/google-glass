@@ -16,7 +16,7 @@
 				 #if ($product.prdName == $!{prdName})
 
 			 	#else
-			 		<li style="font-size:15px">$product.prdName</li>
+			 		<li style="font-size:20px">$product.prdName</li>
 			 	#end
 			 #end
 			</ul>
