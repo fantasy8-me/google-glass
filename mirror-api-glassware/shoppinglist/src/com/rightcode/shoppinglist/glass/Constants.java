@@ -7,10 +7,10 @@ public class Constants {
 	public final static String ITEM_COL_QUANTITY="quantity";
 	public final static String ITEM_COL_PRICE="price";
 	public final static String ITEM_COL_PROMO="promo";
-	public final static String ITEM_COL_NOTES="notes";
+//	public final static String ITEM_COL_NOTES="notes";
 	public final static String ITEM_COL_PURCHASED="purchased";
 	public final static String ITEM_COL_CATEGORY="category";
-	public final static String ITEM_COL_LIST_ID="shopListId";
+//	public final static String ITEM_COL_LIST_ID="shopListId";
 	
 
 	public final static String ITEM_PARM_MAXITEM = "maxItems";
@@ -28,9 +28,13 @@ public class Constants {
 	public final static String VELOCITY_PARM_TOTOAL = "total";
 	
 	public final static String VELOCITY_PARM_COMPLETED= "completed";
+	public final static String VELOCITY_PARM_ITEMS_IN_CATEGORY= "itemsInSameCategory";
 	
 	public final static String MENU_ID_MARK = "mark";
 	public final static String MENU_ID_UNMARK = "unmark";
+	
+	public final static String MENU_NAME_MARK = "Check Off";
+	public final static String MENU_NAME_UNMARK = "Uncheck";
 	
 	public final static String MENU_ICON_MARK = "http://i.imgur.com/IDQZwYS.png";
 	public final static String MENU_ICON_UNMARK = "http://i.imgur.com/IDQZwYS.png"; //Eric.TODO check whether unmark has another icon

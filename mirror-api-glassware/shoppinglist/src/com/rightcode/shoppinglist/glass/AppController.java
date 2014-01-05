@@ -36,7 +36,7 @@ public class AppController {
     ReferenceDataManager refDataManager = null;
 
     private CardDao cardDao = null;
-    private String bundleIdSuffix = "";
+    private String bundleIdSuffix = ""; //Reset this value whenever you are going to create bundle card
 
     private static final Logger LOG = Logger.getLogger(AppController.class.getSimpleName());
 
@@ -132,7 +132,8 @@ public class AppController {
         Credential credential;
         credential = AuthUtil.getCredential(userId);
         Mirror mirrorClient = MirrorClient.getMirror(credential);
-
+        bundleIdSuffix = String.valueOf(System.currentTimeMillis());
+        
         List<String> bundleCovers = cardDao.getCardsByType(userId, Constants.CARD_TYPE_BUNDLE, shoppingListCardId);
         if (bundleCovers != null && bundleCovers.size() > 0) {
             for (int i = 0; i < bundleCovers.size(); i++) {
@@ -149,15 +150,16 @@ public class AppController {
                 String category = (String) iter.next();
                 List<Map<String, Object>> productList = shoppingList.get(category);
 
-                String bundleId = getBundleId(category);
+                String bundleId = getBundleId(shoppingListId + "_"+category);
 
-                Map<String, Object> bundleConverViewbean = buildBundleConverViewBean(category, 0, productList.size());
+                Map<String, Object> bundleConverViewbean = buildBundleConverViewBean(category, 0, productList.size(), shoppingListProvider.getShoppingListName(userId, shoppingListId));
                 createItemConverCard(mirrorClient, bundleConverViewbean, bundleId, userId,shoppingListCardId);
 
                 for (Iterator<Map<String, Object>> iterator = productList.iterator(); iterator.hasNext();) {
                     Map<String, Object> viewbean = new HashMap<String, Object>(iterator.next());
                     viewbean.put(Constants.VELOCITY_PARM_COMPLETED_IN_CATEGORY, 0);
                     viewbean.put(Constants.VELOCITY_PARM_SUBTOTOAL, productList.size());
+                    viewbean.put(Constants.VELOCITY_PARM_ITEMS_IN_CATEGORY, productList);
                     createItemInfoCard(mirrorClient, viewbean, bundleId, userId,shoppingListCardId);
                 }
             }
@@ -252,13 +254,14 @@ public class AppController {
         }
     }
 
-    private Map<String, Object> buildBundleConverViewBean(String category, int numOfCompleted, int subTotoal) {
+    private Map<String, Object> buildBundleConverViewBean(String category, int numOfCompleted, int subTotoal,String listName) {
 
         Map<String, Object> bundleConverViewbean = new HashMap<String, Object>(
                 refDataManager.getCategorySetting(category));
 
         bundleConverViewbean.put(Constants.VELOCITY_PARM_SUBTOTOAL, subTotoal);
         bundleConverViewbean.put(Constants.VELOCITY_PARM_COMPLETED_IN_CATEGORY, numOfCompleted);
+        bundleConverViewbean.put(Constants.VELOCICY_PARM_SHOPPING_LIST_NAME, listName);
         return bundleConverViewbean;
     }
 
@@ -305,7 +308,7 @@ public class AppController {
 
         // And custom actions
         List<MenuValue> menuValues = new ArrayList<MenuValue>();
-        menuValues.add(new MenuValue().setIconUrl(Constants.MENU_ICON_MARK).setDisplayName("Mark"));
+        menuValues.add(new MenuValue().setIconUrl(Constants.MENU_ICON_MARK).setDisplayName(Constants.MENU_NAME_MARK));
         menuItemList.add(new MenuItem().setValues(menuValues).setId(Constants.MENU_ID_MARK).setAction("CUSTOM"));
 
         timelineItem.setMenuItems(menuItemList);
@@ -387,24 +390,25 @@ public class AppController {
 
         List<MenuValue> menuValues = new ArrayList<MenuValue>();
         if (isMark) {
-            menuValues.add(new MenuValue().setIconUrl(Constants.MENU_ICON_UNMARK).setDisplayName("UnMark"));
+            menuValues.add(new MenuValue().setIconUrl(Constants.MENU_ICON_UNMARK).setDisplayName(Constants.MENU_NAME_UNMARK));
             patchTimelineItem.getMenuItems().add(
                     new MenuItem().setValues(menuValues).setId(Constants.MENU_ID_UNMARK).setAction("CUSTOM"));
         } else {
-            menuValues.add(new MenuValue().setIconUrl(Constants.MENU_ICON_MARK).setDisplayName("Mark"));
+            menuValues.add(new MenuValue().setIconUrl(Constants.MENU_ICON_MARK).setDisplayName(Constants.MENU_NAME_MARK));
             patchTimelineItem.getMenuItems().add(
                     new MenuItem().setValues(menuValues).setId(Constants.MENU_ID_MARK).setAction("CUSTOM"));
         }
 
         viewBean.put(Constants.VELOCITY_PARM_COMPLETED_IN_CATEGORY, completedStatus[0]);
         viewBean.put(Constants.VELOCITY_PARM_SUBTOTOAL, completedStatus[1]);
+        viewBean.put(Constants.VELOCITY_PARM_ITEMS_IN_CATEGORY, subShoppingList);
         String html = VelocityHelper.getFinalStr(viewBean, "productInfo.vm");
         patchTimelineItem.setHtml(html);
 
         try {
             mirrorClient.timeline().patch(productCardId, patchTimelineItem).execute();
             updateCategoryCoverCard(mirrorClient, userId, shoppingListId, shoppingListCardId, bundleId,
-                    (String) viewBean.get(Constants.ITEM_COL_CATEGORY),completedStatus[0],completedStatus[1]);
+                    (String) viewBean.get(Constants.ITEM_COL_CATEGORY),completedStatus[0],completedStatus[1], shoppingListProvider.getShoppingListName(userId, shoppingListId));
             updateShoppingListCard(mirrorClient, userId, shoppingListId, shoppingListCardId);
 
             LOG.info("--------Purchase status of item[" + productCardId + "] is updated to:" + isMark);
@@ -429,10 +433,10 @@ public class AppController {
     }
 
     private void updateCategoryCoverCard(Mirror mirrorClient, String userId, String shoppingListId, String shoppingListCardId, String bundleId,
-            String category,int numOfCompleted, int subTotal) {
+            String category,int numOfCompleted, int subTotal, String shoppingListName) {
         String cardId = cardDao.getBundleCoverCardId(userId, bundleId, shoppingListCardId);
 
-        Map<String, Object> viewBean = buildBundleConverViewBean(category, numOfCompleted, subTotal);
+        Map<String, Object> viewBean = buildBundleConverViewBean(category, numOfCompleted, subTotal, shoppingListName);
 
         try {
 

@@ -51,6 +51,7 @@ import com.google.common.collect.Lists;
 import com.rightcode.shoppinglist.glass.AppController;
 import com.rightcode.shoppinglist.glass.Constants;
 import com.rightcode.shoppinglist.glass.dao.CardDao;
+import com.rightcode.shoppinglist.glass.util.MyClass;
 import com.rightcode.shoppinglist.glass.util.Util;
 
 /**
@@ -339,7 +340,12 @@ private boolean preProcess(HttpServletRequest req, HttpServletResponse res, Cred
               }else if(req.getParameter("operation").equals("admin_cleanToken")){
                   appController.cleanUpToken(); //after token clean, user will be redirected to login page
                   req.getSession().removeAttribute("userId");
-              }
+              }else if(req.getParameter("operation").equals("admin_testConn")){
+                  if(MyClass.run())
+                      msg = "Successfully connect to exneral serivce";
+                  else
+                      msg = "Can not connect to exneral serivce";
+              }              
           }catch(Throwable t){//try catch all exception from admin function to avoid impact the normal flow 
               msg = t.getMessage();
               LOG.log(Level.SEVERE,t.getMessage(),t);

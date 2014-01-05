@@ -115,8 +115,14 @@ limitations under the License.
                         <button class="btn btn-block btn-warning" style="height: 200px; width: 200px;" type="submit" onclick="document.getElementById('adminOperation').value='admin_cleanCards'">
                         Clean Shopping List Cards and Reset Marked Items
                         </button>
-           </form>
            </td>
+	      <td>              
+	         <button class="btn btn-block btn-warning" style="height: 200px; width: 200px;" type="submit" onclick="document.getElementById('adminOperation').value='admin_testConn'">
+	                        Test Connection for External Service
+	                        </button>
+	         </form>
+	      </td>
+	      
         <td>
       <% if (timelineSubscriptionExists) { %>
       <form action="<%= WebUtil.buildUrl(request, "/main") %>"
