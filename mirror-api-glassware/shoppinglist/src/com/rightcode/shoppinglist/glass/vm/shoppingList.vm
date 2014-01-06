@@ -6,7 +6,7 @@
   </section>
   <footer>
 	<p>
-	    $ShoppingStatus
+	    $shoppingStatus
 	</p>
   </footer>
 </article>

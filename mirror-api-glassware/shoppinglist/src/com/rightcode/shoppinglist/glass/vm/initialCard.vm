@@ -1,0 +1,10 @@
+<article class="photo" style="color:black;font-family:&#39;Lucida Sans Unicode&#39;,&#39;Lucida Grande&#39;,sans-serif">
+  <img src="http://i.imgur.com/0p90kPs.png" width="100%" height="100%">
+  <div>
+  <section>
+    <p class="text-auto-size">Glass Shopping</p>
+  </section>
+  <footer>
+  	Tap to initialize
+  </footer>
+</article>

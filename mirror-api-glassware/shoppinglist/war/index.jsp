@@ -33,7 +33,7 @@ limitations under the License.
  
   Credential credential = com.rightcode.shoppinglist.glass.ref.AuthUtil.getCredential(userId);
  
-  Contact contact = MirrorClient.getContact(credential, MainServlet.CONTACT_ID);
+  /* Contact contact = MirrorClient.getContact(credential, MainServlet.CONTACT_ID); */
  
   List<TimelineItem> timelineItems = MirrorClient.listItems(credential, 3L).getItems();
  

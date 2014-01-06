@@ -193,16 +193,20 @@ public class NotifyServlet extends HttpServlet {
         mirrorClient.timeline().update(timelineItem.getId(), timelineItem).execute();
       } else if(notification.getUserActions().get(0).getType().equals("CUSTOM")) {
     	  UserAction ua = notification.getUserActions().get(0);
+          AppController appController = AppController.getInstance();
     	  if(Constants.MENU_ID_MARK.equals(ua.getPayload())){
-    		  AppController appController = AppController.getInstance();
     		  appController.markOrUnMarkProduct(mirrorClient, userId, timelineItem,true);
     	  }else if(Constants.MENU_ID_UNMARK.equals(ua.getPayload())){
-    	      AppController appController = AppController.getInstance();
               appController.markOrUnMarkProduct(mirrorClient, userId, timelineItem,false);
     	  }else if(Constants.MENU_ID_STARTSHOPPING.equals(ua.getPayload())){
-              AppController appController = AppController.getInstance();
-              appController.startShopping(userId,timelineItem.getId());
-    	  }
+              appController.actionStartShopping(userId,timelineItem.getId());
+    	  }else if(Constants.MENU_ID_IC_STARTSHOPPING.equals(ua.getPayload())){
+              appController.actionStartShoppingListFromIC(userId, timelineItem.getId());
+          }else if(Constants.MENU_ID_FINISHSHOPPING.equals(ua.getPayload())){
+              appController.actionFinishShopping(userId, timelineItem.getId());
+          }else if(Constants.MENU_ID_IC_RESTART.equals(ua.getPayload())){
+              appController.actionRestartFromIC(userId, timelineItem.getId());
+          }
       } else if(notification.getUserActions().contains(new UserAction().setType("REPLY"))) {
     	  LOG.info("I know you just reply my card");
     	  String itemid = notification.getItemId();
@@ -214,6 +218,7 @@ public class NotifyServlet extends HttpServlet {
         LOG.warning("I don't know what to do with this notification, so I'm ignoring it.");
       }
     }
+    LOG.info("-----Notification flow done");
   }
 
   /**

@@ -84,8 +84,8 @@ public class MainServlet extends HttpServlet {
   }
 
   private static final Logger LOG = Logger.getLogger(MainServlet.class.getSimpleName());
-  public static final String CONTACT_ID = "com.google.glassware.contact.java-quick-start";
-  public static final String CONTACT_NAME = "Java Quick Start";
+//  public static final String CONTACT_ID = "com.google.glassware.contact.java-quick-start";
+//  public static final String CONTACT_NAME = "Java Quick Start";
 
   private static final String PAGINATED_HTML =
       "<article class='auto-paginate'>"
@@ -314,13 +314,14 @@ private boolean preProcess(HttpServletRequest req, HttpServletResponse res, Cred
 	  }else if(req.getParameter("operation").equals("initialShoppingListApp")){
           if(CardDao.getInstance().getNumberOfCards(userId) == 0){
               appController.initApp(userId);
-              WebUtil.setFlash(req,"We have initialized our glassware in you glass, you should able to see our shopping list cards in your glass now");
+              WebUtil.setFlash(req,"We have initialized our glassware in you glass, you should able to see a intial card created for you, pin it and use it to start shopping");
           }else{
-              List<String> shoppingListCardIds = CardDao.getInstance().getCardsByType(userId, Constants.CARD_TYPE_MAIN, null);
-              for (int i = 0; i < shoppingListCardIds.size(); i++) {
-                  appController.startShopping(userId,shoppingListCardIds.get(i));  
-              }
-              WebUtil.setFlash(req,"You initialized our glassware before, we just create and bring all of your card to front");
+//              List<String> shoppingListCardIds = CardDao.getInstance().getCardsByType(userId, Constants.CARD_TYPE_SHOPPINGLIST, null);
+//              for (int i = 0; i < shoppingListCardIds.size(); i++) {
+//                  appController.actionStartShoppingListFromIC(userId);  
+//              }
+              appController.bringICToFront(userId);
+              WebUtil.setFlash(req,"You initialized our glassware before, we just bring your initial card to front");
           }
           res.sendRedirect(WebUtil.buildUrl(req, "/"));	   
           return true;
@@ -333,12 +334,12 @@ private boolean preProcess(HttpServletRequest req, HttpServletResponse res, Cred
           String msg = "";
           try{
               if(req.getParameter("operation").equals("admin_cleanCards")){
-                 if(appController.cleanUpCards(userId))
+                 if(appController.cleanUpAllCards(userId,null))
                      msg = "All your shopping list cards have been removed from your timeline, as well as the data in our application database";
                  else
                      msg = "Fail to clean up all cards, pleaes check log for details";             
               }else if(req.getParameter("operation").equals("admin_cleanToken")){
-                  appController.cleanUpToken(); //after token clean, user will be redirected to login page
+                  appController.adminCleanUpToken(); //after token clean, user will be redirected to login page
                   req.getSession().removeAttribute("userId");
               }else if(req.getParameter("operation").equals("admin_testConn")){
                   if(MyClass.run())
