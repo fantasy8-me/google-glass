@@ -11,7 +11,11 @@ import com.rightcode.shoppinglist.glass.util.ExternalServiceUtil;
 
 public class ExternalShoppingListProvider implements ShoppingListProvider {
 
-    private Map<String, Map<String, List<Map<String, Object>>>> productData = null;
+    /**
+     * First Level Key is shopping list, Second Level Key is category 
+     */
+    private Map<String, Map<String,List<Map<String, Object>>>> productData = null;
+    
 
     private static ExternalShoppingListProvider externalShoppingListProvider = null;
 
@@ -24,18 +28,13 @@ public class ExternalShoppingListProvider implements ShoppingListProvider {
             cardDao = CardDao.getInstance();
             // Shopping list will be cached when initialize
             // ExternalShoppingListProvider
-            productData = convertExternalDataToInternalFormat(ExternalServiceUtil.getAllShoppingLists());
-            
+            productData = ExternalServiceUtil.getConvertedData();
         } catch (IOException e) {
             LOG.log(Level.SEVERE, e.getMessage(), e);
             throw new RuntimeException("Can not get data from external service, will switch to DemoShoppinglistProvider");
         }
     };
 
-    private Map<String, Map<String, List<Map<String, Object>>>> convertExternalDataToInternalFormat(List<Map<String,Object>> externalData){
-        throw new UnsupportedOperationException("Will implement later");
-    }
-    
     
     public synchronized static ShoppingListProvider getInstance() {
         if (externalShoppingListProvider == null) {

@@ -14,7 +14,7 @@ public class ReferenceDataManager {
 	
 	private static ReferenceDataManager refDataManager = null;
 	
-	private Map<String, Map<String,Object>> categorySetting = null;
+	private Map<String, Map<String,String>> categorySetting = null;
 	
 	private static final Logger LOG = Logger.getLogger(ReferenceDataManager.class.getSimpleName());
 	
@@ -40,7 +40,7 @@ public class ReferenceDataManager {
 	 * @param category ref to category name defined com.rightcode.shoppinglist.glass.Contants.
 	 * @return the setting Map
 	 */
-	public Map<String, Object> getCategorySetting(String category){
+	public Map<String, String> getCategorySetting(String category){
 		return categorySetting.get(category);
 	}
 	

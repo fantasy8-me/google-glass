@@ -96,13 +96,7 @@ public class AppController {
 
     private AppController() {
         // Eric.TODO, move following logic to a serviceProiderFactory later
-        try {
-            shoppingListProvider = ExternalShoppingListProvider.getInstance();
-        } catch (Throwable t) {
-            LOG.log(Level.SEVERE, t.getMessage(), t);
-            shoppingListProvider = DemoShoppingListProvider.getInstance();
-            LOG.info("-----Switch to DemoShoppingListProvider");
-        }
+//        shoppingListProvider = DemoShoppingListProvider.getInstance();
         cardDao = CardDao.getInstance();
         refDataManager = ReferenceDataManager.getInstance();
         VelocityHelper.initVelocity();
@@ -123,7 +117,8 @@ public class AppController {
         Credential credential;
         credential = AuthUtil.getCredential(userId);
         Mirror mirrorClient = MirrorClient.getMirror(credential);
-
+        shoppingListProvider = DemoShoppingListProvider.getInstance();
+        
         createInitialCard(mirrorClient, userId);
     }
 
@@ -300,10 +295,15 @@ public class AppController {
 
     private Map<String, Object> buildBundleConverViewBean(String category, int numOfCompleted, int subTotoal,
             String listName) {
-
-        Map<String, Object> bundleConverViewbean = new HashMap<String, Object>(
-                refDataManager.getCategorySetting(category));
-
+        
+        Map<String, String> categoryMap = refDataManager.getCategorySetting(category);
+        if(categoryMap == null){
+            categoryMap = new HashMap<String,String>();
+            categoryMap.put("imgUrl", "");
+            categoryMap.put("title", "Others");
+        }
+        Map<String, Object> bundleConverViewbean = new HashMap<String, Object>(categoryMap);
+        
         bundleConverViewbean.put(Constants.VELOCITY_PARM_SUBTOTOAL, subTotoal);
         bundleConverViewbean.put(Constants.VELOCITY_PARM_COMPLETED_IN_CATEGORY, numOfCompleted);
         bundleConverViewbean.put(Constants.VELOCICY_PARM_SHOPPING_LIST_NAME, listName);

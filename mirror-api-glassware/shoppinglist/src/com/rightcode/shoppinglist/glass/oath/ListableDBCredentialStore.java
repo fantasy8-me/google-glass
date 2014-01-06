@@ -74,7 +74,7 @@ public class ListableDBCredentialStore implements CredentialStore {
             credential.setAccessToken(item.getAccessToken());
             credential.setRefreshToken(item.getRefreshToken());
             credential.setExpirationTimeMilliseconds(item.getExpirationTimeMillis());
-            LOG.info("-----Credential is loaded for:" + userId + credential.getAccessToken());
+//            LOG.info("-----Credential is loaded for:" + userId + credential.getAccessToken());
         } catch (JDOObjectNotFoundException e) {
             LOG.warning("-----Credential can not be loaded for:" + userId + credential.getAccessToken());
             return false;
