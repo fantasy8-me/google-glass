@@ -1,10 +1,17 @@
 package com.rightcode.shoppinglist.glass.util;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,28 +24,37 @@ import org.apache.tools.ant.filters.StringInputStream;
 
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.appengine.api.ThreadManager;
 import com.rightcode.shoppinglist.glass.Constants;
-import com.rightcode.shoppinglist.glass.service.DemoShoppingListProvider;
 
 public class ExternalServiceUtil {
 
     private static final Logger LOG = Logger.getLogger(ExternalServiceUtil.class.getSimpleName());
 
-    private final static String DFT_IMG = "http://i.imgur.com/ZWChwLu.png";
+    private final static String DFT_IMG = "http://i.imgur.com/BGPnkkX.png";
     private final static String DFT_CATEGORY = "other";
+    
+    /**
+     * To switch between external and local dummy response, use only for testing
+     */
+    private static boolean enableExternal = true;
 
-    public static Map<String, Map<String, List<Map<String, Object>>>> getConvertedData() throws IOException {
-
-        Map<String, Map<String, List<Map<String, Object>>>> result = new HashMap<String, Map<String, List<Map<String, Object>>>>();
-
-        List<Map<String, Object>> allLists = getAllShoppingList();
-
-        for (int i = 0; i < allLists.size(); i++) {
-            String id = (String) allLists.get(i).get("Id");
-            result.put(id, convertList(getShoppingList(id)));
+    public static Object[] getConvertedData() {
+        
+        ExecutorService exec = Executors.newCachedThreadPool(ThreadManager.currentRequestThreadFactory()); 
+        FeatchTask task = new FeatchTask();    
+        Future<Object[]> future = exec.submit(task);    
+        Object[] taskResult = null;    
+        try {    
+            taskResult = future.get(Constants.EXTERNAL_SERVICE_TIMEOUT_IN_SECS, TimeUnit.SECONDS);    
+        } catch (TimeoutException e) {
+            LOG.log(Level.SEVERE, e.getMessage(),e);
+            exec.shutdownNow();    
+        } catch (Throwable t) {
+            //Make sure we can handle all error, so we can fallback to productData.json
+            LOG.log(Level.SEVERE, t.getMessage(),t);
         }
-        return result;
-
+        return taskResult;
     }
 
     private static List<Map<String, Object>> getAllShoppingList() throws ClientProtocolException, IOException {
@@ -47,11 +63,14 @@ public class ExternalServiceUtil {
         JsonFactory jsonFactory = new JacksonFactory();
 
         List<Map<String, Object>> result = null;
-        String jsonResponse = fetchFromUrl(shoppingCollectionUrl);
-        LOG.info("-----Got all lists:" + jsonResponse);
-        result = jsonFactory.fromInputStream(new StringInputStream(jsonResponse), null);
-        // result = jsonFactory.fromInputStream(
-        // DemoShoppingListProvider.class.getResourceAsStream("/productData_external_allLists.json"),null);
+        if(enableExternal){
+            LOG.info("-----Going to access:" + shoppingCollectionUrl);
+            String jsonResponse = fetchFromUrl(shoppingCollectionUrl);
+            LOG.info("-----Got all lists:" + jsonResponse);
+            result = jsonFactory.fromInputStream(new StringInputStream(jsonResponse), null);
+        }else{
+            result = jsonFactory.fromInputStream(ExternalServiceUtil.class.getResourceAsStream("/productData_external_allLists.json"),null);
+        }
         return result;
     }
 
@@ -61,11 +80,16 @@ public class ExternalServiceUtil {
         JsonFactory jsonFactory = new JacksonFactory();
 
         Map<String, Object> result = null;
-        String jsonResponse = fetchFromUrl(shoppingListUrl);
-        LOG.info("-----Got list:" + jsonResponse);
-        result = jsonFactory.fromInputStream(new StringInputStream(jsonResponse), null);
-        // String shoppingListStr= ((Map<String,String>)jsonFactory.fromInputStream(DemoShoppingListProvider.class.getResourceAsStream("/productData_external_DetailsLists.json"),null)).get(shoppingListId);
-        // result = jsonFactory.fromInputStream(new StringInputStream(shoppingListStr), null);
+        if(enableExternal){
+            LOG.info("-----Going to access:" + shoppingListUrl);
+          String jsonResponse = fetchFromUrl(shoppingListUrl);
+          LOG.info("-----Got list:" + jsonResponse);
+          result = jsonFactory.fromInputStream(new StringInputStream(jsonResponse), null);            
+        }else{
+            @SuppressWarnings("unchecked")
+            String shoppingListStr= ((Map<String,String>)jsonFactory.fromInputStream(ExternalServiceUtil.class.getResourceAsStream("/productData_external_DetailsLists.json"),null)).get(shoppingListId);
+            result = jsonFactory.fromInputStream(new StringInputStream(shoppingListStr), null);            
+        }
         return result;
     }
 
@@ -130,8 +154,14 @@ public class ExternalServiceUtil {
             img = DFT_IMG;
         }
         product.put(Constants.ITEM_COL_IMGURL, img);
-
-        product.put(Constants.ITEM_COL_QUANTITY, productFromExternal.get("Quantity"));
+        
+        Object quantityValue = productFromExternal.get("Quantity");
+        //A special handling for demo
+        if(quantityValue != null && quantityValue instanceof BigDecimal){
+            product.put(Constants.ITEM_COL_QUANTITY, ((BigDecimal)quantityValue).intValue());
+        }else{
+            product.put(Constants.ITEM_COL_QUANTITY, quantityValue);
+        }
 
         product.put(Constants.ITEM_COL_PRICE, extractPrice((Map<String, Object>) productFromExternal.get("Item")));
 
@@ -204,6 +234,29 @@ public class ExternalServiceUtil {
         }
     }
 
+    
+    final static class FeatchTask implements Callable<Object[]> {    
+        
+        @Override    
+        public Object[] call() throws Exception {
+            Map<String, Map<String, List<Map<String, Object>>>> shoppingListData = new HashMap<String, Map<String, List<Map<String, Object>>>>();
+
+            List<Map<String, Object>> allLists = getAllShoppingList();
+            Map<String,String> listNames = new HashMap<String,String>();
+
+            for (int i = 0; i < allLists.size(); i++) {
+                String id = (String) allLists.get(i).get("Id");
+                listNames.put(id, (String)allLists.get(i).get("Name"));
+                
+                shoppingListData.put(id, convertList(getShoppingList(id)));
+            }
+            Object[] result = new Object[2];
+            result[0] = shoppingListData;
+            result[1] = listNames;
+            return result;            
+        }    
+    }
+    
     public static void main(String[] args) throws IOException {
         JsonFactory jsonFactory = new JacksonFactory();
         LOG.info(jsonFactory.toPrettyString(ExternalServiceUtil.getConvertedData()));

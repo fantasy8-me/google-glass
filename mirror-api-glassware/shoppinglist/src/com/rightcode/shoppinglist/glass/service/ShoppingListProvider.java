@@ -96,5 +96,5 @@ public interface ShoppingListProvider {
     
     
     public String getShoppingListName(String userId, String shoppingListId);
-
+    
 }

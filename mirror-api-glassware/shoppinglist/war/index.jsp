@@ -101,10 +101,18 @@ limitations under the License.
                         <form action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
                         <input type="hidden" name="operation" value="initialShoppingListApp">
                         <button class="btn btn-block btn-primary" style="height: 200px; width: 200px;" type="submit">
-                        Initial Shopping List Glassware
+                        Initial Shopping List Glassware From Local
                         </button>
                 </form>
         </td>
+		<td>
+                        <form action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
+                        <input type="hidden" name="operation" value="initialShoppingListAppFromExternal">
+                        <button class="btn btn-block btn-primary" style="height: 200px; width: 200px;" type="submit">
+                        Initial Shopping List Glassware From External
+                        </button>
+                </form>
+        </td>        
         <td>   
                 <form class="form-horizontal" action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
                         <input type="hidden" id="adminOperation" name="operation" value="">

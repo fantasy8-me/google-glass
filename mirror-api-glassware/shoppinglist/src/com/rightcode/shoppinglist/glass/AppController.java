@@ -23,7 +23,6 @@ import com.rightcode.shoppinglist.glass.dao.CardDao;
 import com.rightcode.shoppinglist.glass.ref.AuthUtil;
 import com.rightcode.shoppinglist.glass.ref.MirrorClient;
 import com.rightcode.shoppinglist.glass.service.DemoShoppingListProvider;
-import com.rightcode.shoppinglist.glass.service.ExternalShoppingListProvider;
 import com.rightcode.shoppinglist.glass.service.ShoppingListProvider;
 import com.rightcode.shoppinglist.glass.util.MirrorUtil;
 import com.rightcode.shoppinglist.glass.util.ReferenceDataManager;
@@ -96,7 +95,7 @@ public class AppController {
 
     private AppController() {
         // Eric.TODO, move following logic to a serviceProiderFactory later
-//        shoppingListProvider = DemoShoppingListProvider.getInstance();
+        shoppingListProvider = DemoShoppingListProvider.getInstance();
         cardDao = CardDao.getInstance();
         refDataManager = ReferenceDataManager.getInstance();
         VelocityHelper.initVelocity();
@@ -113,13 +112,15 @@ public class AppController {
 
     }
 
-    public void initApp(String userId) throws IOException {
-        Credential credential;
-        credential = AuthUtil.getCredential(userId);
-        Mirror mirrorClient = MirrorClient.getMirror(credential);
-        shoppingListProvider = DemoShoppingListProvider.getInstance();
-        
-        createInitialCard(mirrorClient, userId);
+    public int initApp(String userId, String serviceType) throws IOException {
+        //This is a speical handling for demo service, not supported for other service provider
+        int result = ((DemoShoppingListProvider)shoppingListProvider).refreshData(userId, serviceType);
+        if(result != Constants.INIT_APP_RESULT_FAIL){
+            Credential credential = AuthUtil.getCredential(userId);
+            Mirror mirrorClient = MirrorClient.getMirror(credential);
+            createInitialCard(mirrorClient, userId);            
+        }
+        return result;
     }
 
     public void actionStartShopping(String userId, String shoppingListCardId) throws IOException {
@@ -232,29 +233,34 @@ public class AppController {
      * @throws IOException
      */
     public void actionStartShoppingListFromIC(String userId, String cardIdOfIC) throws IOException {
-
-        Credential credential = AuthUtil.getCredential(userId);
-        Mirror mirrorClient = MirrorClient.getMirror(credential);
-        bundleIdSuffix = String.valueOf(System.currentTimeMillis());
         
-        updateICCard(mirrorClient, userId, cardIdOfIC, false);
+        List<String> listCover = cardDao.getCardsByType(userId, Constants.CARD_TYPE_LIST_COVER, null);
+        if(listCover != null && listCover.size() == 0){
+            Credential credential = AuthUtil.getCredential(userId);
+            Mirror mirrorClient = MirrorClient.getMirror(credential);
+            bundleIdSuffix = String.valueOf(System.currentTimeMillis());
+            
+            updateICCard(mirrorClient, userId, cardIdOfIC, false);
 
-        String bundleId = getBundleId("listCover");
-        createListCoverCard(mirrorClient, userId, bundleId);
-        
-        Map<String, Map<String, List<Map<String, Object>>>> shoppingLists = shoppingListProvider
-                .getAllShoppingLists(userId);
+            String bundleId = getBundleId("listCover");
+            createListCoverCard(mirrorClient, userId, bundleId);
+            
+            Map<String, Map<String, List<Map<String, Object>>>> shoppingLists = shoppingListProvider
+                    .getAllShoppingLists(userId);
 
-        Iterator<String> iter = shoppingLists.keySet().iterator();
+            Iterator<String> iter = shoppingLists.keySet().iterator();
 
-        while (iter.hasNext()) {
-            String shoppingListId = (String) iter.next();
-            Map<String, List<Map<String, Object>>> shoppingList = shoppingLists.get(shoppingListId);
-            String shoppingListName = shoppingListProvider.getShoppingListName(userId, shoppingListId);
+            while (iter.hasNext()) {
+                String shoppingListId = (String) iter.next();
+                Map<String, List<Map<String, Object>>> shoppingList = shoppingLists.get(shoppingListId);
+                String shoppingListName = shoppingListProvider.getShoppingListName(userId, shoppingListId);
 
-            createShoppingListCard(mirrorClient,
-                    buildShoppingListViewBean(shoppingList, shoppingListName, Constants.SHOPPING_LIST_STATUS_READY),
-                    userId, shoppingListId, bundleId);
+                createShoppingListCard(mirrorClient,
+                        buildShoppingListViewBean(shoppingList, shoppingListName, Constants.SHOPPING_LIST_STATUS_READY),
+                        userId, shoppingListId, bundleId);
+            }            
+        }else{
+            LOG.warning("-----You have created the list cover card for this project id, we won't create the them for you again");
         }
     }
 

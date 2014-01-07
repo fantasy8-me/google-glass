@@ -51,7 +51,7 @@ import com.google.common.collect.Lists;
 import com.rightcode.shoppinglist.glass.AppController;
 import com.rightcode.shoppinglist.glass.Constants;
 import com.rightcode.shoppinglist.glass.dao.CardDao;
-import com.rightcode.shoppinglist.glass.util.MyClass;
+import com.rightcode.shoppinglist.glass.util.ConnectivityTester;
 import com.rightcode.shoppinglist.glass.util.Util;
 
 /**
@@ -313,17 +313,33 @@ private boolean preProcess(HttpServletRequest req, HttpServletResponse res, Cred
 	      return true;
 	  }else if(req.getParameter("operation").equals("initialShoppingListApp")){
           if(CardDao.getInstance().getNumberOfCards(userId) == 0){
-              appController.initApp(userId);
-              WebUtil.setFlash(req,"We have initialized our glassware in you glass, you should able to see a intial card created for you, pin it and use it to start shopping");
+              int result = appController.initApp(userId, Constants.SERVICE_TYPE_DUMMY);
+              if(Constants.INIT_APP_RESULT_FAIL != result)
+                  WebUtil.setFlash(req,"We have initialized our glassware in you glass with local data, you should able to see a intial card created for you, pin it and use it to start shopping");
+              else{
+                  WebUtil.setFlash(req,"Fail to initialize the glassware, please check log");
+              }
           }else{
-//              List<String> shoppingListCardIds = CardDao.getInstance().getCardsByType(userId, Constants.CARD_TYPE_SHOPPINGLIST, null);
-//              for (int i = 0; i < shoppingListCardIds.size(); i++) {
-//                  appController.actionStartShoppingListFromIC(userId);  
-//              }
               appController.bringICToFront(userId);
               WebUtil.setFlash(req,"You initialized our glassware before, we just bring your initial card to front");
           }
           res.sendRedirect(WebUtil.buildUrl(req, "/"));	   
+          return true;
+      }else if(req.getParameter("operation").equals("initialShoppingListAppFromExternal")){
+          if(CardDao.getInstance().getNumberOfCards(userId) == 0){
+              int result = appController.initApp(userId, Constants.SERVICE_TYPE_EXTERNAL);
+              if(Constants.INIT_APP_RESULT_FAIL == result){
+                  WebUtil.setFlash(req,"Fail to initialize the glassware, please check log");
+              }else if(Constants.INIT_APP_RESULT_SUCCESS_WITH_DUMMY == result){
+                  WebUtil.setFlash(req,"We have initialized our glassware in you glass with local data, you should able to see a intial card created for you, pin it and use it to start shopping");
+              }else if(Constants.INIT_APP_RESULT_SUCCESS_WITH_EXTERNAL == result){
+                  WebUtil.setFlash(req,"We have initialized our glassware in you glass with external data, you should able to see a intial card created for you, pin it and use it to start shopping");
+              }
+          }else{
+              appController.bringICToFront(userId);
+              WebUtil.setFlash(req,"You initialized our glassware before, we just bring your initial card to front");
+          }
+          res.sendRedirect(WebUtil.buildUrl(req, "/"));    
           return true;
       }else if(req.getParameter("operation").equals("insertCoupon")){
            appController.insertCoupon(userId, req.getParameter("couponContent"));
@@ -342,7 +358,7 @@ private boolean preProcess(HttpServletRequest req, HttpServletResponse res, Cred
                   appController.adminCleanUpToken(); //after token clean, user will be redirected to login page
                   req.getSession().removeAttribute("userId");
               }else if(req.getParameter("operation").equals("admin_testConn")){
-                  if(MyClass.run())
+                  if(ConnectivityTester.run())
                       msg = "Successfully connect to exneral serivce";
                   else
                       msg = "Can not connect to exneral serivce";
