@@ -366,7 +366,6 @@ public class AppController {
                 Constants.MENU_NAME_STARTSHOPPING));
         menuItemList.add(new MenuItem().setValues(menuValues).setId(Constants.MENU_ID_STARTSHOPPING)
                 .setAction("CUSTOM"));
-        menuItemList.add(new MenuItem().setAction("TOGGLE_PINNED"));
 
         timelineItem.setMenuItems(menuItemList);
         timelineItem.setNotification(new NotificationConfig().setLevel("DEFAULT"));

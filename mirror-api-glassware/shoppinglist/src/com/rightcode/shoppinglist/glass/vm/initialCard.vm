@@ -2,9 +2,9 @@
   <img src="http://i.imgur.com/0p90kPs.png" width="100%" height="100%">
   <div>
   <section>
-    <p class="text-auto-size">Glass Shopping</p>
+    <p class="text-auto-size">Welcome to your Glass shopping list</p>
   </section>
   <footer>
-  	Tap to initialize
+  	Tap to fetch and wait for the beep.
   </footer>
 </article>

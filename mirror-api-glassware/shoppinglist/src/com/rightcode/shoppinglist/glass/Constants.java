@@ -48,7 +48,7 @@ public class Constants {
 	public final static String MENU_NAME_UNMARK = "Uncheck";
 	public final static String MENU_NAME_STARTSHOPPING = "Start Shopping";
 	public final static String MENU_NAME_FINISHSHOPPING = "Finish Shopping";
-	public final static String MENU_NAME_IC_STARTSHOPPING = "Initialize";
+	public final static String MENU_NAME_IC_STARTSHOPPING = "Fetch";
 	public final static String MENU_NAME_IC_RESTART = "Restart";
 	
 	public final static String MENU_ICON_MARK = "http://i.imgur.com/IDQZwYS.png";
