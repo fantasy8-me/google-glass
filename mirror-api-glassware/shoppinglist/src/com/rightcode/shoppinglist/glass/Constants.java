@@ -86,7 +86,7 @@ public class Constants {
     /**
      * Used when we cann't get the product image
      */
-    public final static String DEFAULT_IMG = "http://i.imgur.com/BGPnkkX.png";
+    public final static String DEFAULT_IMG = "http://i.imgur.com/8Bcyenr.png";
     public final static String DEFAULT_CATEGORY = "others";
 	
     

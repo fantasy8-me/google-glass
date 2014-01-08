@@ -103,23 +103,27 @@ public class ExternalServiceUtil {
         if (productLines != null) {
             for (int i = 0; i < productLines.size(); i++) {
                 Map<String, Object> productLine = productLines.get(i);
+                Map<String, Object> product = null;
                 if (Constants.EXTERNAL_MSG_ITEM_TYPE_PRODUCT.equals(productLine.get(Constants.EXTERNAL_MSG_TAG_TYPE))) {
-                    Map<String, Object> product = convertProduct(productLine);
-                    if (product != null) {
-
-                        String category = (String) product.get(Constants.ITEM_COL_CATEGORY);
-                        if (result.containsKey(category)) {
-                            List<Map<String, Object>> list = result.get(category);
-                            list.add(product);
-                        } else {
-                            List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-                            list.add(product);
-                            result.put(category, list);
-                        }
-                    }
+                    product = convertProduct(productLine);
+                } else if (Constants.EXTERNAL_MSG_ITEM_TYPE_FREETEXT.equals(productLine
+                        .get(Constants.EXTERNAL_MSG_TAG_TYPE))) {
+                    product = convertFreeText(productLine);
                 } else {
                     LOG.info("-----Found a non product item[" + productLine.get(Constants.EXTERNAL_MSG_TAG_ID)
                             + "] Type[" + productLine.get(Constants.EXTERNAL_MSG_TAG_TYPE) + "]");
+                }
+                if (product != null) {
+
+                    String category = (String) product.get(Constants.ITEM_COL_CATEGORY);
+                    if (result.containsKey(category)) {
+                        List<Map<String, Object>> list = result.get(category);
+                        list.add(product);
+                    } else {
+                        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+                        list.add(product);
+                        result.put(category, list);
+                    }
                 }
             }
         }
@@ -157,6 +161,41 @@ public class ExternalServiceUtil {
      * @return null if can't convert the product
      */
     @SuppressWarnings("unchecked")
+    private static Map<String, Object> convertFreeText(Map<String, Object> productFromExternal) {
+        Map<String, Object> product = new HashMap<String, Object>();
+        // As we don't have the spec of external response, so add this try catch
+        // block to avoid the whole parsing fail by one unexpected item
+        try {
+            product.put(Constants.ITEM_COL_PRD_ID, productFromExternal.get(Constants.EXTERNAL_MSG_TAG_ID));
+            product.put(Constants.ITEM_COL_PRDNAME,productFromExternal.get(Constants.EXTERNAL_MSG_TAG_VALUE));
+
+            product.put(Constants.ITEM_COL_IMGURL, Constants.DEFAULT_IMG);
+
+            Object quantityValue = productFromExternal.get(Constants.EXTERNAL_MSG_TAG_QUANTITY);
+            if(quantityValue != null)
+                product.put(Constants.ITEM_COL_QUANTITY, quantityValue);
+            else{
+                product.put(Constants.ITEM_COL_QUANTITY, "");
+            }
+            product.put(Constants.ITEM_COL_PRICE,"");
+
+            product.put(Constants.ITEM_COL_CATEGORY, Constants.DEFAULT_CATEGORY);// Eric.TODO
+                                                                                 // Remove
+                                                                                 // catetory
+                                                                                 // handline
+                                                                                 // later
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "Error occur while covert freetext from external response", e);
+            return null;
+        }
+        return product;
+    }
+
+    /**
+     * @param productFromExternal
+     * @return null if can't convert the product
+     */
+    @SuppressWarnings("unchecked")
     private static Map<String, Object> convertProduct(Map<String, Object> productFromExternal) {
         Map<String, Object> product = new HashMap<String, Object>();
         // As we don't have the spec of external response, so add this try catch
@@ -166,8 +205,8 @@ public class ExternalServiceUtil {
             product.put(Constants.ITEM_COL_PRDNAME,
                     extractDescription((Map<String, Object>) productFromExternal.get(Constants.EXTERNAL_MSG_TAG_ITEM)));
 
-
-            product.put(Constants.ITEM_COL_IMGURL, extractImg((Map<String, Object>) productFromExternal.get(Constants.EXTERNAL_MSG_TAG_ITEM)));
+            product.put(Constants.ITEM_COL_IMGURL,
+                    extractImg((Map<String, Object>) productFromExternal.get(Constants.EXTERNAL_MSG_TAG_ITEM)));
 
             Object quantityValue = productFromExternal.get(Constants.EXTERNAL_MSG_TAG_QUANTITY);
             // A special handling for demo
@@ -183,13 +222,16 @@ public class ExternalServiceUtil {
             product.put(Constants.ITEM_COL_PROMO,
                     extractPromotion((Map<String, Object>) productFromExternal.get(Constants.EXTERNAL_MSG_TAG_ITEM)));
 
-            product.put(Constants.ITEM_COL_CATEGORY, Constants.DEFAULT_CATEGORY);// Eric.TODO Remove catetory handline later
+            product.put(Constants.ITEM_COL_CATEGORY, Constants.DEFAULT_CATEGORY);// Eric.TODO
+                                                                                 // Remove
+                                                                                 // catetory
+                                                                                 // handline
+                                                                                 // later
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "Error occur while covert product from external response", e);
             return null;
         }
         return product;
-
     }
 
     @SuppressWarnings("unchecked")
@@ -204,7 +246,7 @@ public class ExternalServiceUtil {
         }
         return imgUrl;
     }
-    
+
     @SuppressWarnings("unchecked")
     private static String extractPrice(Map<String, Object> itemDetailsMap) {
         String prefix = "$"; // Use $ as deafult
