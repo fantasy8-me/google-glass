@@ -28,7 +28,7 @@ limitations under the License.
 
 <!doctype html>
 <%
-        String userId = com.rightcode.shoppinglist.glass.ref.AuthUtil.getUserId(request);
+    String userId = com.rightcode.shoppinglist.glass.ref.AuthUtil.getUserId(request);
   String appBaseUrl = WebUtil.buildUrl(request, "/");
  
   Credential credential = com.rightcode.shoppinglist.glass.ref.AuthUtil.getCredential(userId);
@@ -64,15 +64,41 @@ limitations under the License.
 <link href="/static/bootstrap/css/bootstrap-responsive.min.css"
 	rel="stylesheet" media="screen">
 <link href="/static/main.css" rel="stylesheet" media="screen">
+<link href="/static/custom/glass.css"
+	rel="stylesheet" media="screen">
 <style>
-	#adminForm button{
-		height: 150px; 
-		width: 150px
-	}
+#adminForm button {
+	height: 150px;
+	width: 150px
+}
 </style>
 </head>
 <body
 	style="background-image: url('http://www.somersetdesign.co.uk/blog/wp-content/uploads/2013/05/google-glass-.jpg'); background-color: #ffffff; background-size: 100%; background-repeat: no-repeat;">
+	<div class="glass">
+		<input id="switcheroo" type="checkbox" /> <label for="switcheroo"
+			class="timeframe panel"> <time>
+				<script type="text/javascript">
+					var time = new Date();
+					var h = time.getHours();
+					if (h > 12) {
+						h -= 12;
+					} else if (h === 0) {
+						h = 12;
+					}
+					var m = time.getMinutes();
+					if (m < 10) {
+						m = "0" + m;
+					}
+					document.write(h + ":" + m);
+				</script>
+			</time>
+			<h2>
+				<img src="http://i.imgur.com/0kEblEN.gif"
+					style="vertical-align: middle" /> OK Glass, Loading...
+			</h2>
+		</label>
+	</div>
 	<div class="navbar navbar-inverse navbar-fixed-top">
 		<div class="navbar-inner">
 			<div class="container">
@@ -82,7 +108,8 @@ limitations under the License.
 		</div>
 	</div>
 
-	<div class="container">
+	<div class="container" style="padding-top:10px">
+		
 		<div class="row" align="center">
 			<img src="http://i.imgur.com/kpZmaxp.png" /><br />
 			<h1>Glass Shopping List</h1>
@@ -97,81 +124,88 @@ limitations under the License.
 			<!-- <img src="http://i.imgur.com/1qpjNhu.png" /><br/> -->
 			<!-- <img src="http://i.imgur.com/8CmINwW.png" /><br/> -->
 		</div>
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
+		<br /> <br /> <br /> <br /> <br /> <br />
 		<div class="row">
 			<h4>Playground:</h4>
 			Use this playground to insert cards to Glass, modify existing cards,
 			preview cards and delete cards from Glass timeline.<br /> Insert
 			Client ID - 989966632667@developer.gserviceaccount.com and press the
-			red "Authorize" button. <br />
-			<br />
+			red "Authorize" button. <br /> <br />
 			<iframe width="1040px" height="800px"
 				src="https://mirror-api-playground.appspot.com/"></iframe>
 		</div>
 		<div class="row">
 			<h4>Admin Block (For Developers Only)</h4>
-			<form id="adminForm" action="<%= WebUtil.buildUrl(request, "/main") %>" method="post">
-				<input type="hidden" id="adminOperation" name="adminOperation" value="">
-				<input type="hidden" name="subscriptionId" value="timeline">
-				<input type="hidden" name="collection" value="timeline">
-			<table>
-				<tr>
-					<td>
+			<form id="adminForm"
+				action="<%=WebUtil.buildUrl(request, "/main")%>" method="post">
+				<input type="hidden" id="adminOperation" name="adminOperation"
+					value=""> <input type="hidden" name="subscriptionId"
+					value="timeline"> <input type="hidden" name="collection"
+					value="timeline">
+				<table>
+					<tr>
+						<td>
 							<button class="btn btn-block btn-warning" type="submit"
 								onclick="document.getElementById('adminOperation').value='admin_cleanCards'">
 								Clean Shopping List Cards and Reset Marked Items</button>
-					</td>
-					<td>
+						</td>
+						<td>
 							<button class="btn btn-block btn-primary" type="submit"
 								onclick="document.getElementById('adminOperation').value='admin_initialShoppingListAppFromExternal'">
 								Initial Shopping List Glassware From External</button>
-					</td>									
-					<td>
+						</td>
+						<td>
 							<button class="btn btn-block btn-primary" type="submit"
 								onclick="document.getElementById('adminOperation').value='admin_initialShoppingListApp'">
 								Initial Shopping List Glassware From Local</button>
 
-					</td>
-					<td>
+						</td>
+						<td>
 							<button class="btn btn-block btn-danger" type="submit"
 								onclick="document.getElementById('adminOperation').value='admin_cleanToken'">
 								Whenever you re-deploy the app with another project id, click
 								this button before any operations</button>
-					</td>
-					<td>
+						</td>
+						<td>
 							<button class="btn btn-block btn-warning" type="submit"
 								onclick="document.getElementById('adminOperation').value='admin_testConn'">
 								Test Connection for External Service</button>
-					</td>
-					<td>
-						<button class="btn btn-block btn-primary"
-							onclick="window.open('https://code.google.com/apis/console/b/0/?pli=1#project:989966632667:quotas');">
-							Quota Usage</button>
-					</td>
-					<td>
-						<% if (timelineSubscriptionExists) { %>
+						</td>
+						<td>
+							<button class="btn btn-block btn-primary"
+								onclick="window.open('https://code.google.com/apis/console/b/0/?pli=1#project:989966632667:quotas');">
+								Quota Usage</button>
+						</td>
+						<td>
+							<%
+							    if (timelineSubscriptionExists) {
+							%>
 							<button class="btn btn-block btn-danger" type="submit"
-								class="delete" onclick="document.getElementById('adminOperation').value='admin_deleteSubscription'">Unsubscribe from timeline updates</button>
-							<% } else { %>
-							<button class="btn btn-block btn-success" type="submit" onclick="document.getElementById('adminOperation').value='admin_insertSubscription'">
-								Subscribe to timeline updates</button>
-						 <% } %>
-					</td>					
-				</tr>
-			</table>
+								class="delete"
+								onclick="document.getElementById('adminOperation').value='admin_deleteSubscription'">Unsubscribe
+								from timeline updates</button> <%
+     } else {
+ %>
+							<button class="btn btn-block btn-success" type="submit"
+								onclick="document.getElementById('adminOperation').value='admin_insertSubscription'">
+								Subscribe to timeline updates</button> <%
+     }
+ %>
+						</td>
+					</tr>
+				</table>
 			</form>
 		</div>
 		<div class="row">
 			<h5>Admin Logs:</h5>
-			<% String flash = WebUtil.getClearFlash(request);
-      if (flash != null) { %>
-			<div class="alert alert-info"><%= StringEscapeUtils.escapeHtml4(flash) %></div>
-			<% } %>
+			<%
+			    String flash = WebUtil.getClearFlash(request);
+			      if (flash != null) {
+			%>
+			<div class="alert alert-info"><%=StringEscapeUtils.escapeHtml4(flash)%></div>
+			<%
+			    }
+			%>
 		</div>
 		<hr />
 		<!-- footer -->
@@ -184,30 +218,27 @@ limitations under the License.
 		src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<script src="/static/bootstrap/js/bootstrap.min.js"></script>
 	<script type="text/javascript">
- 
-var jsonTemplates = {
-"simpleText" :
-'    {\n\
+		var jsonTemplates = {
+			"simpleText" : '    {\n\
         "text": "This item auto-resizes according to the text length",\n\
             "notification": {\n\
             "level": "DEFAULT"\n\
         }\n\
     }',
-"html" :
-'  {\n\
+			"html" : '  {\n\
       "html": "<strong class=\\\"blue\\\">HTML</strong>",\n\
       "notification": {\n\
           "level": "DEFAULT"\n\
       }\n\
    }'
-};
-                       
-        function insertTemplate(templates){
-                if(templates.selectedIndex !== 0){
-                        console.log(templates.selectedIndex)
-                        document.getElementById("jsonMsg").value = jsonTemplates[templates[templates.selectedIndex].value];
-                }
-        }      
-</script>
+		};
+
+		function insertTemplate(templates) {
+			if (templates.selectedIndex !== 0) {
+				console.log(templates.selectedIndex)
+				document.getElementById("jsonMsg").value = jsonTemplates[templates[templates.selectedIndex].value];
+			}
+		}
+	</script>
 </body>
 </html>
