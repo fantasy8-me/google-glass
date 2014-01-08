@@ -90,7 +90,7 @@ public class Constants {
     public final static String DEFAULT_CATEGORY = "others";
 	
     
-    public final static int EXTERNAL_SERVICE_TIMEOUT_IN_SECS= 40;
+    public final static int EXTERNAL_SERVICE_TIMEOUT_IN_SECS= 45;
     public final static String EXTERNAL_MSG_ITEM_TYPE_FREETEXT= "FREETEXT";
     public final static String EXTERNAL_MSG_ITEM_TYPE_PRODUCT= "PRODUCT";
     

@@ -113,7 +113,7 @@ public class MainServlet extends HttpServlet {
                 if (Constants.INIT_APP_RESULT_FAIL == result) {
                     message = "Fail to initialize the glassware, please check log";
                 } else if (Constants.INIT_APP_RESULT_SUCCESS_WITH_DUMMY == result) {
-                    message = "We have initialized our glassware in you glass with local data, you should able to see a intial card created for you, pin it and use it to start shopping";
+                    message = "We have swapped from external server and initialized our glassware in you glass with local data, you should able to see a intial card created for you, pin it and use it to start shopping";
                 } else if (Constants.INIT_APP_RESULT_SUCCESS_WITH_EXTERNAL == result) {
                     message = "We have initialized our glassware in you glass with external data, you should able to see a intial card created for you, pin it and use it to start shopping";
                 }

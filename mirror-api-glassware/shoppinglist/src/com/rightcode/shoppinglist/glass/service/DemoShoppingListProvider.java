@@ -128,7 +128,7 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
                     if (result != null) {
                         productData.put(userId, (Map<String, Map<String, List<Map<String, Object>>>>) result[0]);
                         shoppingListNameMap.put(userId, (Map<String, String>) result[1]);
-                        LOG.info("-----Going to store the message");
+                        LOG.info("-----Going to update service type:" + Constants.SERVICE_TYPE_EXTERNAL);
                         scDao.storeServiceCache(userId,Constants.SERVICE_TYPE_EXTERNAL, jsonFactory.toString(productData.get(userId)),
                                 jsonFactory.toString(shoppingListNameMap.get(userId)));
                         LOG.info("*****Init app with external data successfully");
@@ -177,8 +177,10 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
             nameMap.put("local-shoppinglist-2", "Food for Mom");
             shoppingListNameMap.put(userId, nameMap);
             
-            if (updateDb)
+            if (updateDb){
+                LOG.info("-----Going to update service type:" + Constants.SERVICE_TYPE_DUMMY);
                 ServiceCacheDao.getInstance().storeServiceCache(userId,Constants.SERVICE_TYPE_DUMMY, "", "");
+            }
         } catch (IOException e) {
             LOG.severe("Can not init product data from productData.json:" + e.getMessage());
             throw new RuntimeException(e);
