@@ -118,7 +118,12 @@ public class AppController {
         if(result != Constants.INIT_APP_RESULT_FAIL){
             Credential credential = AuthUtil.getCredential(userId);
             Mirror mirrorClient = MirrorClient.getMirror(credential);
-            createInitialCard(mirrorClient, userId);            
+            List<String> icCard = cardDao.getCardsByType(userId, Constants.CARD_TYPE_IC, null);
+            if(icCard != null && icCard.size() == 0){
+                createInitialCard(mirrorClient, userId); 
+            }else{
+                LOG.warning("You might click the initial button for more than once, we will only create one IC card for you");
+            }
         }
         return result;
     }
@@ -128,13 +133,13 @@ public class AppController {
         Mirror mirrorClient = MirrorClient.getMirror(credential);
         bundleIdSuffix = String.valueOf(System.currentTimeMillis());
 
-        List<String> bundleCovers = cardDao.getCardsByType(userId, Constants.CARD_TYPE_CATEGORY_COVER,
+        List<String> prodcutCards = cardDao.getCardsByType(userId, Constants.CARD_TYPE_PRODUCT,
                 shoppingListCardId);
-        if (bundleCovers != null && bundleCovers.size() > 0) {
-            for (int i = 0; i < bundleCovers.size(); i++) {
-                MirrorUtil.touchCard(mirrorClient, bundleCovers.get(i));
+        if (prodcutCards != null && prodcutCards.size() > 0) {
+            for (int i = 0; i < prodcutCards.size(); i++) {
+                MirrorUtil.touchCard(mirrorClient, prodcutCards.get(i));
             }
-            LOG.info("Starting shopping done, all cards are move to front of your timeline");
+            LOG.info("[Starting shopping] is clicked again, just moved all card to front of your timeline");
         } else {
             String shoppingListId = cardDao.getCardRefById(userId, shoppingListCardId);
             updateShoppingListCard(mirrorClient, userId, shoppingListId, shoppingListCardId,

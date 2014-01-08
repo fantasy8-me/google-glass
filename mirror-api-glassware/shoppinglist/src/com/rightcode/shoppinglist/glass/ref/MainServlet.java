@@ -161,7 +161,7 @@ public class MainServlet extends HttpServlet {
                 AppController.getInstance().unMarkItem(mirrorClient, userId, req.getParameter("addInfo"));
             }
         } else {
-            String operation = req.getParameter("operation");
+            String operation = req.getParameter("adminOperation");
             LOG.warning("Unknown operation specified " + operation);
             message = "I don't know how to do that";
         }

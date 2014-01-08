@@ -57,15 +57,11 @@ limitations under the License.
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rightcode Shopping List Google Glass App Administration
-	Panel</title>
-<link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet"
-	media="screen">
-<link href="/static/bootstrap/css/bootstrap-responsive.min.css"
-	rel="stylesheet" media="screen">
+<title>Rightcode Shopping List Google Glass App Administration Panel</title>
+<link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+<link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
 <link href="/static/main.css" rel="stylesheet" media="screen">
-<link href="/static/custom/glass.css"
-	rel="stylesheet" media="screen">
+<link href="/static/custom/glass.css" rel="stylesheet" media="screen">
 <style>
 #adminForm button {
 	height: 150px;
@@ -76,8 +72,7 @@ limitations under the License.
 <body
 	style="background-image: url('http://www.somersetdesign.co.uk/blog/wp-content/uploads/2013/05/google-glass-.jpg'); background-color: #ffffff; background-size: 100%; background-repeat: no-repeat;">
 	<div class="glass">
-		<input id="switcheroo" type="checkbox" /> <label for="switcheroo"
-			class="timeframe panel"> <time>
+		<input id="switcheroo" type="checkbox" /> <label for="switcheroo" class="timeframe panel"> <time>
 				<script type="text/javascript">
 					var time = new Date();
 					var h = time.getHours();
@@ -94,101 +89,90 @@ limitations under the License.
 				</script>
 			</time>
 			<h2>
-				<img src="http://i.imgur.com/0kEblEN.gif"
-					style="vertical-align: middle" /> OK Glass, Loading...
+				<img src="http://i.imgur.com/0kEblEN.gif" style="vertical-align: middle" /> OK Glass, Loading...
 			</h2>
 		</label>
 	</div>
 	<div class="navbar navbar-inverse navbar-fixed-top">
 		<div class="navbar-inner">
 			<div class="container">
-				<a class="brand" href="#">Rightcode Shopping List Google Glass
-					App Administration Panel</a>
+				<a class="brand" href="#">Rightcode Shopping List Google Glass App Administration Panel</a>
 			</div>
 		</div>
 	</div>
 
-	<div class="container" style="padding-top:10px">
-		
+	<div class="container" style="padding-top: 10px">
+
 		<div class="row" align="center">
 			<img src="http://i.imgur.com/kpZmaxp.png" /><br />
 			<h1>Glass Shopping List</h1>
 		</div>
 		<div class="row">
 			<h4>App Introduction:</h4>
-			This Glassware is an app specifically designed for Google Glass.</br> The
-			purpose of this Glassware is to manage external shopping list
-			database located on the cloud, from the Google Glass device.</br> This
-			demo will show how to enhance shopping capabilities & shopper
-			experience using Google Glass.</br>
+			This Glassware is an app specifically designed for Google Glass.</br> The purpose of this Glassware is to manage external
+			shopping list database located on the cloud, from the Google Glass device.</br> This demo will show how to enhance
+			shopping capabilities & shopper experience using Google Glass.</br>
 			<!-- <img src="http://i.imgur.com/1qpjNhu.png" /><br/> -->
 			<!-- <img src="http://i.imgur.com/8CmINwW.png" /><br/> -->
 		</div>
 		<br /> <br /> <br /> <br /> <br /> <br />
 		<div class="row">
 			<h4>Playground:</h4>
-			Use this playground to insert cards to Glass, modify existing cards,
-			preview cards and delete cards from Glass timeline.<br /> Insert
-			Client ID - 989966632667@developer.gserviceaccount.com and press the
-			red "Authorize" button. <br /> <br />
-			<iframe width="1040px" height="800px"
-				src="https://mirror-api-playground.appspot.com/"></iframe>
+			Use this playground to insert cards to Glass, modify existing cards, preview cards and delete cards from Glass
+			timeline.<br /> Insert Client ID - 989966632667@developer.gserviceaccount.com and press the red "Authorize" button.
+			<br /> <br />
+			<iframe width="1040px" height="800px" src="https://mirror-api-playground.appspot.com/"></iframe>
 		</div>
 		<div class="row">
 			<h4>Admin Block (For Developers Only)</h4>
-			<form id="adminForm"
-				action="<%=WebUtil.buildUrl(request, "/main")%>" method="post">
-				<input type="hidden" id="adminOperation" name="adminOperation"
-					value=""> <input type="hidden" name="subscriptionId"
-					value="timeline"> <input type="hidden" name="collection"
-					value="timeline">
+			<form id="adminForm" action="<%=WebUtil.buildUrl(request, "/main")%>" method="post">
+				<input type="hidden" id="adminOperation" name="adminOperation" value=""> 
+				<input type="hidden" name="subscriptionId" value="timeline"> <input type="hidden" name="collection" value="timeline">
 				<table>
 					<tr>
 						<td>
 							<button class="btn btn-block btn-warning" type="submit"
-								onclick="document.getElementById('adminOperation').value='admin_cleanCards'">
-								Clean Shopping List Cards and Reset Marked Items</button>
+								onclick="document.getElementById('adminOperation').value='admin_cleanCards'">Clean Shopping List Cards
+								and Reset Marked Items</button>
 						</td>
 						<td>
 							<button class="btn btn-block btn-primary" type="submit"
-								onclick="document.getElementById('adminOperation').value='admin_initialShoppingListAppFromExternal'">
-								Initial Shopping List Glassware From External</button>
+								onclick="document.getElementById('adminOperation').value='admin_initialShoppingListAppFromExternal'">Initial
+								Shopping List Glassware From External</button>
 						</td>
 						<td>
 							<button class="btn btn-block btn-primary" type="submit"
-								onclick="document.getElementById('adminOperation').value='admin_initialShoppingListApp'">
-								Initial Shopping List Glassware From Local</button>
+								onclick="document.getElementById('adminOperation').value='admin_initialShoppingListApp'">Initial
+								Shopping List Glassware From Local</button>
 
 						</td>
 						<td>
 							<button class="btn btn-block btn-danger" type="submit"
-								onclick="document.getElementById('adminOperation').value='admin_cleanToken'">
-								Whenever you re-deploy the app with another project id, click
-								this button before any operations</button>
+								onclick="document.getElementById('adminOperation').value='admin_cleanToken'">Whenever you re-deploy the
+								app with another project id, click this button before any operations</button>
 						</td>
 						<td>
 							<button class="btn btn-block btn-warning" type="submit"
-								onclick="document.getElementById('adminOperation').value='admin_testConn'">
-								Test Connection for External Service</button>
+								onclick="document.getElementById('adminOperation').value='admin_testConn'">Test Connection for External
+								Service</button>
 						</td>
 						<td>
 							<button class="btn btn-block btn-primary"
-								onclick="window.open('https://code.google.com/apis/console/b/0/?pli=1#project:989966632667:quotas');">
+								onclick="window.open('https://code.google.com/apis/console/b/0/?pli=1#project:989966632667:quotas');return false;">
 								Quota Usage</button>
 						</td>
 						<td>
 							<%
 							    if (timelineSubscriptionExists) {
 							%>
-							<button class="btn btn-block btn-danger" type="submit"
-								class="delete"
-								onclick="document.getElementById('adminOperation').value='admin_deleteSubscription'">Unsubscribe
-								from timeline updates</button> <%
+							<button class="btn btn-block btn-danger" type="submit" class="delete"
+								onclick="document.getElementById('adminOperation').value='admin_deleteSubscription'">Unsubscribe from
+								timeline updates</button> <%
      } else {
  %>
 							<button class="btn btn-block btn-success" type="submit"
-								onclick="document.getElementById('adminOperation').value='admin_insertSubscription'">
-								Subscribe to timeline updates</button> <%
+								onclick="document.getElementById('adminOperation').value='admin_insertSubscription'">Subscribe to
+								timeline updates</button> <%
      }
  %>
 						</td>
@@ -200,7 +184,7 @@ limitations under the License.
 			<h5>Admin Logs:</h5>
 			<%
 			    String flash = WebUtil.getClearFlash(request);
-			      if (flash != null) {
+						      if (flash != null) {
 			%>
 			<div class="alert alert-info"><%=StringEscapeUtils.escapeHtml4(flash)%></div>
 			<%
@@ -209,13 +193,11 @@ limitations under the License.
 		</div>
 		<hr />
 		<!-- footer -->
-		<div class="row">© Rightcode LTD 2013, All Rights Reserved. No
-			part of this website or any of its contents may be reproduced,
-			copied, modified or adapted, without the prior written consent of the
-			author, unless otherwise indicated for stand-alone materials.</div>
+		<div class="row">© Rightcode LTD 2013, All Rights Reserved. No part of this website or any of its contents may
+			be reproduced, copied, modified or adapted, without the prior written consent of the author, unless otherwise
+			indicated for stand-alone materials.</div>
 	</div>
-	<script
-		src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<script src="/static/bootstrap/js/bootstrap.min.js"></script>
 	<script type="text/javascript">
 		var jsonTemplates = {
