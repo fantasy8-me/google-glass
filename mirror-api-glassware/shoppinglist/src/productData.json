@@ -1,6 +1,6 @@
 {
-"d17bb2da-ce13-4eea-99d4-a2a800b68217":{
-        "category1" : [
+"local-shoppinglist-1":{
+        "others" : [
             {
                 "prdId":"product-1",
                 "prdName":"Tyson Anytizers Chicken Fries",
@@ -8,8 +8,7 @@
                 "quantity":2,
                 "price": "$4.79",
                 "promo":"Buy 2 Get 1",
-                "category":"category1",
-                "shopListId":"d17bb2da-ce13-4eea-99d4-a2a800b68217"
+                "category":"others"
             },
             {
                 "prdId":"product-2",
@@ -18,22 +17,16 @@
                 "quantity":3,
                 "price": "$5.00",
                 "promo":"2 Costs $6",
-				"category":"category1",
-				"shopListId":"d17bb2da-ce13-4eea-99d4-a2a800b68217"
-            }          
-        ],
-        "category2" : [
+				"category":"others"
+            },
             {
                 "prdId":"product-5",
                 "prdName":"Dole White Blueberries",
                 "imgUrl":"http://i.imgur.com/hw7A79V.png",
                 "quantity":1,
                 "price": "$4.39",
-                "category":"category2",
-                "shopListId":"d17bb2da-ce13-4eea-99d4-a2a800b68217"
-            }
-        ],
-        "category3" : [
+                "category":"others"
+            },
             {
                 "prdId":"product-8",
                 "prdName":"Post Shredded Wheat",
@@ -41,32 +34,27 @@
                 "quantity":3,
                 "price": "$3.79",
                 "promo":"3 For $8",
-                "category":"category3",
-                "shopListId":"d17bb2da-ce13-4eea-99d4-a2a800b68217"
-            }
+                "category":"others"
+            }                                
         ]
     },
-"61c368e0-4951-446c-9857-a291015149c2":{
-        "category1" : [
+"local-shoppinglist-2":{
+        "others" : [
             {
                 "prdId":"product-7",
                 "prdName":"Bumble Bee Chunk Light Tuna",
                 "imgUrl":"http://i.imgur.com/lUsTM0q.png",
                 "quantity":2,
                 "price": "$5.00",
-                "category":"category1",
-                "shopListId":"d17bb2da-ce13-4eea-99d4-a2a800b68217"
-            }            
-        ],
-        "category2" : [
+                "category":"others"
+            },
             {
                 "prdId":"product-3",
                 "prdName":"Del Monte Peach Halves",
                 "imgUrl":"http://i.imgur.com/2ARlTvx.png",
                 "quantity":3,
                 "price": "$2.09",
-                "category":"category2",
-                "shopListId":"d17bb2da-ce13-4eea-99d4-a2a800b68217"     
+                "category":"others"
             },  
             {
                 "prdId":"product-4",
@@ -75,11 +63,8 @@
                 "quantity":1,
                 "price": "$4.99",
                 "promo": "50% Today",
-                "category":"category2",
-                "shopListId":"d17bb2da-ce13-4eea-99d4-a2a800b68217"
-            }
-        ],
-        "category3" : [
+                "category":"others"
+            },
             {
                 "prdId":"product-6",
                 "prdName":"Entemann's Crullers Popett",
@@ -87,8 +72,7 @@
                 "quantity":2,
                 "price": "$3.49",
                 "promo":"Buy 2 Get 2 Free",
-                "category":"category3",
-                "shopListId":"d17bb2da-ce13-4eea-99d4-a2a800b68217"
+                "category":"others"
             }
         ]
     }

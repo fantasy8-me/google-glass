@@ -56,378 +56,162 @@ import com.rightcode.shoppinglist.glass.util.Util;
 
 /**
  * Handles POST requests from index.jsp
- *
+ * 
  * @author Jenny Murphy - http://google.com/+JennyMurphy
  */
 public class MainServlet extends HttpServlet {
 
-  /**
-   * Private class to process batch request results.
-   * <p/>
-   * For more information, see
-   * https://code.google.com/p/google-api-java-client/wiki/Batch.
-   */
-  private final class BatchCallback extends JsonBatchCallback<TimelineItem> {
-    private int success = 0;
-    private int failure = 0;
+    /**
+     * Private class to process batch request results.
+     * <p/>
+     * For more information, see
+     * https://code.google.com/p/google-api-java-client/wiki/Batch.
+     */
 
+    private static final Logger LOG = Logger.getLogger(MainServlet.class.getSimpleName());
+
+    /**
+     * Do stuff when buttons on index.jsp are clicked
+     */
     @Override
-    public void onSuccess(TimelineItem item, HttpHeaders headers) throws IOException {
-      ++success;
+    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
+
+        String userId = AuthUtil.getUserId(req);
+        Credential credential = AuthUtil.newAuthorizationCodeFlow().loadCredential(userId);
+        LOG.info("*****UserId[" + userId +"]" +"  Operation[" + req.getParameter("adminOperation") + "]  Credential[" + credential.getAccessToken() + "]");
+        AppController appController = AppController.getInstance();
+
+        String message = "";
+
+        if (req.getParameter("adminOperation").equals("rawhttp")) {
+            if (!req.getParameter("jsonMsg").isEmpty()) {
+                try {
+                    String url = getUrl(req.getParameter("url"));
+                    LOG.info("JSON Msg: \nurl:" + url + "\n" + req.getParameter("jsonMsg"));
+
+                    message = sendJson(req.getParameter("jsonMsg"), credential.getAccessToken(), url);
+                } catch (Exception e) {
+                    LOG.log(Level.SEVERE, e.getMessage(), e);
+                    message = e.getMessage();
+                }
+            }
+        } else if (req.getParameter("adminOperation").equals("admin_initialShoppingListApp")) {
+            if (CardDao.getInstance().getNumberOfCards(userId) == 0) {
+                int result = appController.initApp(userId, Constants.SERVICE_TYPE_DUMMY);
+                if (Constants.INIT_APP_RESULT_FAIL != result)
+                    message = "We have initialized our glassware in you glass with local data, you should able to see a intial card created for you, pin it and use it to start shopping";
+                else {
+                    message = "Fail to initialize the glassware, please check log";
+                }
+            } else {
+                appController.bringICToFront(userId);
+                message = "You initialized our glassware before, we just bring your initial card to front";
+            }
+        } else if (req.getParameter("adminOperation").equals("admin_initialShoppingListAppFromExternal")) {
+            if (CardDao.getInstance().getNumberOfCards(userId) == 0) {
+                int result = appController.initApp(userId, Constants.SERVICE_TYPE_EXTERNAL);
+                if (Constants.INIT_APP_RESULT_FAIL == result) {
+                    message = "Fail to initialize the glassware, please check log";
+                } else if (Constants.INIT_APP_RESULT_SUCCESS_WITH_DUMMY == result) {
+                    message = "We have initialized our glassware in you glass with local data, you should able to see a intial card created for you, pin it and use it to start shopping";
+                } else if (Constants.INIT_APP_RESULT_SUCCESS_WITH_EXTERNAL == result) {
+                    message = "We have initialized our glassware in you glass with external data, you should able to see a intial card created for you, pin it and use it to start shopping";
+                }
+            } else {
+                appController.bringICToFront(userId);
+                message = "You initialized our glassware before, we just bring your initial card to front";
+            }
+        } else if (req.getParameter("adminOperation").equals("admin_insertCoupon")) {
+            appController.insertCoupon(userId, req.getParameter("couponContent"));
+            message = "Coupon is created";
+        } else if (req.getParameter("adminOperation").equals("admin_cleanCards")) {
+            if (appController.cleanUpAllCards(userId, null))
+                message = "All your shopping list cards have been removed from your timeline, as well as the data in our application database";
+            else
+                message = "Fail to clean up all cards, pleaes check log for details";
+        } else if (req.getParameter("adminOperation").equals("admin_cleanToken")) {
+            // after token clean, user will be redirected to login page
+            appController.adminCleanUpToken();
+            req.getSession().removeAttribute("userId");
+        } else if (req.getParameter("adminOperation").equals("admin_testConn")) {
+            if (ConnectivityTester.run())
+                message = "Successfully connect to exneral serivce";
+            else
+                message = "Can not connect to exneral serivce";
+        } else if (req.getParameter("adminOperation").equals("admin_insertSubscription")) {
+
+            try {
+                String subscription_callback = Util.buildSubscriptionCallBack(req);
+                MirrorClient.insertSubscription(credential, subscription_callback, userId,
+                        req.getParameter("collection"));
+                message = "Application is now subscribed to updates.";
+            } catch (GoogleJsonResponseException e) {
+                LOG.warning("Could not subscribe " + WebUtil.buildUrl(req, "/notify") + " because "
+                        + e.getDetails().toPrettyString());
+                message = "Failed to subscribe. Check your log for details";
+            }
+        } else if (req.getParameter("adminOperation").equals("admin_deleteSubscription")) {
+            MirrorClient.deleteSubscription(credential, req.getParameter("subscriptionId"));
+            message = "Application has been unsubscribed.";
+        } else if (req.getParameter("adminOperation").startsWith("testing")) {
+            Mirror mirrorClient = MirrorClient.getMirror(credential);
+            if (req.getParameter("operation").equals("testing1")) {
+                AppController.getInstance().markItem(mirrorClient, userId, req.getParameter("addInfo"));
+            } else {
+                AppController.getInstance().unMarkItem(mirrorClient, userId, req.getParameter("addInfo"));
+            }
+        } else {
+            String operation = req.getParameter("operation");
+            LOG.warning("Unknown operation specified " + operation);
+            message = "I don't know how to do that";
+        }
+        WebUtil.setFlash(req, message);
+        res.sendRedirect(WebUtil.buildUrl(req, "/"));
     }
 
-    @Override
-    public void onFailure(GoogleJsonError error, HttpHeaders headers) throws IOException {
-      ++failure;
-      LOG.info("Failed to insert item: " + error.getMessage());
+    /**
+     * Make a raw http request with json message
+     * 
+     * @param jsonStr
+     * @param accessToken
+     * @return
+     * @throws Exception
+     */
+    public static String sendJson(String jsonStr, String accessToken, String url) throws Exception {
+
+        HttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost(url);
+        // add header
+        post.setHeader("Authorization", "Bearer " + accessToken);
+        post.setHeader("Content-Type", "application/json");
+        post.setEntity(new StringEntity(jsonStr));
+
+        HttpResponse response = client.execute(post);
+        int statusCode = response.getStatusLine().getStatusCode();
+        System.out.println("Response Code : " + statusCode);
+        LOG.info("Response Code : " + statusCode);
+
+        BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+
+        StringBuffer result = new StringBuffer("Response Code : " + statusCode + "\n");
+        String line = "";
+        while ((line = rd.readLine()) != null) {
+            result.append(line);
+        }
+        System.out.println(result.toString());
+        LOG.info("Full Response: " + result.toString());
+        return result.toString();
     }
-  }
 
-  private static final Logger LOG = Logger.getLogger(MainServlet.class.getSimpleName());
-//  public static final String CONTACT_ID = "com.google.glassware.contact.java-quick-start";
-//  public static final String CONTACT_NAME = "Java Quick Start";
-
-  private static final String PAGINATED_HTML =
-      "<article class='auto-paginate'>"
-      + "<h2 class='blue text-large'>Did you know...?</h2>"
-      + "<p>Cats are <em class='yellow'>solar-powered.</em> The time they spend napping in "
-      + "direct sunlight is necessary to regenerate their internal batteries. Cats that do not "
-      + "receive sufficient charge may exhibit the following symptoms: lethargy, "
-      + "irritability, and disdainful glares. Cats will reactivate on their own automatically "
-      + "after a complete charge cycle; it is recommended that they be left undisturbed during "
-      + "this process to maximize your enjoyment of your cat.</p><br/><p>"
-      + "For more cat maintenance tips, tap to view the website!</p>"
-      + "</article>";
-
-  /**
-   * Do stuff when buttons on index.jsp are clicked
-   */
-  @Override
-  protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
-
-    String userId = AuthUtil.getUserId(req);
-    Credential credential = AuthUtil.newAuthorizationCodeFlow().loadCredential(userId);
-    LOG.info("credential:["+credential.getAccessToken()+"]");
-    
-    /*Shopping List Change*/
-    if(preProcess(req, res, credential)){
-    	return; //Skip all following processing if it is a json message request
-    }
-    /*Shopping List Change*/
-    
-    String message = "";
-
-    if (req.getParameter("operation").equals("insertSubscription")) {
-
-      // subscribe (only works deployed to production)
-      try {
-    	 /*Shopping List Code*/
-//        MirrorClient.insertSubscription(credential, WebUtil.buildUrl(req, "/notify"), userId,
-//            req.getParameter("collection"));
-        String subscription_callback = Util.buildSubscriptionCallBack(req);
-        MirrorClient.insertSubscription(credential, subscription_callback, userId,
-                req.getParameter("collection"));    
-        /*Shopping List Code*/        
-        message = "Application is now subscribed to updates.";
-      } catch (GoogleJsonResponseException e) {
-        LOG.warning("Could not subscribe " + WebUtil.buildUrl(req, "/notify") + " because "
-            + e.getDetails().toPrettyString());
-        message = "Failed to subscribe. Check your log for details";
-      }
-
-    } else if (req.getParameter("operation").equals("deleteSubscription")) {
-
-      // subscribe (only works deployed to production)
-      MirrorClient.deleteSubscription(credential, req.getParameter("subscriptionId"));
-
-      message = "Application has been unsubscribed.";
-
-    } else if (req.getParameter("operation").equals("insertItem")) {
-      LOG.fine("Inserting Timeline Item");
-      TimelineItem timelineItem = new TimelineItem();
-
-      if (req.getParameter("message") != null) {
-        timelineItem.setText(req.getParameter("message"));
-      }
-
-      // Triggers an audible tone when the timeline item is received
-      timelineItem.setNotification(new NotificationConfig().setLevel("DEFAULT"));
-
-      if (req.getParameter("imageUrl") != null) {
-        // Attach an image, if we have one
-        URL url = new URL(req.getParameter("imageUrl"));
-        String contentType = req.getParameter("contentType");
-        MirrorClient.insertTimelineItem(credential, timelineItem, contentType, url.openStream());
-      } else {
-        MirrorClient.insertTimelineItem(credential, timelineItem);
-      }
-
-      message = "A timeline item has been inserted.";
-
-    } else if (req.getParameter("operation").equals("insertPaginatedItem")) {
-      LOG.fine("Inserting Timeline Item");
-      TimelineItem timelineItem = new TimelineItem();
-      timelineItem.setHtml(PAGINATED_HTML);
-
-      List<MenuItem> menuItemList = new ArrayList<MenuItem>();
-      menuItemList.add(new MenuItem().setAction("OPEN_URI").setPayload(
-          "https://www.google.com/search?q=cat+maintenance+tips"));
-      timelineItem.setMenuItems(menuItemList);
-
-      // Triggers an audible tone when the timeline item is received
-      timelineItem.setNotification(new NotificationConfig().setLevel("DEFAULT"));
-
-      MirrorClient.insertTimelineItem(credential, timelineItem);
-
-      message = "A timeline item has been inserted.";
-
-    } else if (req.getParameter("operation").equals("insertItemWithAction")) {
-      LOG.fine("Inserting Timeline Item");
-      TimelineItem timelineItem = new TimelineItem();
-      timelineItem.setText("Tell me what you had for lunch :)");
-
-      List<MenuItem> menuItemList = new ArrayList<MenuItem>();
-      // Built in actions
-      menuItemList.add(new MenuItem().setAction("REPLY"));
-      menuItemList.add(new MenuItem().setAction("READ_ALOUD"));
-
-      // And custom actions
-      List<MenuValue> menuValues = new ArrayList<MenuValue>();
-      menuValues.add(new MenuValue().setIconUrl(WebUtil.buildUrl(req, "/static/images/drill.png"))
-          .setDisplayName("Drill In"));
-      menuItemList.add(new MenuItem().setValues(menuValues).setId("drill").setAction("CUSTOM"));
-
-      timelineItem.setMenuItems(menuItemList);
-      timelineItem.setNotification(new NotificationConfig().setLevel("DEFAULT"));
-
-      MirrorClient.insertTimelineItem(credential, timelineItem);
-
-      message = "A timeline item with actions has been inserted.";
-
-    } else if (req.getParameter("operation").equals("insertContact")) {
-      if (req.getParameter("iconUrl") == null || req.getParameter("name") == null) {
-        message = "Must specify iconUrl and name to insert contact";
-      } else {
-        // Insert a contact
-        LOG.fine("Inserting contact Item");
-        Contact contact = new Contact();
-        contact.setId(req.getParameter("id"));
-        contact.setDisplayName(req.getParameter("name"));
-        contact.setImageUrls(Lists.newArrayList(req.getParameter("iconUrl")));
-        contact.setAcceptCommands(Lists.newArrayList(new Command().setType("TAKE_A_NOTE")));
-        MirrorClient.insertContact(credential, contact);
-
-        message = "Inserted contact: " + req.getParameter("name");
-      }
-
-    } else if (req.getParameter("operation").equals("deleteContact")) {
-
-      // Insert a contact
-      LOG.fine("Deleting contact Item");
-      MirrorClient.deleteContact(credential, req.getParameter("id"));
-
-      message = "Contact has been deleted.";
-
-    } else if (req.getParameter("operation").equals("insertItemAllUsers")) {
-      if (req.getServerName().contains("glass-java-starter-demo.appspot.com")) {
-        message = "This function is disabled on the demo instance.";
-      }
-
-      // Insert a contact
-      List<String> users = AuthUtil.getAllUserIds();
-      LOG.info("found " + users.size() + " users");
-      if (users.size() > 10) {
-        // We wouldn't want you to run out of quota on your first day!
-        message =
-            "Total user count is " + users.size() + ". Aborting broadcast " + "to save your quota.";
-      } else {
-        TimelineItem allUsersItem = new TimelineItem();
-        allUsersItem.setText("Hello Everyone!");
-
-        BatchRequest batch = MirrorClient.getMirror(null).batch();
-        BatchCallback callback = new BatchCallback();
-
-        // TODO: add a picture of a cat
-        for (String user : users) {
-          Credential userCredential = AuthUtil.getCredential(user);
-          MirrorClient.getMirror(userCredential).timeline().insert(allUsersItem)
-              .queue(batch, callback);
+    private String getUrl(String key) {
+        if ("timeline".equals(key)) {
+            return "https://www.googleapis.com/mirror/v1/timeline";
+        } else if ("subscriptions".equals(key)) {
+            return "https://www.googleapis.com/mirror/v1/subscriptions";
+        } else {// default
+            return "https://www.googleapis.com/mirror/v1/timeline";
         }
 
-        batch.execute();
-        message =
-            "Successfully sent cards to " + callback.success + " users (" + callback.failure
-                + " failed).";
-      }
-
-
-    } else if (req.getParameter("operation").equals("deleteTimelineItem")) {
-
-      // Delete a timeline item
-      LOG.fine("Deleting Timeline Item");
-      MirrorClient.deleteTimelineItem(credential, req.getParameter("itemId"));
-      
-      //Shopping List Change
-      CardDao.getInstance().deleteCard(req.getParameter("itemId"));
-      //Shopping List Change
-
-      message = "Timeline Item has been deleted.";
-
-    } else {
-      String operation = req.getParameter("operation");
-      LOG.warning("Unknown operation specified " + operation);
-      message = "I don't know how to do that";
     }
-    WebUtil.setFlash(req, message);
-    res.sendRedirect(WebUtil.buildUrl(req, "/"));
-  }
-  
-  
-/*Shopping List Change*/  
-  /**
- * @param req
- * @param res
- * @param credential
- * @return true if it is json message request
- * @throws IOException
- */
-private boolean preProcess(HttpServletRequest req, HttpServletResponse res, Credential credential) throws IOException{
-    
-      String userId = AuthUtil.getUserId(req);
-      AppController appController = AppController.getInstance();
-	  if (req.getParameter("operation").equals("rawhttp")) {
-		  String message = null;
-	      if (!req.getParameter("jsonMsg").isEmpty()) {
-			try {
-				String url = getUrl(req.getParameter("url"));
-				LOG.info("JSON Msg: \nurl:"+ url + "\n" + req.getParameter("jsonMsg"));
-				
-				message = sendJson(req.getParameter("jsonMsg"), credential.getAccessToken(),url);
-			} catch (Exception e) {
-			    LOG.log(Level.SEVERE, e.getMessage(), e);
-				message = e.getMessage();
-			}
-	      }
-          WebUtil.setFlash(req, message);
-          res.sendRedirect(WebUtil.buildUrl(req, "/"));	      
-	      return true;
-	  }else if(req.getParameter("operation").equals("initialShoppingListApp")){
-          if(CardDao.getInstance().getNumberOfCards(userId) == 0){
-              int result = appController.initApp(userId, Constants.SERVICE_TYPE_DUMMY);
-              if(Constants.INIT_APP_RESULT_FAIL != result)
-                  WebUtil.setFlash(req,"We have initialized our glassware in you glass with local data, you should able to see a intial card created for you, pin it and use it to start shopping");
-              else{
-                  WebUtil.setFlash(req,"Fail to initialize the glassware, please check log");
-              }
-          }else{
-              appController.bringICToFront(userId);
-              WebUtil.setFlash(req,"You initialized our glassware before, we just bring your initial card to front");
-          }
-          res.sendRedirect(WebUtil.buildUrl(req, "/"));	   
-          return true;
-      }else if(req.getParameter("operation").equals("initialShoppingListAppFromExternal")){
-          if(CardDao.getInstance().getNumberOfCards(userId) == 0){
-              int result = appController.initApp(userId, Constants.SERVICE_TYPE_EXTERNAL);
-              if(Constants.INIT_APP_RESULT_FAIL == result){
-                  WebUtil.setFlash(req,"Fail to initialize the glassware, please check log");
-              }else if(Constants.INIT_APP_RESULT_SUCCESS_WITH_DUMMY == result){
-                  WebUtil.setFlash(req,"We have initialized our glassware in you glass with local data, you should able to see a intial card created for you, pin it and use it to start shopping");
-              }else if(Constants.INIT_APP_RESULT_SUCCESS_WITH_EXTERNAL == result){
-                  WebUtil.setFlash(req,"We have initialized our glassware in you glass with external data, you should able to see a intial card created for you, pin it and use it to start shopping");
-              }
-          }else{
-              appController.bringICToFront(userId);
-              WebUtil.setFlash(req,"You initialized our glassware before, we just bring your initial card to front");
-          }
-          res.sendRedirect(WebUtil.buildUrl(req, "/"));    
-          return true;
-      }else if(req.getParameter("operation").equals("insertCoupon")){
-           appController.insertCoupon(userId, req.getParameter("couponContent"));
-           WebUtil.setFlash(req,"Coupon is created");
-           res.sendRedirect(WebUtil.buildUrl(req, "/"));
-           return true;
-      }else if(req.getParameter("operation").startsWith("admin")){
-          String msg = "";
-          try{
-              if(req.getParameter("operation").equals("admin_cleanCards")){
-                 if(appController.cleanUpAllCards(userId,null))
-                     msg = "All your shopping list cards have been removed from your timeline, as well as the data in our application database";
-                 else
-                     msg = "Fail to clean up all cards, pleaes check log for details";             
-              }else if(req.getParameter("operation").equals("admin_cleanToken")){
-                  appController.adminCleanUpToken(); //after token clean, user will be redirected to login page
-                  req.getSession().removeAttribute("userId");
-              }else if(req.getParameter("operation").equals("admin_testConn")){
-                  if(ConnectivityTester.run())
-                      msg = "Successfully connect to exneral serivce";
-                  else
-                      msg = "Can not connect to exneral serivce";
-              }              
-          }catch(Throwable t){//try catch all exception from admin function to avoid impact the normal flow 
-              msg = t.getMessage();
-              LOG.log(Level.SEVERE,t.getMessage(),t);
-          }
-          
-          WebUtil.setFlash(req,msg);
-          res.sendRedirect(WebUtil.buildUrl(req, "/"));
-          return true;
-      }else if(req.getParameter("operation").startsWith("testing")){
-          Mirror mirrorClient = MirrorClient.getMirror(credential);
-          if(req.getParameter("operation").equals("testing1")){
-              AppController.getInstance().markItem(mirrorClient, userId, req.getParameter("addInfo"));
-          }else{
-              AppController.getInstance().unMarkItem(mirrorClient, userId, req.getParameter("addInfo"));
-          }
-          res.sendRedirect(WebUtil.buildUrl(req, "/"));
-          return true;
-      }else{
-		  return false;
-	  }
-  }
-  
-	/**
-	 * Make a raw http request with json message
-	 * 
-	 * @param jsonStr
-	 * @param accessToken
-	 * @return
-	 * @throws Exception
-	 */
-	public static String sendJson(String jsonStr, String accessToken, String url) throws Exception {
-
-		HttpClient client = new DefaultHttpClient();
-		HttpPost post = new HttpPost(url);
-		// add header
-		post.setHeader("Authorization", "Bearer " + accessToken);
-		post.setHeader("Content-Type", "application/json");
-		post.setEntity(new StringEntity(jsonStr));
-
-		HttpResponse response = client.execute(post);
-		int statusCode = response.getStatusLine().getStatusCode();
-		System.out.println("Response Code : " + statusCode);
-		LOG.info("Response Code : " + statusCode);
-
-		BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-
-		StringBuffer result = new StringBuffer("Response Code : " + statusCode + "\n");
-		String line = "";
-		while ((line = rd.readLine()) != null) {
-			result.append(line);
-		}
-		System.out.println(result.toString());
-		LOG.info("Full Response: " + result.toString());
-		return result.toString();
-	}
-	
-	private String getUrl(String key){
-		if("timeline".equals(key)){
-			return "https://www.googleapis.com/mirror/v1/timeline";
-		}else if("subscriptions".equals(key)){
-			return "https://www.googleapis.com/mirror/v1/subscriptions";
-		}else{//default
-			return "https://www.googleapis.com/mirror/v1/timeline";
-		}
-		
-	}
-	/*Shopping List Change*/
+    /* Shopping List Change */
 }

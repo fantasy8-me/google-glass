@@ -43,7 +43,7 @@ public class LoggingServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         //Use this log to see whether GAE reload our app
-        System.out.println("----------------------Servlet is reload---");        
+        System.out.println("**********Servlet is reload");        
     }
 
 	

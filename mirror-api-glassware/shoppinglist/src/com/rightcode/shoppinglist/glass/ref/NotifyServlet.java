@@ -60,7 +60,7 @@ public class NotifyServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
 
-        LOG.info("-----------------------------Great12-23, we got a notification ---------------------------- ");
+        LOG.info("**********Great, we got a notification");
 
         // Get the notification object from the request body (into a string so
         // we
@@ -119,8 +119,6 @@ public class NotifyServlet extends HttpServlet {
         } else {
             LOG.severe("-----Credential object is null for user:" + userId);
         }
-        LOG.info("-----AuthUtil.store: " + AuthUtil.store + " identity:" + AuthUtil.store.getIdentity());
-        LOG.info("-----All user in credential store: " + AuthUtil.getAllUserIds());
 
         if (notification.getCollection().equals("locations")) {
             LOG.info("Notification of updated location");
@@ -230,7 +228,7 @@ public class NotifyServlet extends HttpServlet {
                 LOG.warning("Update is not triggered by any user action, so I'm ignoring it.");
             }
         }
-        LOG.info("-----Notification flow done");
+        LOG.info("*****Notification flow done");
     }
 
     /**

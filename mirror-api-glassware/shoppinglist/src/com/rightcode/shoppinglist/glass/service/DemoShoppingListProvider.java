@@ -22,9 +22,9 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
     /**
      * First Level is user, Second Level Key is shopping list, Third Level Key is category
      */
-    private Map<String,Map<String, Map<String, List<Map<String, Object>>>>> productData = new HashMap();
+    private Map<String,Map<String, Map<String, List<Map<String, Object>>>>> productData = new HashMap<>();
     
-    private Map<String, Map<String,String>> shoppingListNameMap = new HashMap<String, Map<String,String>>();
+    private Map<String, Map<String,String>> shoppingListNameMap = new HashMap<>();
 
     private static DemoShoppingListProvider demoShoppingListProvider = null;
 
@@ -34,7 +34,6 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
 
     
 
-    @SuppressWarnings("unchecked")
     private DemoShoppingListProvider() {
         cardDao = CardDao.getInstance();
     };
@@ -62,8 +61,8 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
         refreshData(userId,null);
         // Use the dummy user id which is defined in productData.json
         mergePurchaseStatus(userId, shoppingListId);
-        return productData.get(userId).get(shoppingListId).get(category);
-        // return productData.get(userId);
+        //We don't support category any more, but will keep the logic for a while
+        return productData.get(userId).get(shoppingListId).get(Constants.DEFAULT_CATEGORY); 
     }
 
     @Override
@@ -122,7 +121,7 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
             if (serviceType != null) {
                 if (Constants.SERVICE_TYPE_DUMMY.equals(serviceType)) {
                     initFromLocalDummyData(userId, true);
-                    LOG.info("-----Load data from local file successfully----");
+                    LOG.info("*****Init app with local data successfully");
                     return Constants.INIT_APP_RESULT_SUCCESS_WITH_DUMMY;
                 } else {
                     Object[] result = ExternalServiceUtil.getConvertedData();
@@ -132,11 +131,11 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
                         LOG.info("-----Going to store the message");
                         scDao.storeServiceCache(userId,Constants.SERVICE_TYPE_EXTERNAL, jsonFactory.toString(productData.get(userId)),
                                 jsonFactory.toString(shoppingListNameMap.get(userId)));
-                        LOG.info("-----Load data from external service successfully");
+                        LOG.info("*****Init app with external data successfully");
                         return Constants.INIT_APP_RESULT_SUCCESS_WITH_EXTERNAL;
                     } else {
                         initFromLocalDummyData(userId,true);
-                        LOG.info("*****************Switch to productData.json*****************");
+                        LOG.info("**********Switch to productData.json");
                         return Constants.INIT_APP_RESULT_SUCCESS_WITH_DUMMY;
                     }
                 }
@@ -145,13 +144,13 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
                     ServiceCache sc = scDao.getRecord(userId);
                     if (Constants.SERVICE_TYPE_DUMMY.equals(sc.getCurrentService())) {
                         initFromLocalDummyData(userId, false);
-                        LOG.info("-----Restore data for local file successfully");
+                        LOG.info("*****Restore data for local file successfully");
                         return Constants.INIT_APP_RESULT_SUCCESS_WITH_DUMMY;
                     } else {
                         Map<String, Map<String, List<Map<String, Object>>>> productDataOfUser = jsonFactory.fromString(sc.getCachedListData(), null);
                         productData.put(userId, productDataOfUser);
                         shoppingListNameMap.put(userId, (Map<String,String>)jsonFactory.fromString(sc.getCachedListNames(), null));
-                        LOG.info("-----Restore data for external service successfully");
+                        LOG.info("*****Restore data for external service successfully");
                         return Constants.INIT_APP_RESULT_SUCCESS_WITH_DUMMY;
                     }
                 }else{
@@ -174,9 +173,8 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
             productData.put(userId, productDataOfUser);
             
             Map<String,String> nameMap = new HashMap<String,String>();
-            nameMap.put("d17bb2da-ce13-4eea-99d4-a2a800b68217", "Food for Jason");
-            nameMap.put("61c368e0-4951-446c-9857-a291015149c2", "Food for Mom");
-            nameMap.put("7c37d977-ad5d-40a2-a5ec-a2a8008d2591", "Mom's Birthday List");
+            nameMap.put("local-shoppinglist-1", "Food for Jason");
+            nameMap.put("local-shoppinglist-2", "Food for Mom");
             shoppingListNameMap.put(userId, nameMap);
             
             if (updateDb)
@@ -194,6 +192,7 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
      * @param userId
      */
     private void mergePurchaseStatus(String userId, String shoppingListId) {
+        LOG.info("userId:" + userId + " shoppingListId:" + shoppingListId + " productData is null:"+ (productData == null));
         Map<String, List<Map<String, Object>>> shoppingList = productData.get(userId).get(shoppingListId);
 
         Iterator<String> iter = shoppingList.keySet().iterator();

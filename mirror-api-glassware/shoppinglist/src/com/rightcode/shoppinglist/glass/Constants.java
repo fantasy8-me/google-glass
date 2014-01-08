@@ -72,9 +72,7 @@ public class Constants {
 	public final static String CARD_TYPE_LIST_COVER="LC";
 	public final static String CARD_TYPE_CATEGORY_COVER="CC";
 	public final static String CARD_TYPE_PRODUCT="P";
-	
-	
-	public final static int EXTERNAL_SERVICE_TIMEOUT_IN_SECS= 40;
+
 	
 	public final static String SERVICE_TYPE_EXTERNAL= "E";
 	public final static String SERVICE_TYPE_DUMMY= "D";
@@ -84,5 +82,33 @@ public class Constants {
 	public final static int INIT_APP_RESULT_SUCCESS_WITH_EXTERNAL = 2;
 	public final static int INIT_APP_RESULT_FAIL = -1;
 	
+	
+    /**
+     * Used when we cann't get the product image
+     */
+    public final static String DEFAULT_IMG = "http://i.imgur.com/BGPnkkX.png";
+    public final static String DEFAULT_CATEGORY = "others";
+	
+    
+    public final static int EXTERNAL_SERVICE_TIMEOUT_IN_SECS= 40;
+    public final static String EXTERNAL_MSG_ITEM_TYPE_FREETEXT= "FREETEXT";
+    public final static String EXTERNAL_MSG_ITEM_TYPE_PRODUCT= "PRODUCT";
+    
+    public final static String EXTERNAL_MSG_TAG_LINES = "Lines";
+    public final static String EXTERNAL_MSG_TAG_TYPE = "Type";
+    public final static String EXTERNAL_MSG_TAG_ID = "Id";
+    public final static String EXTERNAL_MSG_TAG_NAME = "Name";
+    public final static String EXTERNAL_MSG_TAG_ITEM = "Item";
+    public final static String EXTERNAL_MSG_TAG_QUANTITY = "Quantity";
+    public final static String EXTERNAL_MSG_TAG_PRICE = "Price";
+    public final static String EXTERNAL_MSG_TAG_VALUE = "Value";
+    public final static String EXTERNAL_MSG_TAG_CURRENCY = "Currency";
+    public final static String EXTERNAL_MSG_TAG_DESC = "Description";
+    public final static String EXTERNAL_MSG_TAG_TYPECODE = "TypeCode";
+    public final static String EXTERNAL_MSG_TAG_IMG = "Image";
+    public final static String EXTERNAL_MSG_TAG_URL = "Url";
+    public final static String EXTERNAL_MSG_TAG_PROMO = "Promotions";
+    
+    
 	
 }

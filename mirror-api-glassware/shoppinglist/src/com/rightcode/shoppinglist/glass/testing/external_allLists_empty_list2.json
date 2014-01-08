@@ -1,0 +1,79 @@
+{
+    "Id": "e040b100-e631-4cf8-84b6-a2ad00128a43",
+    "Name": "My List",
+    "ViewOrder": 0,
+    "LastModifiedDate": "2014-01-08T01:14:31",
+    "Lines": [{
+        "ShopListId": "e040b100-e631-4cf8-84b6-a2ad00128a43",
+        "Id": "aeff6095-eaa7-4281-94c2-54027a5643d9",
+        "Value": "23",
+        "Type": "PRODUCT",
+        "Quantity": 1.000,
+        "ViewOrder": 1,
+        "Item": {
+            "ItemId": "23",
+            "Barcode": "23",
+            "Quantity": {
+                "Value": "1.000",
+                "UnitOfMeasureCode": "EA"
+            },
+            "Price": {
+                "UnitOfMeasureCode": "EA",
+                "Value": "5.99000",
+                "Currency": "GBP"
+            },
+            "Description": [{
+                "Value": "Boursin Herb+Garlic Gournay Cheese",
+                "TypeCode": "Long",
+                "Calture": "en-US"
+            }, {
+                "Value": "Herb+Garlic Gournay",
+                "TypeCode": "Short",
+                "Calture": "en-US"
+            }],
+            "LinkdedItems": []
+        }
+    }, {
+        "ShopListId": "e040b100-e631-4cf8-84b6-a2ad00128a43",
+        "Id": "5ac03553-5d65-4fb1-b05e-5e02df1dc93d",
+        "Value": "5340269",
+        "Type": "PRODUCT",
+        "Quantity": 1.000,
+        "ViewOrder": 1,
+        "Item": {
+            "ItemId": "5340269",
+            "Barcode": "5340269",
+            "Quantity": {
+                "Value": "1.000",
+                "UnitOfMeasureCode": "EA"
+            },
+            "Price": {
+                "UnitOfMeasureCode": "EA",
+                "Value": "2.44000",
+                "Currency": "GBP"
+            },
+            "Description": [{
+                "Value": "A 50g (2 RASHERS) SERVING CONTAINS Calories 51kcal 3%, Sugar 0.6g 1%, Fat 0.3g 1%, Saturates 0.1g 1%, Salt 0.9g 15% OF AN ADULT'S GUIDELINE DAILY AMOUNT.",
+                "TypeCode": "Long",
+                "Calture": "en-US"
+            }, {
+                "Value": "Mattessons Original Turkey Rashers 200g",
+                "TypeCode": "Short",
+                "Calture": "en-US"
+            }],
+            "Image": {
+                "Url": "http://dtraayotams/retalix.sgw/Images/n269.jpg",
+                "Size": "icon"
+            },
+            "LinkdedItems": []
+        }
+    }, {
+        "ShopListId": "e040b100-e631-4cf8-84b6-a2ad00128a43",
+        "Id": "bbb2d2d3-3221-47ae-b684-0985b821fb7e",
+        "Value": "free text",
+        "Type": "FREETEXT",
+        "Quantity": 1.000,
+        "ViewOrder": 1
+    }],
+    "ItemsCount": 3
+}

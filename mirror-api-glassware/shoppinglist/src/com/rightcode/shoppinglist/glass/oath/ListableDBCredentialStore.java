@@ -3,6 +3,7 @@ package com.rightcode.shoppinglist.glass.oath;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.jdo.JDOObjectNotFoundException;
@@ -45,6 +46,8 @@ public class ListableDBCredentialStore implements CredentialStore {
                     credential.getRefreshToken(), credential.getExpirationTimeMilliseconds());
             pm.makePersistent(newItem);
             LOG.info("-----Credential is created for:" + userId + " Token:" + credential.getAccessToken());
+        } catch (Exception e){ //Avoid breaking the entire flow
+            LOG.log(Level.SEVERE, "Unexpected error occur, might happen after you re-deploy appliation with new proejct id, try access again",e);
         } finally {
             pm.close();
             lock.unlock();// Eric.TODO double check

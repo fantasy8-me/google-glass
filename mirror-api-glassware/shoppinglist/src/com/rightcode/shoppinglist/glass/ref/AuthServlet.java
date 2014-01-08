@@ -70,10 +70,6 @@ public class AuthServlet extends HttpServlet {
       //Shopping List Change
       
       Credential credential = AuthUtil.getCredential(userId);
-      if(credential != null){
-          LOG.info("------AuthServlet----AccessTokenn:"+credential.getAccessToken() + " ExpiresInSeconds:" + credential.getExpiresInSeconds() + " TokenServerEncodedUrl:" + credential.getTokenServerEncodedUrl());
-          LOG.info("------AuthServlet----AuthUtil.store: " + AuthUtil.store + " identity:" + AuthUtil.store.getIdentity());
-      }
       
       //Shopping List Change
 

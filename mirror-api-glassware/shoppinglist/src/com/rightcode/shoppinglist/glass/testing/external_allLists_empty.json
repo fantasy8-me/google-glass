@@ -1,0 +1,35 @@
+[{
+    "Id": "b628298a-4a66-4ecc-a18e-a2ad00123e94",
+    "Name": "My List",
+    "ViewOrder": 0,
+    "LastModifiedDate": "2014-01-08T01:06:45",
+    "ItemsCount": 0
+}, {
+    "Id": "e040b100-e631-4cf8-84b6-a2ad00128a43",
+    "Name": "My List",
+    "ViewOrder": 0,
+    "LastModifiedDate": "2014-01-08T01:14:31",
+    "Lines": [{
+        "ShopListId": "e040b100-e631-4cf8-84b6-a2ad00128a43",
+        "Id": "aeff6095-eaa7-4281-94c2-54027a5643d9",
+        "Value": "23",
+        "Type": "PRODUCT",
+        "Quantity": 1.000,
+        "ViewOrder": 1
+    }, {
+        "ShopListId": "e040b100-e631-4cf8-84b6-a2ad00128a43",
+        "Id": "5ac03553-5d65-4fb1-b05e-5e02df1dc93d",
+        "Value": "5340269",
+        "Type": "PRODUCT",
+        "Quantity": 1.000,
+        "ViewOrder": 1
+    }, {
+        "ShopListId": "e040b100-e631-4cf8-84b6-a2ad00128a43",
+        "Id": "bbb2d2d3-3221-47ae-b684-0985b821fb7e",
+        "Value": "free text",
+        "Type": "FREETEXT",
+        "Quantity": 1.000,
+        "ViewOrder": 1
+    }],
+    "ItemsCount": 3
+}]

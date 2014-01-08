@@ -105,7 +105,7 @@ public class AppController {
     public synchronized static AppController getInstance() {
         if (appController == null) {
             // This log is used to indicate that that our app is reload.
-            LOG.info("*--------------------------AppController inited:" + System.currentTimeMillis());
+            LOG.info("*****AppController inited:" + System.currentTimeMillis());
             appController = new AppController();
         }
         return appController;
@@ -149,9 +149,9 @@ public class AppController {
 
                 String bundleId = getBundleId(shoppingListId + "_" + category);
 
-                Map<String, Object> bundleConverViewbean = buildBundleConverViewBean(category, 0, productList.size(),
-                        shoppingListProvider.getShoppingListName(userId, shoppingListId));
-                createItemConverCard(mirrorClient, bundleConverViewbean, bundleId, userId, shoppingListCardId);
+//                Map<String, Object> bundleConverViewbean = buildBundleConverViewBean(category, 0, productList.size(),
+//                        shoppingListProvider.getShoppingListName(userId, shoppingListId));
+                //createItemConverCard(mirrorClient, bundleConverViewbean, bundleId, userId, shoppingListCardId);
 
                 for (Iterator<Map<String, Object>> iterator = productList.iterator(); iterator.hasNext();) {
                     Map<String, Object> viewbean = new HashMap<String, Object>(iterator.next());
@@ -383,7 +383,7 @@ public class AppController {
 
         TimelineItem timelineItem = new TimelineItem();
         timelineItem.setHtml(html);
-        timelineItem.setBundleId(bundleId);
+        //timelineItem.setBundleId(bundleId);
 
         List<MenuItem> menuItemList = new ArrayList<MenuItem>();
 
@@ -444,7 +444,7 @@ public class AppController {
 
     public void markOrUnMarkProduct(Mirror mirrorClient, String userId, TimelineItem timelineItem, boolean isMark) {
         String productCardId = timelineItem.getId();
-        String bundleId = timelineItem.getBundleId();
+        //String bundleId = timelineItem.getBundleId();
 
         String productId = cardDao.getCardRefById(userId, productCardId);
         String shoppingListCardId = cardDao.getShoppingListCardByProductCard(userId, productCardId);
@@ -489,9 +489,9 @@ public class AppController {
 
         try {
             mirrorClient.timeline().patch(productCardId, patchTimelineItem).execute();
-            updateCategoryCoverCard(mirrorClient, userId, shoppingListId, shoppingListCardId, bundleId,
-                    (String) viewBean.get(Constants.ITEM_COL_CATEGORY), completedStatus[0], completedStatus[1],
-                    shoppingListProvider.getShoppingListName(userId, shoppingListId));
+//            updateCategoryCoverCard(mirrorClient, userId, shoppingListId, shoppingListCardId, bundleId,
+//                    (String) viewBean.get(Constants.ITEM_COL_CATEGORY), completedStatus[0], completedStatus[1],
+//                    shoppingListProvider.getShoppingListName(userId, shoppingListId));
             updateShoppingListCard(mirrorClient, userId, shoppingListId, shoppingListCardId,
                     Constants.SHOPPING_LIST_STATUS_IN_PROGRESS, Constants.SHOPPING_LIST_STATUS_IN_PROGRESS);
 
@@ -558,6 +558,7 @@ public class AppController {
         }
     }
 
+    @SuppressWarnings("unused")
     private void updateCategoryCoverCard(Mirror mirrorClient, String userId, String shoppingListId,
             String shoppingListCardId, String bundleId, String category, int numOfCompleted, int subTotal,
             String shoppingListName) {
@@ -580,6 +581,7 @@ public class AppController {
         }
     }
 
+    @SuppressWarnings("unused")
     private TimelineItem createItemConverCard(Mirror mirrorClient, Map<String, Object> itemData, String bundleId,
             String userId, String shoppingListCardId) {
 

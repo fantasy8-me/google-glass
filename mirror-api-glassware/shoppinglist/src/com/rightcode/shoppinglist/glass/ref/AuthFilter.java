@@ -60,7 +60,7 @@ public class AuthFilter implements Filter {
           Credential credential = AuthUtil.getCredential(AuthUtil.getUserId(httpRequest));
           LOG.info("------Credential:"+credential);
           if(credential != null){
-              LOG.info("------AccessTokenn:"+credential.getAccessToken() + " ExpiresInSeconds:" + credential.getExpiresInSeconds() + " TokenServerEncodedUrl:" + credential.getTokenServerEncodedUrl());
+              LOG.info("------AccessTokenn:"+credential.getAccessToken() + " ExpiresInSeconds:" + credential.getExpiresInSeconds());
           }
       }
       if (AuthUtil.getUserId(httpRequest) == null
