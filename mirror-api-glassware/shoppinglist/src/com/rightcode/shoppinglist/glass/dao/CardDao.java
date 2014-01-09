@@ -249,6 +249,23 @@ public class CardDao {
         return result;
     }
 
+    public String getBundleIdFromListCoverCard(String userId) {
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+        Query q = pm.newQuery("select ref from " + Card.class.getName());
+        q.setFilter("userId == userIdParm && type == '" + Constants.CARD_TYPE_LIST_COVER + "' && projectClientId=='" + this.projectClientId + "'");
+        q.declareParameters("String userIdParm");
+        List<String> result = null;
+        try {
+            result = (List<String>) q.execute(userId);
+        } finally {
+            pm.close();
+        }
+        if (result.size() == 1) {
+            return result.get(0);
+        } else {
+            return "";
+        }
+    }
     /**
      * @param userId
      * @param types
@@ -294,6 +311,24 @@ public class CardDao {
 //        return result;
 //    }
     
+    public String getShoppingListCardIdByListId(String userId, String shoppingListId) {
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+        Query q = pm.newQuery("select cardId from " + Card.class.getName());
+        q.setFilter("userId == userIdParm && ref == shoppingListIdParm && type == '"
+                + Constants.CARD_TYPE_SHOPPINGLIST + "' && projectClientId=='" + this.projectClientId + "'");
+        q.declareParameters("String userIdParm, String shoppingListIdParm");
+        List<String> result = null;
+        try {
+            result = (List<String>) q.executeWithArray(new String[] { userId, shoppingListId });
+        } finally {
+            pm.close();
+        }
+        if (result.size() == 1) {
+            return result.get(0);
+        } else {
+            return "";
+        }
+    }
     
     /**
      * Delete a card

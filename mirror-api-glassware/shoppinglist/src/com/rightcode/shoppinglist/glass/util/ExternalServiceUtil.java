@@ -34,11 +34,12 @@ public class ExternalServiceUtil {
     /**
      * To switch between external and local dummy response, use only for testing
      */
-    private static boolean enableExternal = true;
+    private static boolean enableExternal = false;
 
     public static Object[] getConvertedData() {
 
-        ExecutorService exec = Executors.newCachedThreadPool(ThreadManager.currentRequestThreadFactory());
+//        ExecutorService exec = Executors.newCachedThreadPool(ThreadManager.currentRequestThreadFactory());
+        ExecutorService exec = Executors.newCachedThreadPool();
         FeatchTask task = new FeatchTask();
         Future<Object[]> future = exec.submit(task);
         Object[] taskResult = null;
@@ -68,7 +69,7 @@ public class ExternalServiceUtil {
             result = jsonFactory.fromInputStream(new StringInputStream(jsonResponse), null);
         } else {
             result = jsonFactory.fromInputStream(
-                    ExternalServiceUtil.class.getResourceAsStream("/productData_external_allLists.json"), null);
+                    ExternalServiceUtil.class.getResourceAsStream("/com/rightcode/shoppinglist/glass/testing/external_allLists_demo.json"), null);
         }
         return result;
     }
@@ -85,11 +86,10 @@ public class ExternalServiceUtil {
             LOG.info("-----Got list:" + jsonResponse);
             result = jsonFactory.fromInputStream(new StringInputStream(jsonResponse), null);
         } else {
-            @SuppressWarnings("unchecked")
-            String shoppingListStr = ((Map<String, String>) jsonFactory.fromInputStream(
-                    ExternalServiceUtil.class.getResourceAsStream("/productData_external_DetailsLists.json"), null))
-                    .get(shoppingListId);
-            result = jsonFactory.fromInputStream(new StringInputStream(shoppingListStr), null);
+            result = (Map<String, Object>) jsonFactory.fromInputStream(
+                    ExternalServiceUtil.class.getResourceAsStream("/com/rightcode/shoppinglist/glass/testing/external_allLists_demo_list3.json"), null);
+                    
+            //result = jsonFactory.fromInputStream(new StringInputStream(shoppingListStr), null);
         }
         return result;
     }
@@ -344,5 +344,8 @@ public class ExternalServiceUtil {
     }
 
     public static void main(String[] args) throws IOException {
+        JsonFactory jsonFactory = new JacksonFactory();
+        System.out.println(jsonFactory.toPrettyString(ExternalServiceUtil.getConvertedData()));
+        
     }
 }

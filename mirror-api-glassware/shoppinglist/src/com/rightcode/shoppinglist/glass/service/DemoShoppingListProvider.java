@@ -16,23 +16,22 @@ import com.rightcode.shoppinglist.glass.dao.CardDao;
 import com.rightcode.shoppinglist.glass.dao.ServiceCacheDao;
 import com.rightcode.shoppinglist.glass.model.ServiceCache;
 import com.rightcode.shoppinglist.glass.util.ExternalServiceUtil;
+import com.rightcode.shoppinglist.glass.util.MirrorUtil;
 
 public class DemoShoppingListProvider implements ShoppingListProvider {
 
     /**
      * First Level is user, Second Level Key is shopping list, Third Level Key is category
      */
-    private Map<String,Map<String, Map<String, List<Map<String, Object>>>>> productData = new HashMap<>();
-    
-    private Map<String, Map<String,String>> shoppingListNameMap = new HashMap<>();
+    private Map<String, Map<String, Map<String, List<Map<String, Object>>>>> productData = new HashMap<>();
+
+    private Map<String, Map<String, String>> shoppingListNameMap = new HashMap<>();
 
     private static DemoShoppingListProvider demoShoppingListProvider = null;
 
     private static final Logger LOG = Logger.getLogger(DemoShoppingListProvider.class.getSimpleName());
 
     private CardDao cardDao = null;
-
-    
 
     private DemoShoppingListProvider() {
         cardDao = CardDao.getInstance();
@@ -47,7 +46,7 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
 
     @Override
     public Map<String, Map<String, List<Map<String, Object>>>> getAllShoppingLists(String userId) {
-        refreshData(userId,null);
+        initData(userId, null);
         Iterator<String> iter = productData.get(userId).keySet().iterator();
         while (iter.hasNext()) {
             String shoppingListId = (String) iter.next();
@@ -58,16 +57,17 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
 
     @Override
     public List<Map<String, Object>> getShoppingList(String userId, String shoppingListId, String category) {
-        refreshData(userId,null);
+        // In GAE, any data cached in memory will be destroyed after certain period, we need to load the data from db if this happen
+        initData(userId, null);
         // Use the dummy user id which is defined in productData.json
         mergePurchaseStatus(userId, shoppingListId);
-        //We don't support category any more, but will keep the logic for a while
-        return productData.get(userId).get(shoppingListId).get(Constants.DEFAULT_CATEGORY); 
+        // We don't support category any more, but will keep the logic for a while
+        return productData.get(userId).get(shoppingListId).get(Constants.DEFAULT_CATEGORY);
     }
 
     @Override
     public Map<String, List<Map<String, Object>>> getShoppingList(String userId, String shoppingListId) {
-        refreshData(userId,null);
+        initData(userId, null);
         mergePurchaseStatus(userId, shoppingListId);
         Map<String, List<Map<String, Object>>> shoppingList = productData.get(userId).get(shoppingListId);
 
@@ -76,19 +76,19 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
 
     @Override
     public void markProduct(String userId, String shoppingListId, String productId, String cardId) {
-        refreshData(userId,null);
+        initData(userId, null);
         cardDao.markPurchaseStatus(userId, cardId, true);
     }
 
     @Override
     public void unMarkProduct(String userId, String shoppingListId, String productId, String cardId) {
-        refreshData(userId,null);
+        initData(userId, null);
         cardDao.markPurchaseStatus(userId, cardId, false);
     }
 
     @Override
     public Map<String, Object> getProductData(String userId, String shoppingListId, String productId) {
-        refreshData(userId,null);
+        initData(userId, null);
         mergePurchaseStatus(userId, shoppingListId);
         Map<String, List<Map<String, Object>>> shoppingList = productData.get(userId).get(shoppingListId);
 
@@ -109,11 +109,12 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
 
     @Override
     public String getShoppingListName(String userId, String shoppingListId) {
+        initData(userId, null);
         return shoppingListNameMap.get(userId).get(shoppingListId);
     }
 
     @SuppressWarnings("unchecked")
-    public int refreshData(String userId,String serviceType){
+    public int initData(String userId, String serviceType) {
         JsonFactory jsonFactory = new JacksonFactory();
         ServiceCacheDao scDao = ServiceCacheDao.getInstance();
         Map<String, Map<String, List<Map<String, Object>>>> productDataForCurrentUser = this.productData.get(userId);
@@ -129,12 +130,12 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
                         productData.put(userId, (Map<String, Map<String, List<Map<String, Object>>>>) result[0]);
                         shoppingListNameMap.put(userId, (Map<String, String>) result[1]);
                         LOG.info("-----Going to update service type:" + Constants.SERVICE_TYPE_EXTERNAL);
-                        scDao.storeServiceCache(userId,Constants.SERVICE_TYPE_EXTERNAL, jsonFactory.toString(productData.get(userId)),
+                        scDao.storeServiceCache(userId, Constants.SERVICE_TYPE_EXTERNAL, jsonFactory.toString(productData.get(userId)),
                                 jsonFactory.toString(shoppingListNameMap.get(userId)));
                         LOG.info("*****Init app with external data successfully");
                         return Constants.INIT_APP_RESULT_SUCCESS_WITH_EXTERNAL;
                     } else {
-                        initFromLocalDummyData(userId,true);
+                        initFromLocalDummyData(userId, true);
                         LOG.info("**********Switch to productData.json");
                         return Constants.INIT_APP_RESULT_SUCCESS_WITH_DUMMY;
                     }
@@ -142,44 +143,93 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
             } else {
                 if (productDataForCurrentUser == null) {
                     ServiceCache sc = scDao.getRecord(userId);
-                    if (Constants.SERVICE_TYPE_DUMMY.equals(sc.getCurrentService())) {
-                        initFromLocalDummyData(userId, false);
-                        LOG.info("*****Restore data for local file successfully");
-                        return Constants.INIT_APP_RESULT_SUCCESS_WITH_DUMMY;
+                    if (sc != null) {
+                        if (Constants.SERVICE_TYPE_DUMMY.equals(sc.getCurrentService())) {
+                            initFromLocalDummyData(userId, false);
+                            LOG.info("*****Restore data for local file successfully");
+                            return Constants.INIT_APP_RESULT_SUCCESS_WITH_DUMMY;
+                        } else {
+                            Map<String, Map<String, List<Map<String, Object>>>> productDataOfUser = jsonFactory.fromString(
+                                    sc.getCachedListData(), null);
+                            productData.put(userId, productDataOfUser);
+                            shoppingListNameMap.put(userId, (Map<String, String>) jsonFactory.fromString(sc.getCachedListNames(), null));
+                            LOG.info("*****Restore data for external service successfully");
+                            return Constants.INIT_APP_RESULT_SUCCESS_WITH_DUMMY;
+                        }
                     } else {
-                        Map<String, Map<String, List<Map<String, Object>>>> productDataOfUser = jsonFactory.fromString(sc.getCachedListData(), null);
-                        productData.put(userId, productDataOfUser);
-                        shoppingListNameMap.put(userId, (Map<String,String>)jsonFactory.fromString(sc.getCachedListNames(), null));
-                        LOG.info("*****Restore data for external service successfully");
-                        return Constants.INIT_APP_RESULT_SUCCESS_WITH_DUMMY;
+                        LOG.warning("*****Nothing to be restored");
+                        return Constants.INIT_APP_RESULT_SUCCESS;
                     }
-                }else{
+                } else {
                     return Constants.INIT_APP_RESULT_SUCCESS;
                 }
             }
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, e.getMessage(),e);
+            LOG.log(Level.SEVERE, e.getMessage(), e);
             return Constants.INIT_APP_RESULT_FAIL;
         }
 
     }
 
+    @Override
+    public boolean refreshData(String userId) {
+        initData(userId, null);
+
+        JsonFactory jsonFactory = new JacksonFactory();
+        ServiceCacheDao scDao = ServiceCacheDao.getInstance();
+        try {
+            // Object[] result = ExternalServiceUtil.getConvertedData();
+            Object[] result = new Object[2];
+            Map<String, Map<String, List<Map<String, Object>>>> productDataOfUser = jsonFactory.fromInputStream(
+                    DemoShoppingListProvider.class.getResourceAsStream("/productData_refresh.json"), null);
+
+            Map<String, String> nameMap = createDummyListNameMap();
+            result[0] = productDataOfUser;
+            result[1] = nameMap;
+
+            if (result != null) {
+                Map<String, Map<String, List<Map<String, Object>>>> newData = (Map<String, Map<String, List<Map<String, Object>>>>) result[0];
+                Map<String, Map<String, List<Map<String, Object>>>> oldData = productData.get(userId);
+                if (oldData == null) {
+                    LOG.warning("We can't refresh data for you as you didn't initial the app for user:" + userId);
+                    return false;
+                }
+                Map<String, String> newShoppingListNameMap = (Map<String, String>) result[1];
+                List<String> shoppingListCover = cardDao.getCardsByType(userId, Constants.CARD_TYPE_LIST_COVER, null);
+                if (shoppingListCover.size() != 0) {
+                    if (updateTimeline(userId, oldData, newData, newShoppingListNameMap)) {
+                        productData.put(userId, newData);
+                        shoppingListNameMap.put(userId, newShoppingListNameMap);
+
+                        scDao.storeServiceCache(userId, Constants.SERVICE_TYPE_EXTERNAL, jsonFactory.toString(newData),
+                                jsonFactory.toString(newShoppingListNameMap));
+                        LOG.info("*****Refresh data for user[" + userId + "] successfully");
+                        return true;
+                    }
+                    LOG.warning("You click the restart but no shopping list cover, which is invalid");
+                }
+            }
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "Encounter error when refresh data", e);
+        }
+        return false;
+    }
+
     private void initFromLocalDummyData(String userId, boolean updateDb) {
         JsonFactory jsonFactory = new JacksonFactory();
         try {
-            
+
             Map<String, Map<String, List<Map<String, Object>>>> productDataOfUser = jsonFactory.fromInputStream(
                     DemoShoppingListProvider.class.getResourceAsStream("/productData.json"), null);
             productData.put(userId, productDataOfUser);
-            
-            Map<String,String> nameMap = new HashMap<String,String>();
-            nameMap.put("local-shoppinglist-1", "Food for Jason");
-            nameMap.put("local-shoppinglist-2", "Food for Mom");
+
+            Map<String, String> nameMap = createDummyListNameMap();
+
             shoppingListNameMap.put(userId, nameMap);
-            
-            if (updateDb){
+
+            if (updateDb) {
                 LOG.info("-----Going to update service type:" + Constants.SERVICE_TYPE_DUMMY);
-                ServiceCacheDao.getInstance().storeServiceCache(userId,Constants.SERVICE_TYPE_DUMMY, "", "");
+                ServiceCacheDao.getInstance().storeServiceCache(userId, Constants.SERVICE_TYPE_DUMMY, "", "");
             }
         } catch (IOException e) {
             LOG.severe("Can not init product data from productData.json:" + e.getMessage());
@@ -187,14 +237,68 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
         }
     }
 
+    private boolean updateTimeline(String userId, Map<String, Map<String, List<Map<String, Object>>>> oldData,
+            Map<String, Map<String, List<Map<String, Object>>>> newData, Map<String, String> newShoppingListNameMap) throws IOException {
+        Iterator<String> listIds = newData.keySet().iterator();
+        while (listIds.hasNext()) {
+            String shoppingListId = (String) listIds.next();
+
+            if (oldData.containsKey(shoppingListId)) {
+                List<Map<String, Object>> newProductList = newData.get(shoppingListId).get(Constants.DEFAULT_CATEGORY);
+                List<Map<String, Object>> oldProductlist = oldData.get(shoppingListId).get(Constants.DEFAULT_CATEGORY);
+                String shoppingListCardId = cardDao.getShoppingListCardIdByListId(userId, shoppingListId);
+                if (!shoppingListCardId.equals("")) {
+                    List<String> productCards = cardDao.getCardsByType(userId, Constants.CARD_TYPE_PRODUCT, shoppingListCardId);
+                    // Currently, we don't have an perfect way to determine whether a list is 'READY',"IN PROGRESS" or "DONE", So a turn
+                    // around
+                    // is to use number of product cards to determine.
+                    if (productCards.size() > 0) {
+                        LOG.info("-----Going to check list:" + shoppingListId + " for any update");
+                        updateTimeLineForSingleList(userId, oldProductlist, newProductList, shoppingListCardId);
+                    }
+                }
+            } else {
+                String bundleId = cardDao.getBundleIdFromListCoverCard(userId);
+                MirrorUtil.createShoppingListCard(userId, newData.get(shoppingListId), newShoppingListNameMap.get(shoppingListId),
+                        shoppingListId, bundleId);
+                LOG.info("-----Just sync a new list to glass");
+            }
+        }
+        return true;
+    }
+
+    private void updateTimeLineForSingleList(String userId, List<Map<String, Object>> oldProductlist,
+            List<Map<String, Object>> newProductList, String shoppingListCardId) throws IOException {
+        for (int i = 0; i < newProductList.size(); i++) {
+            Map<String, Object> newProduct = newProductList.get(i);
+            if (!containProcut(newProduct, oldProductlist)) {
+                Map<String, Object> viewBean = new HashMap<>(newProductList.get(i));
+                viewBean.put(Constants.VELOCITY_PARM_ITEMS_IN_CATEGORY, newProductList);
+                MirrorUtil.createItemInfoCard(userId, viewBean, shoppingListCardId);
+                LOG.info("-----Just add a new card:" + viewBean.get(Constants.ITEM_COL_PRDNAME)
+                        + " to your timeline for list which card id is:" + shoppingListCardId);
+            }
+        }
+    }
+
+    private boolean containProcut(Map<String, Object> newProduct, List<Map<String, Object>> oldProductlist) {
+        for (int i = 0; i < oldProductlist.size(); i++) {
+            String newProductId = (String) newProduct.get(Constants.ITEM_COL_PRD_ID);
+            String oldProductId = (String) oldProductlist.get(i).get(Constants.ITEM_COL_PRD_ID);
+            if (oldProductId.equals(newProductId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
-     * The product purchase status is store in our Card table, we need to merge
-     * the status to the cached shopping list
+     * The product purchase status is store in our Card table, we need to merge the status to the cached shopping list
      * 
      * @param userId
      */
     private void mergePurchaseStatus(String userId, String shoppingListId) {
-        LOG.info("userId:" + userId + " shoppingListId:" + shoppingListId + " productData is null:"+ (productData == null));
+        LOG.info("userId:" + userId + " shoppingListId:" + shoppingListId + " productData is null:" + (productData == null));
         Map<String, List<Map<String, Object>>> shoppingList = productData.get(userId).get(shoppingListId);
 
         Iterator<String> iter = shoppingList.keySet().iterator();
@@ -226,14 +330,22 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
         }
     }
 
+    private Map<String, String> createDummyListNameMap() {
+        Map<String, String> nameMap = new HashMap<String, String>();
+        nameMap.put("b6ce7152-f24d-4bab-82ed-a2ad01605654", "Sunday's List");
+        nameMap.put("48adac20-19e6-445c-a157-a2ad01615d6a", "Eric's Request");
+        nameMap.put("d892571e-3647-45bc-bb64-a2ad0160fc11", "Crucial For Mom");
+        nameMap.put("local-shoppinglist-2", "local-shoppinglist-2");
+        return nameMap;
+    }
+
     public static void main(String[] args) {
         JsonFactory jsonFactory = new JacksonFactory();
         Object data = null;
         try {
             // Shopping list will be cached when initialize
             // DemoShoppingListProvider
-            data = jsonFactory.fromInputStream(
-                    DemoShoppingListProvider.class.getResourceAsStream("/productData_real.json"), null);
+            data = jsonFactory.fromInputStream(DemoShoppingListProvider.class.getResourceAsStream("/productData_real.json"), null);
             System.out.println("data:" + data);
         } catch (IOException e) {
             LOG.severe("Can not init product data");

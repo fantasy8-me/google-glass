@@ -53,12 +53,11 @@ import javax.servlet.http.HttpServletResponse;
 public class NotifyServlet extends HttpServlet {
     private static final Logger LOG = Logger.getLogger(NotifyServlet.class.getSimpleName());
 
-    private static final String[] CAT_UTTERANCES = { "<em class='green'>Purr...</em>",
-            "<em class='red'>Hisss... scratch...</em>", "<em class='yellow'>Meow...</em>" };
+    private static final String[] CAT_UTTERANCES = { "<em class='green'>Purr...</em>", "<em class='red'>Hisss... scratch...</em>",
+            "<em class='yellow'>Meow...</em>" };
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException,
-            IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         LOG.info("**********Great, we got a notification");
 
@@ -114,8 +113,7 @@ public class NotifyServlet extends HttpServlet {
         Mirror mirrorClient = MirrorClient.getMirror(credential);
 
         if (credential != null) {
-            LOG.info("-----Access token[" + credential.getAccessToken() + "], Expires In "
-                    + credential.getExpiresInSeconds());
+            LOG.info("-----Access token[" + credential.getAccessToken() + "], Expires In " + credential.getExpiresInSeconds());
         } else {
             LOG.severe("-----Credential object is null for user:" + userId);
         }
@@ -130,24 +128,18 @@ public class NotifyServlet extends HttpServlet {
             MirrorClient.insertTimelineItem(
                     credential,
                     new TimelineItem()
-                            .setText(
-                                    "Java Quick Start says you are now at " + location.getLatitude() + " by "
-                                            + location.getLongitude())
+                            .setText("Java Quick Start says you are now at " + location.getLatitude() + " by " + location.getLongitude())
                             .setNotification(new NotificationConfig().setLevel("DEFAULT")).setLocation(location)
                             .setMenuItems(Lists.newArrayList(new MenuItem().setAction("NAVIGATE"))));
 
-            // This is a location notification. Ping the device with a timeline
-            // item
+            // This is a location notification. Ping the device with a timeline item
             // telling them where they are.
         } else if (notification.getCollection().equals("timeline")) {
             // Get the impacted timeline item
             TimelineItem timelineItem = null;
-            // Eric.TODO, some strange error log found which end here but not
-            // further info, so use
-            // Try catch here to make sure we can got the error details
-            // 2014-1-1, Event the timeline is deleted from timeline. below
-            // method won't return error but a incomplete timeline item(with id
-            // and bundle_id, but not html, text)
+            // Eric.TODO, some strange error log found which end here but not further info, so use Try catch here to make sure we can got
+            // the error details 2014-1-1, Event the timeline is deleted from timeline. below method won't return error but a incomplete
+            // timeline item(with id and bundle_id, but not html, text)
             try {
                 timelineItem = mirrorClient.timeline().get(notification.getItemId()).execute();
             } catch (Throwable t) {
@@ -161,8 +153,8 @@ public class NotifyServlet extends HttpServlet {
                 // If it was a share, and contains a photo, update the photo's
                 // caption to
                 // acknowledge that we got it.
-                if (notification.getUserActions().contains(new UserAction().setType("SHARE"))
-                        && timelineItem.getAttachments() != null && timelineItem.getAttachments().size() > 0) {
+                if (notification.getUserActions().contains(new UserAction().setType("SHARE")) && timelineItem.getAttachments() != null
+                        && timelineItem.getAttachments().size() > 0) {
                     LOG.info("It was a share of a photo. Updating the caption on the photo.");
 
                     String caption = timelineItem.getText();
@@ -175,10 +167,7 @@ public class NotifyServlet extends HttpServlet {
                     TimelineItem itemPatch = new TimelineItem();
                     itemPatch.setText("Java Quick Start got your photo! " + caption);
 
-                    // Patch the item. Notice that since we retrieved the entire
-                    // item above
-                    // in order to access the caption, we could have just
-                    // changed the text
+                    // Patch the item. Notice that since we retrieved the entire item above in order to access the caption, we could have just changed the text
                     // in place and used the update method, but we wanted to
                     // illustrate the
                     // patch method here.
@@ -193,8 +182,8 @@ public class NotifyServlet extends HttpServlet {
                     String utterance = CAT_UTTERANCES[new Random().nextInt(CAT_UTTERANCES.length)];
 
                     timelineItem.setText(null);
-                    timelineItem.setHtml(makeHtmlForCard("<p class='text-auto-size'>" + "Oh, did you say " + noteText
-                            + "? " + utterance + "</p>"));
+                    timelineItem.setHtml(makeHtmlForCard("<p class='text-auto-size'>" + "Oh, did you say " + noteText + "? " + utterance
+                            + "</p>"));
                     timelineItem.setMenuItems(Lists.newArrayList(new MenuItem().setAction("DELETE")));
 
                     mirrorClient.timeline().update(timelineItem.getId(), timelineItem).execute();
@@ -213,6 +202,8 @@ public class NotifyServlet extends HttpServlet {
                         appController.actionFinishShopping(userId, timelineItem.getId());
                     } else if (Constants.MENU_ID_IC_RESTART.equals(ua.getPayload())) {
                         appController.actionRestartFromIC(userId, timelineItem.getId());
+                    }else if (Constants.MENU_ID_IC_REFRESH.equals(ua.getPayload())) {
+                        appController.actionRefresh(userId);
                     }
                 } else if (notification.getUserActions().contains(new UserAction().setType("REPLY"))) {
                     LOG.info("I know you just reply my card");
@@ -224,7 +215,7 @@ public class NotifyServlet extends HttpServlet {
                 } else {
                     LOG.warning("I don't know what to do with this notification, so I'm ignoring it.");
                 }
-            }else{
+            } else {
                 LOG.warning("Update is not triggered by any user action, so I'm ignoring it.");
             }
         }
@@ -232,8 +223,7 @@ public class NotifyServlet extends HttpServlet {
     }
 
     /**
-     * Wraps some HTML content in article/section tags and adds a footer
-     * identifying the card as originating from the Java Quick Start.
+     * Wraps some HTML content in article/section tags and adds a footer identifying the card as originating from the Java Quick Start.
      * 
      * @param content
      *            the HTML content to wrap
