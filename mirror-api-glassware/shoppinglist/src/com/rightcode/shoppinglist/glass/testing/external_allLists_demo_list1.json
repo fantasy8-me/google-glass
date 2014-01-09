@@ -1,0 +1,135 @@
+{ "Id" : "48adac20-19e6-445c-a157-a2ad01615d6a",
+  "ItemsCount" : 4,
+  "LastModifiedDate" : "2014-01-08T21:27:35",
+  "Lines" : [ { "Id" : "1f071743-1fed-412c-80c8-ffd8c4e0800f",
+        "Item" : { "Barcode" : "5340017",
+            "Description" : [ { "Calture" : "en-US",
+                  "TypeCode" : "Long",
+                  "Value" : "Supermarkets Ltd,London,EC1N 2HT"
+                },
+                { "Calture" : "en-US",
+                  "TypeCode" : "Short",
+                  "Value" : "Apples, Basics (each)"
+                }
+              ],
+            "Image" : { "Size" : "icon",
+                "Url" : "http://23.21.131.69/DemoImages/n16.png"
+              },
+            "ItemId" : "5340017",
+            "LinkdedItems" : [  ],
+            "Price" : { "Currency" : "GBP",
+                "UnitOfMeasureCode" : "EA",
+                "Value" : "0.65000"
+              },
+            "Promotions" : [ { "Description" : [ { "Calture" : "en-US",
+                        "TypeCode" : "Short",
+                        "Value" : "Apple Weight new price"
+                      } ],
+                  "EndTime" : "2020-12-17T09:30:47",
+                  "Id" : "123123124",
+                  "StartTime" : "2010-12-17T09:30:47"
+                } ],
+            "Quantity" : { "UnitOfMeasureCode" : "EA",
+                "Value" : "1.000"
+              }
+          },
+        "Quantity" : 1.0,
+        "ShopListId" : "48adac20-19e6-445c-a157-a2ad01615d6a",
+        "Type" : "PRODUCT",
+        "Value" : "5340017",
+        "ViewOrder" : 1
+      },
+      { "Id" : "2d3f618e-5e1b-445e-8f3c-612bcef1137f",
+        "Item" : { "Barcode" : "5340045",
+            "Description" : [ { "Calture" : "en-US",
+                  "TypeCode" : "Long",
+                  "Value" : "Coke is a great-tasting, refreshing soft drink that has provided moments of uplift and happiness every day for over 125 years, Natural flavours and no added preservatives since 1886. Gluten free, dairy free, nut free. Suitable for vegetarians and vegans. "
+                },
+                { "Calture" : "en-US",
+                  "TypeCode" : "Short",
+                  "Value" : "Coca Cola 330ml"
+                }
+              ],
+            "Image" : { "Size" : "icon",
+                "Url" : "http://23.21.131.69/DemoImages/n44.png"
+              },
+            "ItemId" : "5340045",
+            "LinkdedItems" : [  ],
+            "Price" : { "Currency" : "GBP",
+                "UnitOfMeasureCode" : "EA",
+                "Value" : "0.65000"
+              },
+            "Quantity" : { "UnitOfMeasureCode" : "EA",
+                "Value" : "1.000"
+              }
+          },
+        "Quantity" : 1.0,
+        "ShopListId" : "48adac20-19e6-445c-a157-a2ad01615d6a",
+        "Type" : "PRODUCT",
+        "Value" : "5340045",
+        "ViewOrder" : 1
+      },
+      { "Id" : "6feca85f-3592-4ec8-8fa1-ba950429d3b3",
+        "Item" : { "Barcode" : "5340002",
+            "Description" : [ { "Calture" : "en-US",
+                  "TypeCode" : "Long",
+                  "Value" : "Pasteurized, homogenized, whole fresh filtered milk."
+                },
+                { "Calture" : "en-US",
+                  "TypeCode" : "Short",
+                  "Value" : "Whole milk"
+                }
+              ],
+            "Image" : { "Size" : "icon",
+                "Url" : "http://23.21.131.69/DemoImages/n1.png"
+              },
+            "ItemId" : "5340002",
+            "LinkdedItems" : [  ],
+            "Price" : { "Currency" : "GBP",
+                "UnitOfMeasureCode" : "EA",
+                "Value" : "1.50000"
+              },
+            "Quantity" : { "UnitOfMeasureCode" : "EA",
+                "Value" : "1.000"
+              }
+          },
+        "Quantity" : 1.0,
+        "ShopListId" : "48adac20-19e6-445c-a157-a2ad01615d6a",
+        "Type" : "PRODUCT",
+        "Value" : "5340002",
+        "ViewOrder" : 1
+      },
+      { "Id" : "e279487a-4f9e-4fd7-a506-3a66d94ca0b7",
+        "Item" : { "Barcode" : "5340091",
+            "Description" : [ { "Calture" : "en-US",
+                  "TypeCode" : "Long",
+                  "Value" : "Watermelon"
+                },
+                { "Calture" : "en-US",
+                  "TypeCode" : "Short",
+                  "Value" : "Watermelon"
+                }
+              ],
+            "Image" : { "Size" : "icon",
+                "Url" : "http://23.21.131.69/DemoImages/n90.jpg"
+              },
+            "ItemId" : "5340091",
+            "LinkdedItems" : [  ],
+            "Price" : { "Currency" : "GBP",
+                "UnitOfMeasureCode" : "EA",
+                "Value" : "2.25000"
+              },
+            "Quantity" : { "UnitOfMeasureCode" : "EA",
+                "Value" : "1.000"
+              }
+          },
+        "Quantity" : 1.0,
+        "ShopListId" : "48adac20-19e6-445c-a157-a2ad01615d6a",
+        "Type" : "PRODUCT",
+        "Value" : "5340091",
+        "ViewOrder" : 1
+      }
+    ],
+  "Name" : "Eric's Request",
+  "ViewOrder" : 0
+}

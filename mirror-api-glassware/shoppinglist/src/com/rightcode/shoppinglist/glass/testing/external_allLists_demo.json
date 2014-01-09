@@ -1,0 +1,92 @@
+[ { "Id" : "b6ce7152-f24d-4bab-82ed-a2ad01605654",
+    "ItemsCount" : 3,
+    "LastModifiedDate" : "2014-01-08T21:24:16",
+    "Lines" : [ { "Id" : "c109bb8b-1aab-4da9-9f51-3b48fcfaa0e7",
+          "Quantity" : 1.0,
+          "ShopListId" : "b6ce7152-f24d-4bab-82ed-a2ad01605654",
+          "Type" : "PRODUCT",
+          "Value" : "5340060",
+          "ViewOrder" : 1
+        },
+        { "Id" : "f6d31c2d-433a-4ae2-bbf7-bae58f035fd8",
+          "Quantity" : 1.0,
+          "ShopListId" : "b6ce7152-f24d-4bab-82ed-a2ad01605654",
+          "Type" : "PRODUCT",
+          "Value" : "5340037",
+          "ViewOrder" : 1
+        },
+        { "Id" : "f88c5e91-1c9b-46df-9e13-fe1194259e5c",
+          "Quantity" : 1.0,
+          "ShopListId" : "b6ce7152-f24d-4bab-82ed-a2ad01605654",
+          "Type" : "PRODUCT",
+          "Value" : "5340062",
+          "ViewOrder" : 1
+        }
+      ],
+    "Name" : "Sunday's List",
+    "ViewOrder" : 0
+  },
+  { "Id" : "d892571e-3647-45bc-bb64-a2ad0160fc11",
+    "ItemsCount" : 3,
+    "LastModifiedDate" : "2014-01-08T21:26:01",
+    "Lines" : [ { "Id" : "94a4357c-142b-4437-bc74-18884adb493d",
+          "Quantity" : 1.0,
+          "ShopListId" : "d892571e-3647-45bc-bb64-a2ad0160fc11",
+          "Type" : "PRODUCT",
+          "Value" : "5340014",
+          "ViewOrder" : 1
+        },
+        { "Id" : "ab794281-d65b-452f-97af-f230dd4ff681",
+          "Quantity" : 1.0,
+          "ShopListId" : "d892571e-3647-45bc-bb64-a2ad0160fc11",
+          "Type" : "PRODUCT",
+          "Value" : "5340055",
+          "ViewOrder" : 1
+        },
+        { "Id" : "0a4821cb-cc2e-4692-8e29-026d40725451",
+          "Quantity" : 1.0,
+          "ShopListId" : "d892571e-3647-45bc-bb64-a2ad0160fc11",
+          "Type" : "PRODUCT",
+          "Value" : "5340102",
+          "ViewOrder" : 1
+        }
+      ],
+    "Name" : "Crucial For Mom",
+    "ViewOrder" : 0
+  },
+  { "Id" : "48adac20-19e6-445c-a157-a2ad01615d6a",
+    "ItemsCount" : 4,
+    "LastModifiedDate" : "2014-01-08T21:27:35",
+    "Lines" : [ { "Id" : "1f071743-1fed-412c-80c8-ffd8c4e0800f",
+          "Quantity" : 1.0,
+          "ShopListId" : "48adac20-19e6-445c-a157-a2ad01615d6a",
+          "Type" : "PRODUCT",
+          "Value" : "5340017",
+          "ViewOrder" : 1
+        },
+        { "Id" : "2d3f618e-5e1b-445e-8f3c-612bcef1137f",
+          "Quantity" : 1.0,
+          "ShopListId" : "48adac20-19e6-445c-a157-a2ad01615d6a",
+          "Type" : "PRODUCT",
+          "Value" : "5340045",
+          "ViewOrder" : 1
+        },
+        { "Id" : "6feca85f-3592-4ec8-8fa1-ba950429d3b3",
+          "Quantity" : 1.0,
+          "ShopListId" : "48adac20-19e6-445c-a157-a2ad01615d6a",
+          "Type" : "PRODUCT",
+          "Value" : "5340002",
+          "ViewOrder" : 1
+        },
+        { "Id" : "e279487a-4f9e-4fd7-a506-3a66d94ca0b7",
+          "Quantity" : 1.0,
+          "ShopListId" : "48adac20-19e6-445c-a157-a2ad01615d6a",
+          "Type" : "PRODUCT",
+          "Value" : "5340091",
+          "ViewOrder" : 1
+        }
+      ],
+    "Name" : "Eric's Request",
+    "ViewOrder" : 0
+  }
+]

@@ -34,12 +34,12 @@ public class ExternalServiceUtil {
     /**
      * To switch between external and local dummy response, use only for testing
      */
-    private static boolean enableExternal = false;
+    private static boolean enableExternal = true;
 
     public static Object[] getConvertedData() {
 
-//        ExecutorService exec = Executors.newCachedThreadPool(ThreadManager.currentRequestThreadFactory());
-        ExecutorService exec = Executors.newCachedThreadPool();
+        ExecutorService exec = Executors.newCachedThreadPool(ThreadManager.currentRequestThreadFactory());
+//        ExecutorService exec = Executors.newCachedThreadPool();//For local testing
         FeatchTask task = new FeatchTask();
         Future<Object[]> future = exec.submit(task);
         Object[] taskResult = null;

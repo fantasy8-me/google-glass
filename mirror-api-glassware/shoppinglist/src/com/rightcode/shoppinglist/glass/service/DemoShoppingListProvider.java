@@ -178,14 +178,14 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
         JsonFactory jsonFactory = new JacksonFactory();
         ServiceCacheDao scDao = ServiceCacheDao.getInstance();
         try {
-            // Object[] result = ExternalServiceUtil.getConvertedData();
-            Object[] result = new Object[2];
-            Map<String, Map<String, List<Map<String, Object>>>> productDataOfUser = jsonFactory.fromInputStream(
-                    DemoShoppingListProvider.class.getResourceAsStream("/productData_refresh.json"), null);
-
-            Map<String, String> nameMap = createDummyListNameMap();
-            result[0] = productDataOfUser;
-            result[1] = nameMap;
+             Object[] result = ExternalServiceUtil.getConvertedData();
+//            Object[] result = new Object[2]; Local testing
+//            Map<String, Map<String, List<Map<String, Object>>>> productDataOfUser = jsonFactory.fromInputStream(
+//                    DemoShoppingListProvider.class.getResourceAsStream("/com/rightcode/shoppinglist/glass/testing/productData_refresh.json"), null);
+//
+//            Map<String, String> nameMap = createDummyListNameMap();
+//            result[0] = productDataOfUser;
+//            result[1] = nameMap;
 
             if (result != null) {
                 Map<String, Map<String, List<Map<String, Object>>>> newData = (Map<String, Map<String, List<Map<String, Object>>>>) result[0];
