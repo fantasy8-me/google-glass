@@ -250,8 +250,8 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
                     // around is to use number of product cards to determine.
                     if (productCards.size() > 0) {
                         LOG.info("-----Going to check list:" + shoppingListId + " for any update");
-                        MirrorUtil.updateShoppingListCardContent(userId, shoppingListCardId, newData.get(shoppingListId),
-                                newShoppingListNameMap.get(shoppingListId), Constants.SHOPPING_LIST_STATUS_IN_PROGRESS);                        
+//                        MirrorUtil.updateShoppingListCardContent(userId, shoppingListCardId, newData.get(shoppingListId),
+//                                newShoppingListNameMap.get(shoppingListId), Constants.SHOPPING_LIST_STATUS_IN_PROGRESS);                        
                         updateTimeLineForSingleList(userId, oldProductlist, newProductList, shoppingListCardId);
                     }
                 }
@@ -275,12 +275,14 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
                 MirrorUtil.createItemInfoCard(userId, viewBean, shoppingListCardId);
                 LOG.info("-----Just add a new card:" + viewBean.get(Constants.ITEM_COL_PRDNAME)
                         + " to your timeline for list which card id is:" + shoppingListCardId);
-            } else {
-                String cardId = cardDao.getCardIdByRef(userId, (String) newProduct.get(Constants.ITEM_COL_PRD_ID),
-                        Constants.CARD_TYPE_PRODUCT);
-                MirrorUtil.updateProductCardContent(userId, newProduct, cardId, newProductList);
-                LOG.info("newProduct:"+newProduct);
-            }
+            } 
+            
+//            else {
+//                String cardId = cardDao.getCardIdByRef(userId, (String) newProduct.get(Constants.ITEM_COL_PRD_ID),
+//                        Constants.CARD_TYPE_PRODUCT);
+//                MirrorUtil.updateProductCardContent(userId, newProduct, cardId, newProductList);
+//                LOG.info("newProduct:"+newProduct);
+//            }
         }
     }
 
