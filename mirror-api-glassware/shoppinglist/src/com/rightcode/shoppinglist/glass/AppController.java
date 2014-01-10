@@ -112,20 +112,24 @@ public class AppController {
 
     }
 
-    public int initApp(String userId, String serviceType) throws IOException {
-        //This is a speical handling for demo service, not supported for other service provider
-        int result = ((DemoShoppingListProvider)shoppingListProvider).initData(userId, serviceType);
-        if(result != Constants.INIT_APP_RESULT_FAIL){
-            Credential credential = AuthUtil.getCredential(userId);
-            Mirror mirrorClient = MirrorClient.getMirror(credential);
-            List<String> icCard = cardDao.getCardsByType(userId, Constants.CARD_TYPE_IC, null);
-            if(icCard != null && icCard.size() == 0){
-                createInitialCard(mirrorClient, userId); 
-            }else{
-                LOG.warning("You might click the initial button for more than once, we will only create one IC card for you");
-            }
+    public String initApp(String userId) throws IOException {
+
+        if (cardDao.getNumberOfCards(userId) > 0) {
+            cleanUpAllCards(userId, null);
         }
-        return result;
+        // This is a speical handling for demo service, not supported for other service provider
+        // int result = ((DemoShoppingListProvider)shoppingListProvider).initData(userId, serviceType);
+        // if(result != Constants.INIT_APP_RESULT_FAIL){
+        String msg = null;
+        Credential credential = AuthUtil.getCredential(userId);
+        Mirror mirrorClient = MirrorClient.getMirror(credential);
+        if (createInitialCard(mirrorClient, userId)) {
+            msg = "An intial card was created for you in your glass. Pin it and start shopping by fetch shopping list from our exteranl service provider";
+        } else {
+            msg = "Fail to create IC card for you, please contact our support team for details";
+        }
+        // }
+        return msg;
     }
 
     public void actionStartShopping(String userId, String shoppingListCardId) throws IOException {
@@ -133,8 +137,7 @@ public class AppController {
         Mirror mirrorClient = MirrorClient.getMirror(credential);
         bundleIdSuffix = String.valueOf(System.currentTimeMillis());
 
-        List<String> prodcutCards = cardDao.getCardsByType(userId, Constants.CARD_TYPE_PRODUCT,
-                shoppingListCardId);
+        List<String> prodcutCards = cardDao.getCardsByType(userId, Constants.CARD_TYPE_PRODUCT, shoppingListCardId);
         if (prodcutCards != null && prodcutCards.size() > 0) {
             for (int i = 0; i < prodcutCards.size(); i++) {
                 MirrorUtil.touchCard(mirrorClient, prodcutCards.get(i));
@@ -142,26 +145,26 @@ public class AppController {
             LOG.info("[Starting shopping] is clicked again, just moved all card to front of your timeline");
         } else {
             String shoppingListId = cardDao.getCardRefById(userId, shoppingListCardId);
-            updateShoppingListCard(mirrorClient, userId, shoppingListId, shoppingListCardId,
-                    Constants.SHOPPING_LIST_STATUS_IN_PROGRESS, Constants.SHOPPING_LIST_STATUS_READY);
+            LOG.info("Starting shopping list:" + shoppingListId + " cardId:" + shoppingListCardId);
+            updateShoppingListCard(mirrorClient, userId, shoppingListId, shoppingListCardId, Constants.SHOPPING_LIST_STATUS_IN_PROGRESS,
+                    Constants.SHOPPING_LIST_STATUS_READY);
 
-            Map<String, List<Map<String, Object>>> shoppingList = shoppingListProvider.getShoppingList(userId,
-                    shoppingListId);
+            Map<String, List<Map<String, Object>>> shoppingList = shoppingListProvider.getShoppingList(userId, shoppingListId);
             Iterator<String> iter = shoppingList.keySet().iterator();
             while (iter.hasNext()) {
                 String category = (String) iter.next();
                 List<Map<String, Object>> productList = shoppingList.get(category);
 
-                String bundleId = getBundleId(shoppingListId + "_" + category);
+                // String bundleId = getBundleId(shoppingListId + "_" + category);
 
-//                Map<String, Object> bundleConverViewbean = buildBundleConverViewBean(category, 0, productList.size(),
-//                        shoppingListProvider.getShoppingListName(userId, shoppingListId));
-                //createItemConverCard(mirrorClient, bundleConverViewbean, bundleId, userId, shoppingListCardId);
+                // Map<String, Object> bundleConverViewbean = buildBundleConverViewBean(category, 0, productList.size(),
+                // shoppingListProvider.getShoppingListName(userId, shoppingListId));
+                // createItemConverCard(mirrorClient, bundleConverViewbean, bundleId, userId, shoppingListCardId);
 
                 for (Iterator<Map<String, Object>> iterator = productList.iterator(); iterator.hasNext();) {
                     Map<String, Object> viewbean = new HashMap<String, Object>(iterator.next());
                     viewbean.put(Constants.VELOCITY_PARM_ITEMS_IN_CATEGORY, productList);
-                    MirrorUtil.createItemInfoCard(userId,viewbean,shoppingListCardId);
+                    MirrorUtil.createItemInfoCard(userId, viewbean, shoppingListCardId);
                 }
             }
             LOG.info("Starting shopping done, all shopping list cards have ben created");
@@ -173,8 +176,8 @@ public class AppController {
         Mirror mirrorClient = MirrorClient.getMirror(credential);
         cleanUpAllCards(userId, shoppingListCardId);
         String shoppingListId = cardDao.getCardRefById(userId, shoppingListCardId);
-        updateShoppingListCard(mirrorClient, userId, shoppingListId, shoppingListCardId,
-                Constants.SHOPPING_LIST_STATUS_DONE, Constants.SHOPPING_LIST_STATUS_IN_PROGRESS);
+        updateShoppingListCard(mirrorClient, userId, shoppingListId, shoppingListCardId, Constants.SHOPPING_LIST_STATUS_DONE,
+                Constants.SHOPPING_LIST_STATUS_IN_PROGRESS);
         LOG.info("-----Finish Shopping Done");
     }
 
@@ -185,6 +188,13 @@ public class AppController {
         MirrorUtil.touchCard(mirrorClient, cardIds.get(0));
     }
 
+    /**
+     * @param userId
+     * @param shoppingListCardId
+     *            pass null if clean all shopping list
+     * @return
+     * @throws IOException
+     */
     public boolean cleanUpAllCards(String userId, String shoppingListCardId) throws IOException {
         List<String> allCards = cardDao.getCardsByType(userId, null, shoppingListCardId);
         return cleanUpCards(userId, allCards);
@@ -230,38 +240,41 @@ public class AppController {
     }
 
     /**
-     * Called by Notification Servlet
+     * 
      * 
      * @param userId
      * @throws IOException
      */
-    public void actionStartShoppingListFromIC(String userId, String cardIdOfIC) throws IOException {
-        
-        List<String> listCover = cardDao.getCardsByType(userId, Constants.CARD_TYPE_LIST_COVER, null);
-        if(listCover != null && listCover.size() == 0){
-            Credential credential = AuthUtil.getCredential(userId);
-            Mirror mirrorClient = MirrorClient.getMirror(credential);
-            bundleIdSuffix = String.valueOf(System.currentTimeMillis());
-            
-            updateICCard(mirrorClient, userId, cardIdOfIC, false);
+    public void actionFetchShoppingLists(String userId, String cardIdOfIC) throws IOException {
 
-            String bundleId = getBundleId("listCover");
-            createListCoverCard(mirrorClient, userId, bundleId);
-            
-            Map<String, Map<String, List<Map<String, Object>>>> shoppingLists = shoppingListProvider
-                    .getAllShoppingLists(userId);
+        if (shoppingListProvider.fetchShoppingLists(userId) > 0) {
+            List<String> listCover = cardDao.getCardsByType(userId, Constants.CARD_TYPE_LIST_COVER, null);
+            if (listCover != null && listCover.size() == 0) {
+                Credential credential = AuthUtil.getCredential(userId);
+                Mirror mirrorClient = MirrorClient.getMirror(credential);
+                bundleIdSuffix = String.valueOf(System.currentTimeMillis());
 
-            Iterator<String> iter = shoppingLists.keySet().iterator();
+                updateICCard(mirrorClient, userId, cardIdOfIC, false);
 
-            while (iter.hasNext()) {
-                String shoppingListId = (String) iter.next();
-                Map<String, List<Map<String, Object>>> shoppingList = shoppingLists.get(shoppingListId);
-                String shoppingListName = shoppingListProvider.getShoppingListName(userId, shoppingListId);
+                String bundleId = getBundleId("listCover");
+                createListCoverCard(mirrorClient, userId, bundleId);
 
-                MirrorUtil.createShoppingListCard(userId,shoppingList,shoppingListName, shoppingListId, bundleId);
-            }            
-        }else{
-            LOG.warning("-----You have created the list cover card for this project id, we won't create the them for you again");
+                Map<String, Map<String, List<Map<String, Object>>>> shoppingLists = shoppingListProvider.getAllShoppingLists(userId);
+
+                Iterator<String> iter = shoppingLists.keySet().iterator();
+
+                while (iter.hasNext()) {
+                    String shoppingListId = (String) iter.next();
+                    Map<String, List<Map<String, Object>>> shoppingList = shoppingLists.get(shoppingListId);
+                    String shoppingListName = shoppingListProvider.getShoppingListName(userId, shoppingListId);
+
+                    MirrorUtil.createShoppingListCard(userId, shoppingList, shoppingListName, shoppingListId, bundleId);
+                }
+            } else {
+                LOG.warning("-----You have created the list cover card for this project id, we won't create the them for you again");
+            }
+        } else {
+            LOG.severe("Fail to fetch data from exteranl service, even not able to load data from local dummy file");
         }
     }
 
@@ -269,7 +282,8 @@ public class AppController {
 
         Credential credential = AuthUtil.getCredential(userId);
         Mirror mirrorClient = MirrorClient.getMirror(credential);
-        String[] types = new String[]{Constants.CARD_TYPE_CATEGORY_COVER, Constants.CARD_TYPE_LIST_COVER, Constants.CARD_TYPE_PRODUCT, Constants.CARD_TYPE_SHOPPINGLIST};
+        String[] types = new String[] { Constants.CARD_TYPE_CATEGORY_COVER, Constants.CARD_TYPE_LIST_COVER, Constants.CARD_TYPE_PRODUCT,
+                Constants.CARD_TYPE_SHOPPINGLIST };
         List<String> cardsExceptIC = new ArrayList<String>();
         for (int i = 0; i < types.length; i++) {
             cardsExceptIC.addAll(cardDao.getCardsByType(userId, types[i], null));
@@ -278,14 +292,12 @@ public class AppController {
         updateICCard(mirrorClient, userId, cardIdOfIC, true);
 
     }
-    
+
     public void actionRefresh(String userId) throws IOException {
-        Credential credential = AuthUtil.getCredential(userId);
-        Mirror mirrorClient = MirrorClient.getMirror(credential);
         shoppingListProvider.refreshData(userId);
     }
 
-    private void createListCoverCard(Mirror mirrorClient, String userId, String bundleId) {
+    private void createListCoverCard(Mirror mirrorClient, String userId, String bundleId) throws IOException {
         TimelineItem returnItem = null;
         String html = VelocityHelper.getFinalStr(new HashMap<String, Object>(), "listCover.vm");
 
@@ -301,29 +313,29 @@ public class AppController {
             cardDao.insertCard(returnItem.getId(), userId, Constants.CARD_TYPE_LIST_COVER, bundleId, null);
             LOG.info("Bundle cover card for list has been created:[" + returnItem.getId() + "] [" + userId + "]");
         } catch (IOException e) {
-            LOG.severe("Error when create list conver card");
-            LOG.log(Level.SEVERE, e.getMessage(), e);
+            LOG.log(Level.SEVERE, "Error when create list conver card", e);
+            throw e;// re-throw the exception to break the flow
         }
     }
 
-    private Map<String, Object> buildBundleConverViewBean(String category, int numOfCompleted, int subTotoal,
-            String listName) {
-        
+    @Deprecated
+    private Map<String, Object> buildBundleConverViewBean(String category, int numOfCompleted, int subTotoal, String listName) {
+
         Map<String, String> categoryMap = refDataManager.getCategorySetting(category);
-        if(categoryMap == null){
-            categoryMap = new HashMap<String,String>();
+        if (categoryMap == null) {
+            categoryMap = new HashMap<String, String>();
             categoryMap.put("imgUrl", "");
             categoryMap.put("title", "Others");
         }
         Map<String, Object> bundleConverViewbean = new HashMap<String, Object>(categoryMap);
-        
+
         bundleConverViewbean.put(Constants.VELOCITY_PARM_SUBTOTOAL, subTotoal);
         bundleConverViewbean.put(Constants.VELOCITY_PARM_COMPLETED_IN_CATEGORY, numOfCompleted);
         bundleConverViewbean.put(Constants.VELOCICY_PARM_SHOPPING_LIST_NAME, listName);
         return bundleConverViewbean;
     }
 
-    private void createInitialCard(Mirror mirrorClient, String userId) {
+    private boolean createInitialCard(Mirror mirrorClient, String userId) {
         String html = VelocityHelper.getFinalStr(null, "initialCard.vm");
 
         TimelineItem timelineItem = new TimelineItem();
@@ -333,10 +345,9 @@ public class AppController {
 
         // And custom actions
         List<MenuValue> menuValues = new ArrayList<MenuValue>();
-        menuValues.add(new MenuValue().setIconUrl(Constants.MENU_ICON_IC_STARTSHOPPING).setDisplayName(
-                Constants.MENU_NAME_IC_STARTSHOPPING));
-        menuItemList.add(new MenuItem().setValues(menuValues).setId(Constants.MENU_ID_IC_STARTSHOPPING)
-                .setAction("CUSTOM"));
+        menuValues.add(new MenuValue().setIconUrl(Constants.MENU_ICON_IC_STARTSHOPPING)
+                .setDisplayName(Constants.MENU_NAME_IC_STARTSHOPPING));
+        menuItemList.add(new MenuItem().setValues(menuValues).setId(Constants.MENU_ID_IC_STARTSHOPPING).setAction("CUSTOM"));
         menuItemList.add(new MenuItem().setAction("TOGGLE_PINNED"));
 
         timelineItem.setMenuItems(menuItemList);
@@ -346,10 +357,11 @@ public class AppController {
             TimelineItem item = mirrorClient.timeline().insert(timelineItem).execute();
             cardDao.insertCard(item.getId(), userId, Constants.CARD_TYPE_IC, null, null);
             LOG.info("-----Initial Card created:[" + item.getId() + "] [" + userId + "]");
-        } catch (IOException e) {
-            LOG.severe("Error when create initial card");
-            LOG.log(Level.SEVERE, e.getMessage(), e);
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "Error occur when create initial card", e);
+            return false;
         }
+        return true;
     }
 
     /**
@@ -390,7 +402,7 @@ public class AppController {
 
     public void markOrUnMarkProduct(Mirror mirrorClient, String userId, TimelineItem timelineItem, boolean isMark) {
         String productCardId = timelineItem.getId();
-        //String bundleId = timelineItem.getBundleId();
+        // String bundleId = timelineItem.getBundleId();
 
         String productId = cardDao.getCardRefById(userId, productCardId);
         String shoppingListCardId = cardDao.getShoppingListCardByProductCard(userId, productCardId);
@@ -402,11 +414,10 @@ public class AppController {
         else
             shoppingListProvider.unMarkProduct(userId, shoppingListId, productId, productCardId);
 
-        Map<String, Object> viewBean = new HashMap<String, Object>(shoppingListProvider.getProductData(userId,
-                shoppingListId, productId));
+        Map<String, Object> viewbean = new HashMap<String, Object>(shoppingListProvider.getProductData(userId, shoppingListId, productId));
         List<Map<String, Object>> subShoppingList = shoppingListProvider.getShoppingList(userId, shoppingListId,
-                (String) viewBean.get(Constants.ITEM_COL_CATEGORY));
-        int[] completedStatus = MirrorUtil.calculateCompletedStatus(subShoppingList);
+                (String) viewbean.get(Constants.ITEM_COL_CATEGORY));
+        // int[] completedStatus = MirrorUtil.calculateCompletedStatus(subShoppingList);
 
         // Create an empty timeline item for patch
         TimelineItem patchTimelineItem = new TimelineItem();
@@ -416,30 +427,24 @@ public class AppController {
 
         List<MenuValue> menuValues = new ArrayList<MenuValue>();
         if (isMark) {
-            menuValues.add(new MenuValue().setIconUrl(Constants.MENU_ICON_UNMARK).setDisplayName(
-                    Constants.MENU_NAME_UNMARK));
-            patchTimelineItem.getMenuItems().add(
-                    new MenuItem().setValues(menuValues).setId(Constants.MENU_ID_UNMARK).setAction("CUSTOM"));
+            menuValues.add(new MenuValue().setIconUrl(Constants.MENU_ICON_UNMARK).setDisplayName(Constants.MENU_NAME_UNMARK));
+            patchTimelineItem.getMenuItems().add(new MenuItem().setValues(menuValues).setId(Constants.MENU_ID_UNMARK).setAction("CUSTOM"));
         } else {
-            menuValues.add(new MenuValue().setIconUrl(Constants.MENU_ICON_MARK)
-                    .setDisplayName(Constants.MENU_NAME_MARK));
-            patchTimelineItem.getMenuItems().add(
-                    new MenuItem().setValues(menuValues).setId(Constants.MENU_ID_MARK).setAction("CUSTOM"));
+            menuValues.add(new MenuValue().setIconUrl(Constants.MENU_ICON_MARK).setDisplayName(Constants.MENU_NAME_MARK));
+            patchTimelineItem.getMenuItems().add(new MenuItem().setValues(menuValues).setId(Constants.MENU_ID_MARK).setAction("CUSTOM"));
         }
 
-        viewBean.put(Constants.VELOCITY_PARM_COMPLETED_IN_CATEGORY, completedStatus[0]);
-        viewBean.put(Constants.VELOCITY_PARM_SUBTOTOAL, completedStatus[1]);
-        viewBean.put(Constants.VELOCITY_PARM_ITEMS_IN_CATEGORY, subShoppingList);
-        String html = VelocityHelper.getFinalStr(viewBean, "productInfo.vm");
+        viewbean.put(Constants.VELOCITY_PARM_ITEMS_IN_CATEGORY, subShoppingList);
+        String html = VelocityHelper.getFinalStr(viewbean, "productInfo.vm");
         patchTimelineItem.setHtml(html);
 
         try {
             mirrorClient.timeline().patch(productCardId, patchTimelineItem).execute();
-//            updateCategoryCoverCard(mirrorClient, userId, shoppingListId, shoppingListCardId, bundleId,
-//                    (String) viewBean.get(Constants.ITEM_COL_CATEGORY), completedStatus[0], completedStatus[1],
-//                    shoppingListProvider.getShoppingListName(userId, shoppingListId));
-            updateShoppingListCard(mirrorClient, userId, shoppingListId, shoppingListCardId,
-                    Constants.SHOPPING_LIST_STATUS_IN_PROGRESS, Constants.SHOPPING_LIST_STATUS_IN_PROGRESS);
+            // updateCategoryCoverCard(mirrorClient, userId, shoppingListId, shoppingListCardId, bundleId,
+            // (String) viewbean.get(Constants.ITEM_COL_CATEGORY), completedStatus[0], completedStatus[1],
+            // shoppingListProvider.getShoppingListName(userId, shoppingListId));
+            updateShoppingListCard(mirrorClient, userId, shoppingListId, shoppingListCardId, Constants.SHOPPING_LIST_STATUS_IN_PROGRESS,
+                    Constants.SHOPPING_LIST_STATUS_IN_PROGRESS);
 
             LOG.info("--------Purchase status of item[" + productCardId + "] is updated to:" + isMark);
         } catch (IOException e) {
@@ -460,22 +465,20 @@ public class AppController {
             List<MenuItem> menuItemList = new ArrayList<MenuItem>();
             timelineItem.setMenuItems(menuItemList);
             List<MenuValue> menuValues = new ArrayList<MenuValue>();
-            if(restart){
+            if (restart) {
                 menuValues.add(new MenuValue().setIconUrl(Constants.MENU_ICON_IC_STARTSHOPPING).setDisplayName(
                         Constants.MENU_NAME_IC_STARTSHOPPING));
                 timelineItem.getMenuItems().add(
                         new MenuItem().setValues(menuValues).setId(Constants.MENU_ID_IC_STARTSHOPPING).setAction("CUSTOM"));
-            }else{
-                menuValues.add(new MenuValue().setIconUrl(Constants.MENU_ICON_IC_REFRESH).setDisplayName(
-                        Constants.MENU_NAME_IC_REFRESH));                
+            } else {
+                menuValues.add(new MenuValue().setIconUrl(Constants.MENU_ICON_IC_REFRESH).setDisplayName(Constants.MENU_NAME_IC_REFRESH));
                 timelineItem.getMenuItems().add(
                         new MenuItem().setValues(menuValues).setId(Constants.MENU_ID_IC_REFRESH).setAction("CUSTOM"));
                 menuValues = new ArrayList<MenuValue>();
-                menuValues.add(new MenuValue().setIconUrl(Constants.MENU_ICON_IC_RESTART).setDisplayName(
-                        Constants.MENU_NAME_IC_RESTART));
+                menuValues.add(new MenuValue().setIconUrl(Constants.MENU_ICON_IC_RESTART).setDisplayName(Constants.MENU_NAME_IC_RESTART));
                 timelineItem.getMenuItems().add(
-                        new MenuItem().setValues(menuValues).setId(Constants.MENU_ID_IC_RESTART).setAction("CUSTOM"));                
-                
+                        new MenuItem().setValues(menuValues).setId(Constants.MENU_ID_IC_RESTART).setAction("CUSTOM"));
+
             }
             mirrorClient.timeline().patch(cardId, timelineItem).execute();
         } catch (IOException e) {
@@ -484,11 +487,10 @@ public class AppController {
         }
     }
 
-    private void updateShoppingListCard(Mirror mirrorClient, String userId, String shoppingListId,
-            String shoppingListCardId, String status, String preStatus) {
+    private void updateShoppingListCard(Mirror mirrorClient, String userId, String shoppingListId, String shoppingListCardId,
+            String status, String preStatus) {
         try {
-            String html = VelocityHelper.getFinalStr(buildShoppingListViewBean(userId, shoppingListId, status),
-                    "shoppingList.vm");
+            String html = VelocityHelper.getFinalStr(buildShoppingListViewBean(userId, shoppingListId, status), "shoppingList.vm");
             TimelineItem timelineItem = new TimelineItem();
             timelineItem.setHtml(html);
             if (!status.equals(preStatus)) {
@@ -499,8 +501,7 @@ public class AppController {
                     menuValues.add(new MenuValue().setIconUrl(Constants.MENU_ICON_FINISHSHOPPING).setDisplayName(
                             Constants.MENU_NAME_FINISHSHOPPING));
                     timelineItem.getMenuItems().add(
-                            new MenuItem().setValues(menuValues).setId(Constants.MENU_ID_FINISHSHOPPING)
-                                    .setAction("CUSTOM"));
+                            new MenuItem().setValues(menuValues).setId(Constants.MENU_ID_FINISHSHOPPING).setAction("CUSTOM"));
                 }
             }
             mirrorClient.timeline().patch(shoppingListCardId, timelineItem).execute();
@@ -511,31 +512,31 @@ public class AppController {
     }
 
     @SuppressWarnings("unused")
-    private void updateCategoryCoverCard(Mirror mirrorClient, String userId, String shoppingListId,
-            String shoppingListCardId, String bundleId, String category, int numOfCompleted, int subTotal,
-            String shoppingListName) {
+    @Deprecated
+    private void updateCategoryCoverCard(Mirror mirrorClient, String userId, String shoppingListId, String shoppingListCardId,
+            String bundleId, String category, int numOfCompleted, int subTotal, String shoppingListName) {
         String cardId = cardDao.getBundleCoverCardId(userId, bundleId, shoppingListCardId);
 
-        Map<String, Object> viewBean = buildBundleConverViewBean(category, numOfCompleted, subTotal, shoppingListName);
+        Map<String, Object> viewbean = buildBundleConverViewBean(category, numOfCompleted, subTotal, shoppingListName);
 
         try {
 
             TimelineItem timelineItem = new TimelineItem();
 
-            String html = VelocityHelper.getFinalStr(viewBean, "bundleConver.vm");
+            String html = VelocityHelper.getFinalStr(viewbean, "bundleConver.vm");
             timelineItem.setHtml(html);
 
             mirrorClient.timeline().patch(cardId, timelineItem).execute();
         } catch (IOException e) {
-            LOG.severe("Error occur while updating the bundle cover card for:" + userId + " category:" + category
-                    + " bundleId:" + bundleId);
+            LOG.severe("Error occur while updating the bundle cover card for:" + userId + " category:" + category + " bundleId:" + bundleId);
             LOG.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 
     @SuppressWarnings("unused")
-    private TimelineItem createItemConverCard(Mirror mirrorClient, Map<String, Object> itemData, String bundleId,
-            String userId, String shoppingListCardId) {
+    @Deprecated
+    private TimelineItem createItemConverCard(Mirror mirrorClient, Map<String, Object> itemData, String bundleId, String userId,
+            String shoppingListCardId) {
 
         TimelineItem returnItem = null;
         String html = VelocityHelper.getFinalStr(itemData, "bundleConver.vm");
@@ -549,8 +550,7 @@ public class AppController {
 
         try {
             returnItem = mirrorClient.timeline().insert(timelineItem).execute();
-            cardDao.insertCard(returnItem.getId(), userId, Constants.CARD_TYPE_CATEGORY_COVER, bundleId,
-                    shoppingListCardId);
+            cardDao.insertCard(returnItem.getId(), userId, Constants.CARD_TYPE_CATEGORY_COVER, bundleId, shoppingListCardId);
             LOG.info("Bundle cover card created:[" + returnItem.getId() + "] [" + userId + "]");
         } catch (IOException e) {
             LOG.severe("Error when create item conver card, data:" + itemData);
@@ -567,14 +567,9 @@ public class AppController {
     }
 
     private Map<String, Object> buildShoppingListViewBean(String userId, String shoppingListId, String status) {
-        Map<String, List<Map<String, Object>>> shoppingList = shoppingListProvider.getShoppingList(userId,
-                shoppingListId);
+        Map<String, List<Map<String, Object>>> shoppingList = shoppingListProvider.getShoppingList(userId, shoppingListId);
         String shoppingListName = shoppingListProvider.getShoppingListName(userId, shoppingListId);
         return MirrorUtil.buildShoppingListViewBean(shoppingList, shoppingListName, status);
     }
-
-
-
-
 
 }

@@ -62,12 +62,17 @@ limitations under the License.
 <link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
 <link href="/static/main.css" rel="stylesheet" media="screen">
 <link href="/static/custom/glass.css" rel="stylesheet" media="screen">
+
 <style>
 #adminForm button {
 	height: 150px;
 	width: 150px
 }
+iframe{
+	border-bottom: solid 2px black;
+}
 </style>
+
 </head>
 <body style="background-image: url('http://www.somersetdesign.co.uk/blog/wp-content/uploads/2013/05/google-glass-.jpg'); background-color: #ffffff; background-size: 100%; background-repeat: no-repeat;">
 	<div class="glass">
@@ -110,10 +115,12 @@ limitations under the License.
 			<div class="row">
 			<%
 			    String flash = WebUtil.getClearFlash(request);
-						      if (flash != null) {
+						      if (flash != null && !flash.equals("")) {
 			%>
-			<h5 style="color: red; font-weight: bold">Notice:</h5>
-			<div class="alert alert-info"><%=StringEscapeUtils.escapeHtml4(flash)%></div>
+			<div class="span8">
+				<h5 style="color: red; font-weight: bold">Notice:</h5>
+				<div class="alert alert-info"><%=StringEscapeUtils.escapeHtml4(flash)%></div>
+			</div>
 			<%
 			    }
 			%>
@@ -128,15 +135,14 @@ limitations under the License.
 								onclick="document.getElementById('adminOperation').value='admin_cleanCards'">Delete timeline cards
 								and uncheck Items</button>
 						</td>
-						<td>
+<!-- 						<td>
 							<button class="btn btn-block btn-primary" type="submit"
 								onclick="document.getElementById('adminOperation').value='admin_initialShoppingListAppFromExternal'">Fetch
 								data from external server</button>
-						</td>
+						</td> -->
 						<td>
 							<button class="btn btn-block btn-primary" type="submit"
-								onclick="document.getElementById('adminOperation').value='admin_initialShoppingListApp'">Fetch data
-								from dummy server</button>
+								onclick="document.getElementById('adminOperation').value='admin_initialShoppingListApp'">Clean timeline, database and initialize welcome card</button>
 
 						</td>
 						<td>
@@ -162,7 +168,7 @@ limitations under the License.
 			Use this playground to insert cards to Glass, modify existing cards, preview cards and delete cards from Glass
 			timeline.<br /> Insert Client ID - 989966632667.apps.googleusercontent.com and press the red "Authorize" button.
 			<br /> <br />
-			<iframe width="1040px" height="800px" src="https://mirror-api-playground.appspot.com/"></iframe>
+			<iframe width="1040px" height="800px" frameBorder="0" src="https://mirror-api-playground.appspot.com/"></iframe>
 		</div>
 		<hr />
 		<!-- footer -->
@@ -172,6 +178,7 @@ limitations under the License.
 	</div>
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" charset="utf-8" src="/static/tubular/js/jquery.tubular.1.0.js"></script>
 	<script type="text/javascript">
 		var jsonTemplates = {
 			"simpleText" : '    {\n\
@@ -194,6 +201,10 @@ limitations under the License.
 				document.getElementById("jsonMsg").value = jsonTemplates[templates[templates.selectedIndex].value];
 			}
 		}
+		
+		$(".container").ready(function() {
+			//$('.container').tubular({videoId: '0Bmhjf0rKe8'}); // where idOfYourVideo is the YouTube ID.
+		});
 	</script>
 </body>
 </html>

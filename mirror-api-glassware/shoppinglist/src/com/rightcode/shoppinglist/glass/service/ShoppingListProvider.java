@@ -98,4 +98,6 @@ public interface ShoppingListProvider {
     public String getShoppingListName(String userId, String shoppingListId);
     
     public boolean refreshData(String userId);
+    
+    public int fetchShoppingLists(String userId);
 }

@@ -96,18 +96,21 @@ public class MainServlet extends HttpServlet {
                 }
             }
         } else if (req.getParameter("adminOperation").equals("admin_initialShoppingListApp")) {
-            if (CardDao.getInstance().getNumberOfCards(userId) == 0) {
-                int result = appController.initApp(userId, Constants.SERVICE_TYPE_DUMMY);
-                if (Constants.INIT_APP_RESULT_FAIL != result)
-                    message = "We have initialized our glassware in you glass with local data, you should able to see a intial card created for you, pin it and use it to start shopping";
-                else {
-                    message = "Fail to initialize the glassware, please check log";
-                }
-            } else {
-                appController.bringICToFront(userId);
-                message = "You initialized our glassware before, we just bring your initial card to front";
-            }
-        } else if (req.getParameter("adminOperation").equals("admin_initialShoppingListAppFromExternal")) {
+            message = appController.initApp(userId);
+//            if (CardDao.getInstance().getNumberOfCards(userId) == 0) {
+//                int result = appController.initApp(userId, Constants.SERVICE_TYPE_DUMMY);
+//                if (Constants.INIT_APP_RESULT_FAIL != result)
+//                    message = "We have initialized our glassware in you glass with local data, you should able to see a intial card created for you, pin it and use it to start shopping";
+//                else {
+//                    message = "Fail to initialize the glassware, please check log";
+//                }
+//            } else {
+//                appController.bringICToFront(userId);
+//                message = "You initialized our glassware before, we just bring your initial card to front";
+//            }
+        } 
+        /*
+        else if (req.getParameter("adminOperation").equals("admin_initialShoppingListAppFromExternal")) {
             if (CardDao.getInstance().getNumberOfCards(userId) == 0) {
                 int result = appController.initApp(userId, Constants.SERVICE_TYPE_EXTERNAL);
                 if (Constants.INIT_APP_RESULT_FAIL == result) {
@@ -121,7 +124,8 @@ public class MainServlet extends HttpServlet {
                 appController.bringICToFront(userId);
                 message = "You initialized our glassware before, we just bring your initial card to front";
             }
-        } else if (req.getParameter("adminOperation").equals("admin_insertCoupon")) {
+        } */
+        else if (req.getParameter("adminOperation").equals("admin_insertCoupon")) {
             appController.insertCoupon(userId, req.getParameter("couponContent"));
             message = "Coupon is created";
         } else if (req.getParameter("adminOperation").equals("admin_cleanCards")) {

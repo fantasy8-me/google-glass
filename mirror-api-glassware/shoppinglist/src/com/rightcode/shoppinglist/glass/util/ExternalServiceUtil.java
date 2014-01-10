@@ -39,7 +39,8 @@ public class ExternalServiceUtil {
     public static Object[] getConvertedData() {
 
         ExecutorService exec = Executors.newCachedThreadPool(ThreadManager.currentRequestThreadFactory());
-//        ExecutorService exec = Executors.newCachedThreadPool();//For local testing
+        // ExecutorService exec = Executors.newCachedThreadPool(); //only user for main method testing
+
         FeatchTask task = new FeatchTask();
         Future<Object[]> future = exec.submit(task);
         Object[] taskResult = null;
@@ -49,8 +50,7 @@ public class ExternalServiceUtil {
             LOG.log(Level.SEVERE, e.getMessage(), e);
             exec.shutdownNow();
         } catch (Throwable t) {
-            // Make sure we can handle all error, so we can fallback to
-            // productData.json
+            // Make sure we can handle all error, so we can fallback to productData.json
             LOG.log(Level.SEVERE, t.getMessage(), t);
         }
         return taskResult;
@@ -69,13 +69,14 @@ public class ExternalServiceUtil {
             result = jsonFactory.fromInputStream(new StringInputStream(jsonResponse), null);
         } else {
             result = jsonFactory.fromInputStream(
-                    ExternalServiceUtil.class.getResourceAsStream("/com/rightcode/shoppinglist/glass/testing/external_allLists_demo.json"), null);
+                    ExternalServiceUtil.class.getResourceAsStream("/com/rightcode/shoppinglist/glass/testing/external_allLists_demo.json"),
+                    null);
         }
         return result;
     }
 
-    private static Map<String, Object> getShoppingList(String shoppingListId) throws ClientProtocolException,
-            IOException {
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> getShoppingList(String shoppingListId) throws ClientProtocolException, IOException {
         String shoppingListUrl = buildUrl("ShoppingList/" + shoppingListId);
         JsonFactory jsonFactory = new JacksonFactory();
 
@@ -86,18 +87,17 @@ public class ExternalServiceUtil {
             LOG.info("-----Got list:" + jsonResponse);
             result = jsonFactory.fromInputStream(new StringInputStream(jsonResponse), null);
         } else {
-            result = (Map<String, Object>) jsonFactory.fromInputStream(
-                    ExternalServiceUtil.class.getResourceAsStream("/com/rightcode/shoppinglist/glass/testing/external_allLists_demo_list3.json"), null);
-                    
-            //result = jsonFactory.fromInputStream(new StringInputStream(shoppingListStr), null);
+            result = (Map<String, Object>) jsonFactory.fromInputStream(ExternalServiceUtil.class
+                    .getResourceAsStream("/com/rightcode/shoppinglist/glass/testing/external_allLists_demo_list3.json"), null);
+
+            // result = jsonFactory.fromInputStream(new StringInputStream(shoppingListStr), null);
         }
         return result;
     }
 
     private static Map<String, List<Map<String, Object>>> convertList(Map<String, Object> dataFromExternal) {
         @SuppressWarnings("unchecked")
-        List<Map<String, Object>> productLines = (List<Map<String, Object>>) dataFromExternal
-                .get(Constants.EXTERNAL_MSG_TAG_LINES);
+        List<Map<String, Object>> productLines = (List<Map<String, Object>>) dataFromExternal.get(Constants.EXTERNAL_MSG_TAG_LINES);
 
         Map<String, List<Map<String, Object>>> result = new HashMap<>();
         if (productLines != null) {
@@ -106,12 +106,11 @@ public class ExternalServiceUtil {
                 Map<String, Object> product = null;
                 if (Constants.EXTERNAL_MSG_ITEM_TYPE_PRODUCT.equals(productLine.get(Constants.EXTERNAL_MSG_TAG_TYPE))) {
                     product = convertProduct(productLine);
-                } else if (Constants.EXTERNAL_MSG_ITEM_TYPE_FREETEXT.equals(productLine
-                        .get(Constants.EXTERNAL_MSG_TAG_TYPE))) {
+                } else if (Constants.EXTERNAL_MSG_ITEM_TYPE_FREETEXT.equals(productLine.get(Constants.EXTERNAL_MSG_TAG_TYPE))) {
                     product = convertFreeText(productLine);
                 } else {
-                    LOG.info("-----Found a non product item[" + productLine.get(Constants.EXTERNAL_MSG_TAG_ID)
-                            + "] Type[" + productLine.get(Constants.EXTERNAL_MSG_TAG_TYPE) + "]");
+                    LOG.info("-----Found a non product item[" + productLine.get(Constants.EXTERNAL_MSG_TAG_ID) + "] Type["
+                            + productLine.get(Constants.EXTERNAL_MSG_TAG_TYPE) + "]");
                 }
                 if (product != null) {
 
@@ -160,30 +159,25 @@ public class ExternalServiceUtil {
      * @param productFromExternal
      * @return null if can't convert the product
      */
-    @SuppressWarnings("unchecked")
     private static Map<String, Object> convertFreeText(Map<String, Object> productFromExternal) {
         Map<String, Object> product = new HashMap<String, Object>();
         // As we don't have the spec of external response, so add this try catch
         // block to avoid the whole parsing fail by one unexpected item
         try {
             product.put(Constants.ITEM_COL_PRD_ID, productFromExternal.get(Constants.EXTERNAL_MSG_TAG_ID));
-            product.put(Constants.ITEM_COL_PRDNAME,productFromExternal.get(Constants.EXTERNAL_MSG_TAG_VALUE));
+            product.put(Constants.ITEM_COL_PRDNAME, productFromExternal.get(Constants.EXTERNAL_MSG_TAG_VALUE));
 
             product.put(Constants.ITEM_COL_IMGURL, Constants.DEFAULT_IMG);
 
             Object quantityValue = productFromExternal.get(Constants.EXTERNAL_MSG_TAG_QUANTITY);
-            if(quantityValue != null)
+            if (quantityValue != null)
                 product.put(Constants.ITEM_COL_QUANTITY, quantityValue);
-            else{
+            else {
                 product.put(Constants.ITEM_COL_QUANTITY, "");
             }
-            product.put(Constants.ITEM_COL_PRICE,"");
-
-            product.put(Constants.ITEM_COL_CATEGORY, Constants.DEFAULT_CATEGORY);// Eric.TODO
-                                                                                 // Remove
-                                                                                 // catetory
-                                                                                 // handline
-                                                                                 // later
+            product.put(Constants.ITEM_COL_PRICE, "");
+            // Eric.TODO Remove category handling later
+            product.put(Constants.ITEM_COL_CATEGORY, Constants.DEFAULT_CATEGORY);
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "Error occur while covert freetext from external response", e);
             return null;
@@ -256,20 +250,20 @@ public class ExternalServiceUtil {
             if (currency != null && currency.equals("GBP")) {
                 prefix = "\u20A4";
             }
-            return prefix
-                    + " "
-                    + ((Map<String, String>) itemDetailsMap.get(Constants.EXTERNAL_MSG_TAG_PRICE))
-                            .get(Constants.EXTERNAL_MSG_TAG_VALUE);
-        } else {
-            return "";
+            String price = priceNode.get(Constants.EXTERNAL_MSG_TAG_VALUE);
+            
+            LOG.warning("----price -----: " + itemDetailsMap.get("ItemId") );
+            if (price != null) {
+                return prefix + " " + price;
+            }
         }
+        return "";
 
     }
 
     @SuppressWarnings("unchecked")
     private static String extractDescription(Map<String, Object> itemDetailsMap) {
-        List<Map<String, String>> descs = (List<Map<String, String>>) itemDetailsMap
-                .get(Constants.EXTERNAL_MSG_TAG_DESC);
+        List<Map<String, String>> descs = (List<Map<String, String>>) itemDetailsMap.get(Constants.EXTERNAL_MSG_TAG_DESC);
         String longName = null;
         String shortName = null;
         if (descs != null) {
@@ -293,8 +287,7 @@ public class ExternalServiceUtil {
 
     @SuppressWarnings("unchecked")
     private static String extractPromotion(Map<String, Object> itemDetailsMap) {
-        List<Map<String, Object>> proms = (List<Map<String, Object>>) itemDetailsMap
-                .get(Constants.EXTERNAL_MSG_TAG_PROMO);
+        List<Map<String, Object>> proms = (List<Map<String, Object>>) itemDetailsMap.get(Constants.EXTERNAL_MSG_TAG_PROMO);
 
         String longName = null;
         String shortName = null;
@@ -346,6 +339,6 @@ public class ExternalServiceUtil {
     public static void main(String[] args) throws IOException {
         JsonFactory jsonFactory = new JacksonFactory();
         System.out.println(jsonFactory.toPrettyString(ExternalServiceUtil.getConvertedData()));
-        
+
     }
 }

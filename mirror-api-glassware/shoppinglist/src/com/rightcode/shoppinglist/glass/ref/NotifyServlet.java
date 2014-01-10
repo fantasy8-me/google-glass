@@ -197,7 +197,7 @@ public class NotifyServlet extends HttpServlet {
                     } else if (Constants.MENU_ID_STARTSHOPPING.equals(ua.getPayload())) {
                         appController.actionStartShopping(userId, timelineItem.getId());
                     } else if (Constants.MENU_ID_IC_STARTSHOPPING.equals(ua.getPayload())) {
-                        appController.actionStartShoppingListFromIC(userId, timelineItem.getId());
+                        appController.actionFetchShoppingLists(userId, timelineItem.getId());
                     } else if (Constants.MENU_ID_FINISHSHOPPING.equals(ua.getPayload())) {
                         appController.actionFinishShopping(userId, timelineItem.getId());
                     } else if (Constants.MENU_ID_IC_RESTART.equals(ua.getPayload())) {

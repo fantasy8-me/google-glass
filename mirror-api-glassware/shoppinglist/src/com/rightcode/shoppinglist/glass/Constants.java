@@ -86,7 +86,7 @@ public class Constants {
 	public final static String SERVICE_TYPE_EXTERNAL= "E";
 	public final static String SERVICE_TYPE_DUMMY= "D";
 	
-	public final static int INIT_APP_RESULT_SUCCESS = 0;
+//	public final static int INIT_APP_RESULT_SUCCESS = 0;
 	public final static int INIT_APP_RESULT_SUCCESS_WITH_DUMMY = 1;
 	public final static int INIT_APP_RESULT_SUCCESS_WITH_EXTERNAL = 2;
 	public final static int INIT_APP_RESULT_FAIL = -1;

@@ -311,15 +311,21 @@ public class CardDao {
 //        return result;
 //    }
     
-    public String getShoppingListCardIdByListId(String userId, String shoppingListId) {
+    /**
+     * Get the card id by ref, usually, ref is the prodcut id or shopping list id
+     * @param userId
+     * @param id
+     * @param type 
+     * @return
+     */
+    public String getCardIdByRef(String userId, String id, String type) {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Query q = pm.newQuery("select cardId from " + Card.class.getName());
-        q.setFilter("userId == userIdParm && ref == shoppingListIdParm && type == '"
-                + Constants.CARD_TYPE_SHOPPINGLIST + "' && projectClientId=='" + this.projectClientId + "'");
-        q.declareParameters("String userIdParm, String shoppingListIdParm");
+        q.setFilter("userId == userIdParm && ref == idParm && type == typeParm" + " && projectClientId=='" + this.projectClientId + "'");
+        q.declareParameters("String userIdParm, String idParm, String typeParm");
         List<String> result = null;
         try {
-            result = (List<String>) q.executeWithArray(new String[] { userId, shoppingListId });
+            result = (List<String>) q.executeWithArray(new String[] { userId, id, type });
         } finally {
             pm.close();
         }
