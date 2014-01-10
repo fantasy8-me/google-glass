@@ -251,8 +251,6 @@ public class ExternalServiceUtil {
                 prefix = "\u20A4";
             }
             String price = priceNode.get(Constants.EXTERNAL_MSG_TAG_VALUE);
-            
-            LOG.warning("----price -----: " + itemDetailsMap.get("ItemId") );
             if (price != null) {
                 return prefix + " " + price;
             }

@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
+<%@page import="com.rightcode.shoppinglist.glass.util.Util"%>
 <%@ page import="com.google.api.client.auth.oauth2.Credential"%>
 <%@ page import="com.google.api.services.mirror.model.Contact"%>
 <%@ page import="com.rightcode.shoppinglist.glass.ref.MirrorClient"%>
@@ -144,7 +145,7 @@ iframe{
 		<div class="row" style="color: white">
 			<h4 style="color: white">Playground:</h4>
 			Use this playground to insert cards to Glass, modify existing cards, preview cards and delete cards from Glass
-			timeline.<br /> Insert Client ID - 989966632667.apps.googleusercontent.com and press the red "Authorize" button.
+			timeline.<br /> Insert Client ID - <%= Util.getProjectClientId() %> and press the red "Authorize" button.
 			<br /> <br />
 			<iframe width="1040px" height="800px" frameBorder="0" src="https://mirror-api-playground.appspot.com/"></iframe>
 		</div>
