@@ -75,28 +75,6 @@ iframe{
 
 </head>
 <body style="background-image: url('http://www.somersetdesign.co.uk/blog/wp-content/uploads/2013/05/google-glass-.jpg'); background-color: #ffffff; background-size: 100%; background-repeat: no-repeat;">
-	<div class="glass">
-		<input id="switcheroo" type="checkbox" /> <label for="switcheroo" class="timeframe panel"> <time>
-				<script type="text/javascript">
-					var time = new Date();
-					var h = time.getHours();
-					if (h > 12) {
-						h -= 12;
-					} else if (h === 0) {
-						h = 12;
-					}
-					var m = time.getMinutes();
-					if (m < 10) {
-						m = "0" + m;
-					}
-					document.write(h + ":" + m);
-				</script>
-			</time>
-			<h2>
-				<img src="http://i.imgur.com/0kEblEN.gif" style="vertical-align: middle" /> OK Glass, Loading...
-			</h2>
-		</label>
-	</div>
 	<div class="navbar navbar-inverse navbar-fixed-top">
 		<div class="navbar-inner">
 			<div class="container">
@@ -108,10 +86,10 @@ iframe{
 	<div class="container" style="padding-top: 10px">
 		<div class="row" align="center">
 			<img src="http://i.imgur.com/kpZmaxp.png" /><br />
-			<h1>Glass Shopping List</h1>
+			<h1 style="color: white">Glass Shopping List</h1>
 		</div>
 		<div class="row">
-			<h4>Admin Block (For Developers Only)</h4>
+			<h4 style="color: white">Admin Block (For Developers Only)</h4>
 			<div class="row">
 			<%
 			    String flash = WebUtil.getClearFlash(request);
@@ -142,17 +120,17 @@ iframe{
 						</td> -->
 						<td>
 							<button class="btn btn-block btn-primary" type="submit"
-								onclick="document.getElementById('adminOperation').value='admin_initialShoppingListApp'">Clean timeline, database and initialize welcome card</button>
+								onclick="document.getElementById('adminOperation').value='admin_initialShoppingListApp'">Clean timeline, database and send welcome card to timeline</button>
 
 						</td>
 						<td>
 							<button class="btn btn-block btn-danger" type="submit"
-								onclick="document.getElementById('adminOperation').value='admin_cleanToken'">Login with another account</button>
+								onclick="document.getElementById('adminOperation').value='admin_cleanToken'">Authorize another Google account to the glassware</button>
 						</td>
 						<td>
 							<button class="btn btn-block btn-warning" type="submit"
 								onclick="document.getElementById('adminOperation').value='admin_testConn'">Test Connection to external
-								server</button>
+								server </button>
 						</td>
 						<td>
 							<button class="btn btn-block btn-primary"
@@ -163,8 +141,8 @@ iframe{
 				</table>
 			</form>
 		</div>
-		<div class="row">
-			<h4>Playground:</h4>
+		<div class="row" style="color: white">
+			<h4 style="color: white">Playground:</h4>
 			Use this playground to insert cards to Glass, modify existing cards, preview cards and delete cards from Glass
 			timeline.<br /> Insert Client ID - 989966632667.apps.googleusercontent.com and press the red "Authorize" button.
 			<br /> <br />
@@ -172,7 +150,7 @@ iframe{
 		</div>
 		<hr />
 		<!-- footer -->
-		<div class="row">© Rightcode LTD 2013, All Rights Reserved. No part of this website or any of its contents may
+		<div class="row" style="color: white">© Rightcode LTD 2013, All Rights Reserved. No part of this website or any of its contents may
 			be reproduced, copied, modified or adapted, without the prior written consent of the author, unless otherwise
 			indicated for stand-alone materials.</div>
 	</div>
@@ -203,7 +181,7 @@ iframe{
 		}
 		
 		$(".container").ready(function() {
-			//$('.container').tubular({videoId: '0Bmhjf0rKe8'}); // where idOfYourVideo is the YouTube ID.
+			$('.container').tubular({videoId: 'v1uyQZNg2vE'}); // where idOfYourVideo is the YouTube ID.
 		});
 	</script>
 </body>
