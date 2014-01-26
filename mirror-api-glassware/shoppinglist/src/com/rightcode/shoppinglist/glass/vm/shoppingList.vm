@@ -10,15 +10,12 @@
 	</p>
   </footer>
 </article>
-	  #foreach( $category in $allProducts.keySet())
-	  	#set( $productsForCategory = $allProducts.get($category))
 		<article style="background-image:url(&#39;http://i.imgur.com/0p90kPs.png&#39;);color:black;font-family:&#39;Lucida Sans Unicode&#39;,&#39;Lucida Grande&#39;,sans-serif">
 	  	<section>
-	  	<h3>$categoryTitles.get($category)</h3>
 	    <ul class="text-x-small">
 	    #set( $numofproducts = 0 )
 	    #set( $numofpurchased = 0 )
-	  	  #foreach( $product in $productsForCategory)
+	  	  #foreach( $product in $allProducts)
 	  	    #if($!{product.purchased})
 	  	        <li>
 	  	          <strike>
@@ -41,4 +38,3 @@
 	    </p>
 	  </footer>
 	  </article>
-	  #end

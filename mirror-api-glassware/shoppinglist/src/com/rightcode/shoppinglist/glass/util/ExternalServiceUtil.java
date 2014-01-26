@@ -95,11 +95,11 @@ public class ExternalServiceUtil {
         return result;
     }
 
-    private static Map<String, List<Map<String, Object>>> convertList(Map<String, Object> dataFromExternal) {
+    private static List<Map<String, Object>> convertList(Map<String, Object> dataFromExternal) {
         @SuppressWarnings("unchecked")
         List<Map<String, Object>> productLines = (List<Map<String, Object>>) dataFromExternal.get(Constants.EXTERNAL_MSG_TAG_LINES);
 
-        Map<String, List<Map<String, Object>>> result = new HashMap<>();
+        List<Map<String, Object>> result = new ArrayList<>();
         if (productLines != null) {
             for (int i = 0; i < productLines.size(); i++) {
                 Map<String, Object> productLine = productLines.get(i);
@@ -113,16 +113,7 @@ public class ExternalServiceUtil {
                             + productLine.get(Constants.EXTERNAL_MSG_TAG_TYPE) + "]");
                 }
                 if (product != null) {
-
-                    String category = (String) product.get(Constants.ITEM_COL_CATEGORY);
-                    if (result.containsKey(category)) {
-                        List<Map<String, Object>> list = result.get(category);
-                        list.add(product);
-                    } else {
-                        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-                        list.add(product);
-                        result.put(category, list);
-                    }
+                    result.add(product);
                 }
             }
         }
@@ -176,8 +167,6 @@ public class ExternalServiceUtil {
                 product.put(Constants.ITEM_COL_QUANTITY, "");
             }
             product.put(Constants.ITEM_COL_PRICE, "");
-            // Eric.TODO Remove category handling later
-            product.put(Constants.ITEM_COL_CATEGORY, Constants.DEFAULT_CATEGORY);
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "Error occur while covert freetext from external response", e);
             return null;
@@ -216,11 +205,6 @@ public class ExternalServiceUtil {
             product.put(Constants.ITEM_COL_PROMO,
                     extractPromotion((Map<String, Object>) productFromExternal.get(Constants.EXTERNAL_MSG_TAG_ITEM)));
 
-            product.put(Constants.ITEM_COL_CATEGORY, Constants.DEFAULT_CATEGORY);// Eric.TODO
-                                                                                 // Remove
-                                                                                 // catetory
-                                                                                 // handline
-                                                                                 // later
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "Error occur while covert product from external response", e);
             return null;
@@ -316,7 +300,7 @@ public class ExternalServiceUtil {
 
         @Override
         public Object[] call() throws Exception {
-            Map<String, Map<String, List<Map<String, Object>>>> shoppingListData = new HashMap<String, Map<String, List<Map<String, Object>>>>();
+            Map<String, List<Map<String, Object>>> shoppingListData = new HashMap<>();
 
             List<Map<String, Object>> allLists = getAllShoppingList();
             Map<String, String> listNames = new HashMap<String, String>();

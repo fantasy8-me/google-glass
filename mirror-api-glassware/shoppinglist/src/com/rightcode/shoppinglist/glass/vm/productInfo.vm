@@ -12,7 +12,7 @@
       <div class="text-auto-size">
 		<p class="align-center" style="font-size:27px"><i><b><u>Next on your list:</u></b></i></p>
 			<ul>
-			 #foreach($product in $itemsInSameCategory)
+			 #foreach($product in $itemsInSameList)
 				 #if ($product.prdName == $!{prdName})
 
 			 	#else

@@ -9,14 +9,14 @@ public class Constants {
 	public final static String ITEM_COL_PROMO="promo";
 //	public final static String ITEM_COL_NOTES="notes";
 	public final static String ITEM_COL_PURCHASED="purchased";
-	public final static String ITEM_COL_CATEGORY="category";
+//	public final static String ITEM_COL_CATEGORY="category";
 //	public final static String ITEM_COL_LIST_ID="shopListId";
 	
 
 	public final static String ITEM_PARM_MAXITEM = "maxItems";
 	
 	public final static String VELOCICY_PARM_AllPRODUCTS = "allProducts";
-	public final static String VELOCICY_PARM_CATEGORY_TITLES = "categoryTitles";
+//	public final static String VELOCICY_PARM_CATEGORY_TITLES = "categoryTitles";
 	public final static String VELOCICY_PARM_SHOPPING_LIST_NAME = "listName";
 	public final static String VELOCICY_PARM_SHOPPING_LIST_SIMPLE = "isSimple";
 	public final static String VELOCICY_PARM_SHOPPING_LIST_STATUS = "shoppingStatus";
@@ -31,16 +31,16 @@ public class Constants {
 	/**
 	 * @deprecated
 	 */
-	public final static String VELOCITY_PARM_SUBTOTOAL = "subtotal";
+	//public final static String VELOCITY_PARM_SUBTOTOAL = "subtotal";
 	   /**
      * @deprecated
      */
-	public final static String VELOCITY_PARM_COMPLETED_IN_CATEGORY = "completedInCategory";
+	//public final static String VELOCITY_PARM_COMPLETED_IN_CATEGORY = "completedInCategory";
 	
 	public final static String VELOCITY_PARM_TOTOAL = "total";
 	
 	public final static String VELOCITY_PARM_COMPLETED= "completed";
-	public final static String VELOCITY_PARM_ITEMS_IN_CATEGORY= "itemsInSameCategory";
+	public final static String VELOCITY_PARM_ITEMS_IN_SAME_LIST= "itemsInSameList";
 	
 	public final static String MENU_ID_MARK = "mark";
 	public final static String MENU_ID_UNMARK = "unmark";
@@ -79,7 +79,7 @@ public class Constants {
 	 */
 	public final static String CARD_TYPE_SHOPPINGLIST="SL";
 	public final static String CARD_TYPE_LIST_COVER="LC";
-	public final static String CARD_TYPE_CATEGORY_COVER="CC";
+//	public final static String CARD_TYPE_CATEGORY_COVER="CC";
 	public final static String CARD_TYPE_PRODUCT="P";
 
 	

@@ -182,7 +182,7 @@ iframe{
 		}
 		
 		$(".container").ready(function() {
-			$('.container').tubular({videoId: 'v1uyQZNg2vE'}); // where idOfYourVideo is the YouTube ID.
+			//$('.container').tubular({videoId: 'v1uyQZNg2vE'}); // where idOfYourVideo is the YouTube ID.
 		});
 	</script>
 </body>

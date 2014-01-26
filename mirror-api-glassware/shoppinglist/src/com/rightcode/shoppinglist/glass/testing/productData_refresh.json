@@ -1,23 +1,20 @@
 {
-  "b6ce7152-f24d-4bab-82ed-a2ad01605654" : {
-    "others" : [ {
+  "b6ce7152-f24d-4bab-82ed-a2ad01605654" : [
+  	{
       "imgUrl" : "http://23.21.131.69/DemoImages/n59.png",
       "prdId" : "c109bb8b-1aab-4da9-9f51-3b48fcfaa0e7",
-      "category" : "others",
       "price" : "₤ 4.99000",
       "quantity" : 1,
       "prdName" : "Head And Shoulders Sensitive Shampoo 500ml"
     }, {
       "imgUrl" : "http://23.21.131.69/DemoImages/n36.jpg",
       "prdId" : "f6d31c2d-433a-4ae2-bbf7-bae58f035fd8",
-      "category" : "others",
       "price" : "₤ 1.50000",
       "quantity" : 1,
       "prdName" : "Burgen Buckwheat And Poppy Seed Bread Medium Sliced 800g"
     }, {
       "imgUrl" : "http://23.21.131.69/DemoImages/n61.jpg",
       "prdId" : "f88c5e91-1c9b-46df-9e13-fe1194259e5c",
-      "category" : "others",
       "price" : "₤ 2.03000",
       "quantity" : 1,
       "prdName" : "L'Oreal Kid's Strawberry Conditioner 250ml"
@@ -28,8 +25,7 @@
                 "imgUrl":"http://i.imgur.com/5jb56KP.png",
                 "quantity":2,
                 "price": "$4.79",
-                "promo":"Buy 2 Get 1",
-                "category":"others"
+                "promo":"Buy 2 Get 1"
             },
             {
                 "prdId":"product-2",
@@ -37,16 +33,13 @@
                 "imgUrl":"http://i.imgur.com/ZWChwLu.png",
                 "quantity":3,
                 "price": "$5.00",
-                "promo":"2 Costs $6",
-				"category":"others"
+                "promo":"2 Costs $6"
             }  
-     ]
-  },
-  "48adac20-19e6-445c-a157-a2ad01615d6a" : {
-    "others" : [ {
+],
+"48adac20-19e6-445c-a157-a2ad01615d6a" : [
+	{
       "imgUrl" : "http://23.21.131.69/DemoImages/n16.png",
       "prdId" : "1f071743-1fed-412c-80c8-ffd8c4e0800f",
-      "category" : "others",
       "price" : "₤ 0.65000",
       "promo" : "Apple Weight new price",
       "quantity" : 1,
@@ -54,68 +47,59 @@
     }, {
       "imgUrl" : "http://23.21.131.69/DemoImages/n44.png",
       "prdId" : "2d3f618e-5e1b-445e-8f3c-612bcef1137f",
-      "category" : "others",
       "price" : "₤ 0.65000",
       "quantity" : 1,
       "prdName" : "Coca Cola 330ml"
     }, {
       "imgUrl" : "http://23.21.131.69/DemoImages/n1.png",
       "prdId" : "6feca85f-3592-4ec8-8fa1-ba950429d3b3",
-      "category" : "others",
       "price" : "₤ 1.50000",
       "quantity" : 1,
       "prdName" : "Whole milk"
     }, {
       "imgUrl" : "http://23.21.131.69/DemoImages/n90.jpg",
       "prdId" : "e279487a-4f9e-4fd7-a506-3a66d94ca0b7",
-      "category" : "others",
       "price" : "₤ 2.25000",
       "quantity" : 1,
       "prdName" : "Watermelon"
-    } ]
-  },
-  "d892571e-3647-45bc-bb64-a2ad0160fc11" : {
-    "others" : [ {
+    } 
+],
+"d892571e-3647-45bc-bb64-a2ad0160fc11" : [
+	{
       "imgUrl" : "http://23.21.131.69/DemoImages/n13.png",
       "prdId" : "94a4357c-142b-4437-bc74-18884adb493d",
-      "category" : "others",
       "price" : "₤ 1.69000",
       "quantity" : 1,
       "prdName" : "Cadbury's Mousse Mint Chocolate 4x45g"
     }, {
       "imgUrl" : "http://23.21.131.69/DemoImages/n54.png",
       "prdId" : "ab794281-d65b-452f-97af-f230dd4ff681",
-      "category" : "others",
       "price" : "₤ 1.69000",
       "quantity" : 1,
       "prdName" : "Ben And Jerry's Caramel Chew Chew 150ml"
     }, {
       "imgUrl" : "http://23.21.131.69/DemoImages/n101.jpg",
       "prdId" : "0a4821cb-cc2e-4692-8e29-026d40725451",
-      "category" : "others",
       "price" : "₤ 1.25000",
       "promo" : "Broccoli Weight new price",
       "quantity" : 1,
       "prdName" : "Broccoli"
-    } ]
-  },
-"local-shoppinglist-2":{
-        "others" : [
+    } 
+],
+"local-shoppinglist-2":[
             {
                 "prdId":"product-7",
                 "prdName":"Bumble Bee Chunk Light Tuna",
                 "imgUrl":"http://i.imgur.com/lUsTM0q.png",
                 "quantity":2,
-                "price": "$5.00",
-                "category":"others"
+                "price": "$5.00"
             },
             {
                 "prdId":"product-3",
                 "prdName":"Del Monte Peach Halves",
                 "imgUrl":"http://i.imgur.com/2ARlTvx.png",
                 "quantity":3,
-                "price": "$2.09",
-                "category":"others"
+                "price": "$2.09"
             },  
             {
                 "prdId":"product-4",
@@ -123,8 +107,7 @@
                 "imgUrl":"http://i.imgur.com/jEga7Gf.png",
                 "quantity":1,
                 "price": "$4.99",
-                "promo": "50% Today",
-                "category":"others"
+                "promo": "50% Today"
             },
             {
                 "prdId":"product-6",
@@ -132,9 +115,7 @@
                 "imgUrl":"http://i.imgur.com/am4ozDJ.png",
                 "quantity":2,
                 "price": "$3.49",
-                "promo":"Buy 2 Get 2 Free",
-                "category":"others"
+                "promo":"Buy 2 Get 2 Free"
             }
-        ]
-    }  
+        ]  
 }

@@ -96,13 +96,13 @@ public class VelocityHelper {
         // System.out.println(VelocityHelper.getFinalStr(data,
         // "itemConver.vm"));
 
-        Map<String, List<Map<String, Object>>> shoppingList = DemoShoppingListProvider.getInstance().getShoppingList(
+        List<Map<String, Object>> shoppingList = DemoShoppingListProvider.getInstance().getShoppingList(
                 "", "d17bb2da-ce13-4eea-99d4-a2a800b68217");
 
         Map<String, Object> items = new HashMap<String, Object>();
         items.put(Constants.VELOCICY_PARM_AllPRODUCTS, shoppingList);
 
-        items.put(Constants.VELOCICY_PARM_CATEGORY_TITLES, ReferenceDataManager.getInstance().getCategoryTitleMap());
+//        items.put(Constants.VELOCICY_PARM_CATEGORY_TITLES, ReferenceDataManager.getInstance().getCategoryTitleMap());
 
         System.out.println(VelocityHelper.getFinalStr(items, "shoppingList.vm"));
 

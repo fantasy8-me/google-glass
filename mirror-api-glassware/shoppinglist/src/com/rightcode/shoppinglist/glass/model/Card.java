@@ -26,7 +26,7 @@ public class Card {
   private String projectClientId;  
 
   /**
-   * Refer to Constants.CARD_TYPE_SHOPPINGLIST Constants.CARD_TYPE_CATEGORY_COVER
+   * Refer to Constants.CARD_TYPE_SHOPPINGLIST
    * Constants.CARD_TYPE_PRODUCT
    */
   @Persistent

@@ -108,7 +108,7 @@ public class CardDao {
         }
     }
 
-    public String getBundleCoverCardId(String userId, String bundleId, String shoppingListCardId) {
+/*    public String getBundleCoverCardId(String userId, String bundleId, String shoppingListCardId) {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Query q = pm.newQuery("select cardId from " + Card.class.getName());
         q.setFilter("userId == userIdParm && ref == bundleIdParm && shoppingListCardId == shoppingListCardIdParam && type == '"
@@ -125,7 +125,7 @@ public class CardDao {
         } else {
             return "";
         }
-    }
+    }*/
 
     public Map<String, Boolean> getPurchaseStatus(String userId) {
         PersistenceManager pm = PMF.get().getPersistenceManager();

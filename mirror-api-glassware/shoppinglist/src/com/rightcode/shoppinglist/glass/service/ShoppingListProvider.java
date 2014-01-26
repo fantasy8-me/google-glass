@@ -8,12 +8,12 @@ public interface ShoppingListProvider {
     
     
     /**
-     * First Level Key is shopping list, Second Level Key is category 
+     * First Level Key is shopping list 
      * 
      * @param userId
      * @return all shopping list of user
      */
-    public Map<String,Map<String, List<Map<String, Object>>>> getAllShoppingLists(String userId);    
+    public Map<String, List<Map<String, Object>>> getAllShoppingLists(String userId);    
 
     /**
      * To get a list of product by specify user id and category id.
@@ -28,11 +28,10 @@ public interface ShoppingListProvider {
      *            id of the shopping list
      * @return List of product in specified category
      */
-    public List<Map<String, Object>> getShoppingList(String userId, String shoppingListId, String category);
+    /*public List<Map<String, Object>> getShoppingList(String userId, String shoppingListId, String category);*/
 
     /**
-     * Get all products in shopping list, product are group by category and
-     * stored in a Map
+     * Get all products in shopping list
      * 
      * Refer to productData.json to understand the data structure
      * 
@@ -40,9 +39,9 @@ public interface ShoppingListProvider {
      *            google user id
      * @param shoppingListId
      *            id of the shopping list
-     * @return All products in a Map, key of the map is category id.
+     * @return the shopping list.
      */
-    public Map<String, List<Map<String, Object>>> getShoppingList(String userId, String shoppingListId);
+    public List<Map<String, Object>> getShoppingList(String userId, String shoppingListId);
 
     /**
      * @param userId  google user id

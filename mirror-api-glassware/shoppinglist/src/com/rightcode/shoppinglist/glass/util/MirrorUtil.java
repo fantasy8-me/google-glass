@@ -88,7 +88,7 @@ public final class MirrorUtil {
         TimelineItem patchTimelineItem = new TimelineItem();
         Map<String, Object> viewbean = new HashMap<>(metaData);
 
-        viewbean.put(Constants.VELOCITY_PARM_ITEMS_IN_CATEGORY, shoppingList);
+        viewbean.put(Constants.VELOCITY_PARM_ITEMS_IN_SAME_LIST, shoppingList);
         String html = VelocityHelper.getFinalStr(viewbean, "productInfo.vm");
         patchTimelineItem.setHtml(html);
         try {
@@ -102,7 +102,7 @@ public final class MirrorUtil {
     }
 
     public static void updateShoppingListCardContent(String userId, String shoppingListCardId,
-            Map<String, List<Map<String, Object>>> shoppingList, String shoppingListName, String status) {
+            List<Map<String, Object>> shoppingList, String shoppingListName, String status) {
         String html = VelocityHelper.getFinalStr(buildShoppingListViewBean(shoppingList, shoppingListName, status), "shoppingList.vm");
         TimelineItem timelineItem = new TimelineItem();
         timelineItem.setHtml(html);
@@ -117,7 +117,7 @@ public final class MirrorUtil {
         }
     }
 
-    public static String createShoppingListCard(String userId, Map<String, List<Map<String, Object>>> shoppingList,
+    public static String createShoppingListCard(String userId, List<Map<String, Object>> shoppingList,
             String shoppingListName, String shoppingListId, String bundleId) throws IOException {
         CardDao cardDao = CardDao.getInstance();
         Credential credential = AuthUtil.getCredential(userId);
@@ -157,12 +157,12 @@ public final class MirrorUtil {
         }
     }
 
-    public static Map<String, Object> buildShoppingListViewBean(Map<String, List<Map<String, Object>>> shoppingList,
+    public static Map<String, Object> buildShoppingListViewBean(List<Map<String, Object>> shoppingList,
             String shoppingListName, String status) {
         Map<String, Object> viewBean = new HashMap<String, Object>();
         int[] result = calculateCompletedStatus(shoppingList);
         viewBean.put(Constants.VELOCICY_PARM_AllPRODUCTS, shoppingList);
-        viewBean.put(Constants.VELOCICY_PARM_CATEGORY_TITLES, ReferenceDataManager.getInstance().getCategoryTitleMap());
+//        viewBean.put(Constants.VELOCICY_PARM_CATEGORY_TITLES, ReferenceDataManager.getInstance().getCategoryTitleMap());
         viewBean.put(Constants.VELOCITY_PARM_COMPLETED, result[0]);
         viewBean.put(Constants.VELOCITY_PARM_TOTOAL, result[1]);
         viewBean.put(Constants.VELOCICY_PARM_SHOPPING_LIST_NAME, shoppingListName);
@@ -189,19 +189,6 @@ public final class MirrorUtil {
             }
         }
         result[1] = subShoppingList.size();
-        return result;
-    }
-
-    private static int[] calculateCompletedStatus(Map<String, List<Map<String, Object>>> shoppingList) {
-        int[] result = new int[] { 0, 0 };
-
-        Iterator<String> iter = shoppingList.keySet().iterator();
-        while (iter.hasNext()) {
-            String category = (String) iter.next();
-            int[] subResult = calculateCompletedStatus(shoppingList.get(category));
-            result[0] += subResult[0];
-            result[1] += subResult[1];
-        }
         return result;
     }
 }
