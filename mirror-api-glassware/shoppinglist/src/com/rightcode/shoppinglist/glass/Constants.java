@@ -9,14 +9,12 @@ public class Constants {
 	public final static String ITEM_COL_PROMO="promo";
 //	public final static String ITEM_COL_NOTES="notes";
 	public final static String ITEM_COL_PURCHASED="purchased";
-//	public final static String ITEM_COL_CATEGORY="category";
 //	public final static String ITEM_COL_LIST_ID="shopListId";
 	
 
 	public final static String ITEM_PARM_MAXITEM = "maxItems";
 	
 	public final static String VELOCICY_PARM_AllPRODUCTS = "allProducts";
-//	public final static String VELOCICY_PARM_CATEGORY_TITLES = "categoryTitles";
 	public final static String VELOCICY_PARM_SHOPPING_LIST_NAME = "listName";
 	public final static String VELOCICY_PARM_SHOPPING_LIST_SIMPLE = "isSimple";
 	public final static String VELOCICY_PARM_SHOPPING_LIST_STATUS = "shoppingStatus";
@@ -26,16 +24,6 @@ public class Constants {
 	public final static String SHOPPING_LIST_STATUS_DONE = "Done";
 	
 	
-	
-	/*Param to store sutotal for each category*/
-	/**
-	 * @deprecated
-	 */
-	//public final static String VELOCITY_PARM_SUBTOTOAL = "subtotal";
-	   /**
-     * @deprecated
-     */
-	//public final static String VELOCITY_PARM_COMPLETED_IN_CATEGORY = "completedInCategory";
 	
 	public final static String VELOCITY_PARM_TOTOAL = "total";
 	
@@ -79,14 +67,12 @@ public class Constants {
 	 */
 	public final static String CARD_TYPE_SHOPPINGLIST="SL";
 	public final static String CARD_TYPE_LIST_COVER="LC";
-//	public final static String CARD_TYPE_CATEGORY_COVER="CC";
 	public final static String CARD_TYPE_PRODUCT="P";
 
 	
 	public final static String SERVICE_TYPE_EXTERNAL= "E";
 	public final static String SERVICE_TYPE_DUMMY= "D";
 	
-//	public final static int INIT_APP_RESULT_SUCCESS = 0;
 	public final static int INIT_APP_RESULT_SUCCESS_WITH_DUMMY = 1;
 	public final static int INIT_APP_RESULT_SUCCESS_WITH_EXTERNAL = 2;
 	public final static int INIT_APP_RESULT_FAIL = -1;
@@ -96,7 +82,6 @@ public class Constants {
      * Used when we cann't get the product image
      */
     public final static String DEFAULT_IMG = "http://i.imgur.com/8Bcyenr.png";
-    public final static String DEFAULT_CATEGORY = "others";
 	
     
     public final static int EXTERNAL_SERVICE_TIMEOUT_IN_SECS= 50;
@@ -119,5 +104,4 @@ public class Constants {
     public final static String EXTERNAL_MSG_TAG_PROMO = "Promotions";
     
     
-	
 }

@@ -16,21 +16,6 @@ public interface ShoppingListProvider {
     public Map<String, List<Map<String, Object>>> getAllShoppingLists(String userId);    
 
     /**
-     * To get a list of product by specify user id and category id.
-     * 
-     * Meta data of category are defined in category.json
-     * 
-     * @param userId
-     *            google user id
-     * @param category
-     *            category id
-     * @param shoppingListId
-     *            id of the shopping list
-     * @return List of product in specified category
-     */
-    /*public List<Map<String, Object>> getShoppingList(String userId, String shoppingListId, String category);*/
-
-    /**
      * Get all products in shopping list
      * 
      * Refer to productData.json to understand the data structure

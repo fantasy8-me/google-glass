@@ -65,36 +65,6 @@ public class VelocityHelper {
 
     public static void main(String[] args) {
         VelocityHelper.initVelocity();
-        // VelocityContext context = new VelocityContext();
-        //
-        // context.put("quantity", "1234");
-        //
-        // Template template = null;
-        //
-        // try {
-        // template = Velocity.getTemplate(resourceRoot + "itemConver.vm");
-        // StringWriter sw = new StringWriter();
-        // template.merge(context, sw);
-        // System.out.println(sw.toString());
-        // } catch (Exception e) {
-        // e.printStackTrace();
-        // }
-        // Map data = new HashMap();
-        // List list = new ArrayList();
-        // list.add("note1");
-        // list.add("note2");
-        // data.put(Constants.ITEM_COL_IMGURL, "imgurl_str");
-        // data.put(Constants.ITEM_COL_NOTES, list);
-        // data.put(Constants.ITEM_COL_PRDNAME, "prdname_str");
-        // data.put(Constants.ITEM_COL_PRD_ID, 1);
-        // data.put(Constants.ITEM_COL_PRICE, 999999.99);
-        // data.put(Constants.ITEM_COL_PROMO, "promo str");
-        // data.put(Constants.ITEM_COL_PURCHASED,true);
-        // data.put(Constants.ITEM_COL_QUANTITY, 2);
-        //
-
-        // System.out.println(VelocityHelper.getFinalStr(data,
-        // "itemConver.vm"));
 
         List<Map<String, Object>> shoppingList = DemoShoppingListProvider.getInstance().getShoppingList(
                 "", "d17bb2da-ce13-4eea-99d4-a2a800b68217");
@@ -102,7 +72,6 @@ public class VelocityHelper {
         Map<String, Object> items = new HashMap<String, Object>();
         items.put(Constants.VELOCICY_PARM_AllPRODUCTS, shoppingList);
 
-//        items.put(Constants.VELOCICY_PARM_CATEGORY_TITLES, ReferenceDataManager.getInstance().getCategoryTitleMap());
 
         System.out.println(VelocityHelper.getFinalStr(items, "shoppingList.vm"));
 

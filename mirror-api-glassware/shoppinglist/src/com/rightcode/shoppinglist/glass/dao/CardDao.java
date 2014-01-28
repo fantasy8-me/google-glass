@@ -108,25 +108,6 @@ public class CardDao {
         }
     }
 
-/*    public String getBundleCoverCardId(String userId, String bundleId, String shoppingListCardId) {
-        PersistenceManager pm = PMF.get().getPersistenceManager();
-        Query q = pm.newQuery("select cardId from " + Card.class.getName());
-        q.setFilter("userId == userIdParm && ref == bundleIdParm && shoppingListCardId == shoppingListCardIdParam && type == '"
-                + Constants.CARD_TYPE_CATEGORY_COVER + "' && projectClientId=='" + this.projectClientId + "'");
-        q.declareParameters("String userIdParm, String bundleIdParm, String shoppingListCardIdParam");
-        List<String> result = null;
-        try {
-            result = (List<String>) q.executeWithArray(new String[] { userId, bundleId, shoppingListCardId });
-        } finally {
-            pm.close();
-        }
-        if (result.size() == 1) {
-            return result.get(0);
-        } else {
-            return "";
-        }
-    }*/
-
     public Map<String, Boolean> getPurchaseStatus(String userId) {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Query q = pm.newQuery("select ref,isPurchased from " + Card.class.getName());
@@ -164,27 +145,6 @@ public class CardDao {
         }
     }
 
-    /**
-     * 
-     * @param userId
-     * @return list of bundle cover card id for specified user
-     */
-    // public List<String> getAllBundleConvers(String userId) {
-    // PersistenceManager pm = PMF.get().getPersistenceManager();
-    // Query q = pm.newQuery("select cardId from " + Card.class.getName());
-    // q.setFilter("userId == userIdParm && type == '" +
-    // Constants.CARD_TYPE_CATEGORY_COVER + "' && projectClientId=='"
-    // + this.projectClientId + "'");
-    // q.declareParameters("String userIdParm");
-    //
-    // List<String> result = null;
-    // try {
-    // result = (List<String>) q.execute(userId);
-    // } finally {
-    // pm.close();
-    // }
-    // return result;
-    // }
 
     /**
      * 

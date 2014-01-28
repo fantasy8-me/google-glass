@@ -3,7 +3,6 @@ package com.rightcode.shoppinglist.glass.util;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -48,7 +47,6 @@ public final class MirrorUtil {
 
         TimelineItem timelineItem = new TimelineItem();
         timelineItem.setHtml(html);
-        // timelineItem.setBundleId(bundleId);
 
         List<MenuItem> menuItemList = new ArrayList<MenuItem>();
 
@@ -162,7 +160,6 @@ public final class MirrorUtil {
         Map<String, Object> viewBean = new HashMap<String, Object>();
         int[] result = calculateCompletedStatus(shoppingList);
         viewBean.put(Constants.VELOCICY_PARM_AllPRODUCTS, shoppingList);
-//        viewBean.put(Constants.VELOCICY_PARM_CATEGORY_TITLES, ReferenceDataManager.getInstance().getCategoryTitleMap());
         viewBean.put(Constants.VELOCITY_PARM_COMPLETED, result[0]);
         viewBean.put(Constants.VELOCITY_PARM_TOTOAL, result[1]);
         viewBean.put(Constants.VELOCICY_PARM_SHOPPING_LIST_NAME, shoppingListName);
@@ -172,14 +169,14 @@ public final class MirrorUtil {
     }
 
     /**
-     * @param subShoppingList
-     * @return int[] int[0]: completed int[1]: subtotal
+     * @param 
+     * @return int[] int[0]: completed int[1]: total
      */
-    private static int[] calculateCompletedStatus(List<Map<String, Object>> subShoppingList) {
+    private static int[] calculateCompletedStatus(List<Map<String, Object>> shoppingList) {
         int[] result = new int[] { 0, 0 };
 
-        for (int i = 0; i < subShoppingList.size(); i++) {
-            Map<String, Object> product = subShoppingList.get(i);
+        for (int i = 0; i < shoppingList.size(); i++) {
+            Map<String, Object> product = shoppingList.get(i);
             boolean isPurchased = false;
             if (product.get(Constants.ITEM_COL_PURCHASED) != null) {
                 isPurchased = (Boolean) product.get(Constants.ITEM_COL_PURCHASED);
@@ -188,7 +185,7 @@ public final class MirrorUtil {
                 result[0]++;
             }
         }
-        result[1] = subShoppingList.size();
+        result[1] = shoppingList.size();
         return result;
     }
 }

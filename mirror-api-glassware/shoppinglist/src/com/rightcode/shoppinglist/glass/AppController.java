@@ -63,7 +63,8 @@ public class AppController {
         @Override
         public void onFailure(GoogleJsonError e, HttpHeaders responseHeaders) throws IOException {
             allSuccess = false;
-            LOG.severe("Fail to delete card:" + cardId + " Reason:" + e.getMessage());
+            cardDao.deleteCard(cardId);
+            LOG.severe("Fail to delete card:" + cardId + "in timeline Reason:" + e.getMessage() + ", only clean up the card in db");
         }
 
         public CleanUpBatchCallback setId(String cardId) {
@@ -92,7 +93,6 @@ public class AppController {
     }
 
     private AppController() {
-        // Eric.TODO, move following logic to a serviceProiderFactory later
         shoppingListProvider = DemoShoppingListProvider.getInstance();
         cardDao = CardDao.getInstance();
         VelocityHelper.initVelocity();
@@ -114,9 +114,6 @@ public class AppController {
         if (cardDao.getNumberOfCards(userId) > 0) {
             cleanUpAllCards(userId, null);
         }
-        // This is a speical handling for demo service, not supported for other service provider
-        // int result = ((DemoShoppingListProvider)shoppingListProvider).initData(userId, serviceType);
-        // if(result != Constants.INIT_APP_RESULT_FAIL){
         String msg = null;
         Credential credential = AuthUtil.getCredential(userId);
         Mirror mirrorClient = MirrorClient.getMirror(credential);
@@ -147,23 +144,7 @@ public class AppController {
                     Constants.SHOPPING_LIST_STATUS_READY);
 
             List<Map<String, Object>> shoppingList = shoppingListProvider.getShoppingList(userId, shoppingListId);
-//            Iterator<String> iter = shoppingList.keySet().iterator();
-//            while (iter.hasNext()) {
-//                String category = (String) iter.next();
-//                List<Map<String, Object>> productList = shoppingList.get(category);
 
-                // String bundleId = getBundleId(shoppingListId + "_" + category);
-
-                // Map<String, Object> bundleConverViewbean = buildBundleConverViewBean(category, 0, productList.size(),
-                // shoppingListProvider.getShoppingListName(userId, shoppingListId));
-                // createItemConverCard(mirrorClient, bundleConverViewbean, bundleId, userId, shoppingListCardId);
-
-//                for (Iterator<Map<String, Object>> iterator = productList.iterator(); iterator.hasNext();) {
-//                    Map<String, Object> viewbean = new HashMap<String, Object>(iterator.next());
-//                    viewbean.put(Constants.VELOCITY_PARM_ITEMS_IN_SAME_LIST, productList);
-//                    MirrorUtil.createItemInfoCard(userId, viewbean, shoppingListCardId);
-//                }
-//            }
             for (Iterator<Map<String, Object>> iterator = shoppingList.iterator(); iterator.hasNext();) {
                 Map<String, Object> viewbean = new HashMap<String, Object>(iterator.next());
                 viewbean.put(Constants.VELOCITY_PARM_ITEMS_IN_SAME_LIST, shoppingList);
@@ -321,23 +302,6 @@ public class AppController {
         }
     }
 
-    @Deprecated
-/*    private Map<String, Object> buildBundleConverViewBean(String category, int numOfCompleted, int subTotoal, String listName) {
-
-        Map<String, String> categoryMap = refDataManager.getCategorySetting(category);
-        if (categoryMap == null) {
-            categoryMap = new HashMap<String, String>();
-            categoryMap.put("imgUrl", "");
-            categoryMap.put("title", "Others");
-        }
-        Map<String, Object> bundleConverViewbean = new HashMap<String, Object>(categoryMap);
-
-        bundleConverViewbean.put(Constants.VELOCITY_PARM_SUBTOTOAL, subTotoal);
-        bundleConverViewbean.put(Constants.VELOCITY_PARM_COMPLETED_IN_CATEGORY, numOfCompleted);
-        bundleConverViewbean.put(Constants.VELOCICY_PARM_SHOPPING_LIST_NAME, listName);
-        return bundleConverViewbean;
-    }*/
-
     private boolean createInitialCard(Mirror mirrorClient, String userId) {
         String html = VelocityHelper.getFinalStr(null, "initialCard.vm");
 
@@ -442,9 +406,6 @@ public class AppController {
 
         try {
             mirrorClient.timeline().patch(productCardId, patchTimelineItem).execute();
-            // updateCategoryCoverCard(mirrorClient, userId, shoppingListId, shoppingListCardId, bundleId,
-            // (String) viewbean.get(Constants.ITEM_COL_CATEGORY), completedStatus[0], completedStatus[1],
-            // shoppingListProvider.getShoppingListName(userId, shoppingListId));
             updateShoppingListCard(mirrorClient, userId, shoppingListId, shoppingListCardId, Constants.SHOPPING_LIST_STATUS_IN_PROGRESS,
                     Constants.SHOPPING_LIST_STATUS_IN_PROGRESS);
 
@@ -512,55 +473,6 @@ public class AppController {
             LOG.log(Level.SEVERE, e.getMessage(), e);
         }
     }
-
-    @SuppressWarnings("unused")
-    @Deprecated
-/*    private void updateCategoryCoverCard(Mirror mirrorClient, String userId, String shoppingListId, String shoppingListCardId,
-            String bundleId, String category, int numOfCompleted, int subTotal, String shoppingListName) {
-        String cardId = cardDao.getBundleCoverCardId(userId, bundleId, shoppingListCardId);
-
-        Map<String, Object> viewbean = buildBundleConverViewBean(category, numOfCompleted, subTotal, shoppingListName);
-
-        try {
-
-            TimelineItem timelineItem = new TimelineItem();
-
-            String html = VelocityHelper.getFinalStr(viewbean, "bundleConver.vm");
-            timelineItem.setHtml(html);
-
-            mirrorClient.timeline().patch(cardId, timelineItem).execute();
-        } catch (IOException e) {
-            LOG.severe("Error occur while updating the bundle cover card for:" + userId + " category:" + category + " bundleId:" + bundleId);
-            LOG.log(Level.SEVERE, e.getMessage(), e);
-        }
-    }*/
-
-/*    @SuppressWarnings("unused")
-    @Deprecated
-    private TimelineItem createItemConverCard(Mirror mirrorClient, Map<String, Object> itemData, String bundleId, String userId,
-            String shoppingListCardId) {
-
-        TimelineItem returnItem = null;
-        String html = VelocityHelper.getFinalStr(itemData, "bundleConver.vm");
-
-        TimelineItem timelineItem = new TimelineItem();
-        timelineItem.setHtml(html);
-        timelineItem.setIsBundleCover(true);
-
-        timelineItem.setBundleId(bundleId);
-        timelineItem.setNotification(new NotificationConfig().setLevel("DEFAULT"));
-
-        try {
-            returnItem = mirrorClient.timeline().insert(timelineItem).execute();
-            cardDao.insertCard(returnItem.getId(), userId, Constants.CARD_TYPE_CATEGORY_COVER, bundleId, shoppingListCardId);
-            LOG.info("Bundle cover card created:[" + returnItem.getId() + "] [" + userId + "]");
-        } catch (IOException e) {
-            LOG.severe("Error when create item conver card, data:" + itemData);
-            LOG.log(Level.SEVERE, e.getMessage(), e);
-        }
-        return returnItem;
-
-    }*/
 
     private String getBundleId(String coverName) {
         // Add current time stamp to separate the cards created in different
