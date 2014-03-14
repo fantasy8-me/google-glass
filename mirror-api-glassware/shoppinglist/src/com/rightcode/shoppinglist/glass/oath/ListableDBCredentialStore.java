@@ -15,9 +15,8 @@ import com.google.api.client.auth.oauth2.CredentialStore;
 import com.rightcode.shoppinglist.glass.util.PMF;
 
 /**
- * A new credential store. It's exactly the same as
- * com.google.api.client.auth.oauth2.MemoryCredentialStore except it has the
- * added ability to list all of the users.
+ * When deploy the sample app to GAE, found data can not be persistent in memory. 
+ * This class is to store the credential to database
  * 
  * @author
  */
@@ -29,8 +28,6 @@ public class ListableDBCredentialStore implements CredentialStore {
     private final Lock lock = new ReentrantLock();
 
     private static final Logger LOG = Logger.getLogger(ListableDBCredentialStore.class.getSimpleName());
-
-    private long identity = System.currentTimeMillis();
 
     public void store(String userId, Credential credential) {
         lock.lock();
@@ -77,7 +74,6 @@ public class ListableDBCredentialStore implements CredentialStore {
             credential.setAccessToken(item.getAccessToken());
             credential.setRefreshToken(item.getRefreshToken());
             credential.setExpirationTimeMilliseconds(item.getExpirationTimeMillis());
-//            LOG.info("-----Credential is loaded for:" + userId + credential.getAccessToken());
         } catch (JDOObjectNotFoundException e) {
             LOG.warning("-----Credential can not be loaded for:" + userId + credential.getAccessToken());
             return false;
@@ -88,10 +84,7 @@ public class ListableDBCredentialStore implements CredentialStore {
         return true;
     }
 
-    public long getIdentity() {
-        return identity;
-    }
-
+    @SuppressWarnings("unchecked")
     public List<String> listAllUsers() {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Query q = pm.newQuery("select userId from " + CredentialModel.class.getName());

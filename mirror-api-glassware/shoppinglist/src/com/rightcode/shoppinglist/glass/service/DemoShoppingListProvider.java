@@ -104,7 +104,7 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
         ServiceCacheDao scDao = ServiceCacheDao.getInstance();
         try {
             Object[] result = ExternalServiceUtil.getConvertedData();
-            // Object[] result = null; //To do local test with productData.json
+//             Object[] result = null; //To do local test with productData.json, enable the setting in refreshData as well
             if (result != null) {
                 productData.put(userId, (Map<String, List<Map<String, Object>>>) result[0]);
                 shoppingListNameMap.put(userId, (Map<String, String>) result[1]);
@@ -133,7 +133,7 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
         ServiceCacheDao scDao = ServiceCacheDao.getInstance();
         try {
             Object[] result = ExternalServiceUtil.getConvertedData();
-            // Object[] result = getLocalData();
+//             Object[] result = getLocalData(); //support local test, enable the setting in fetchShoppingLists as well
 
             if (result != null) {
                 // compare all shopping list of current user
@@ -155,7 +155,7 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
                         LOG.info("*****Refresh data for user[" + userId + "] successfully");
                         return true;
                     }
-                    LOG.warning("You click the restart but no shopping list cover, which is invalid");
+                    LOG.warning("You click the refresh but no shopping list cover, which is invalid");
                 }
             }
         } catch (Exception e) {
@@ -207,7 +207,7 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
                     LOG.info("*****Restore data for external service successfully");
                 }
             } else {
-                LOG.severe("Can not restore data from db, the shopping list is not fetched before");
+                LOG.severe("Can not restore data from db, the shopping list was not fetched before");
             }
         }
     }
@@ -272,7 +272,7 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
             if (!containProcut(newProduct, oldProductlist)) {
                 Map<String, Object> viewBean = new HashMap<>(newProductList.get(i));
                 viewBean.put(Constants.VELOCITY_PARM_ITEMS_IN_SAME_LIST, newProductList);
-                MirrorUtil.createItemInfoCard(userId, viewBean, shoppingListCardId);
+                MirrorUtil.createProductCard(userId, viewBean, shoppingListCardId);
                 LOG.info("-----Just add a new card:" + viewBean.get(Constants.ITEM_COL_PRDNAME)
                         + " to your timeline for list which card id is:" + shoppingListCardId);
             } else {

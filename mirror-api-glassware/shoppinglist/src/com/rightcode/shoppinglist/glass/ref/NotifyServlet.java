@@ -196,12 +196,12 @@ public class NotifyServlet extends HttpServlet {
                         appController.markOrUnMarkProduct(mirrorClient, userId, timelineItem, false);
                     } else if (Constants.MENU_ID_STARTSHOPPING.equals(ua.getPayload())) {
                         appController.actionStartShopping(userId, timelineItem.getId());
-                    } else if (Constants.MENU_ID_IC_STARTSHOPPING.equals(ua.getPayload())) {
+                    } else if (Constants.MENU_ID_IC_FETCH.equals(ua.getPayload())) {
                         appController.actionFetchShoppingLists(userId, timelineItem.getId());
                     } else if (Constants.MENU_ID_FINISHSHOPPING.equals(ua.getPayload())) {
                         appController.actionFinishShopping(userId, timelineItem.getId());
                     } else if (Constants.MENU_ID_IC_RESTART.equals(ua.getPayload())) {
-                        appController.actionRestartFromIC(userId, timelineItem.getId());
+                        appController.actionRestart(userId, timelineItem.getId());
                     }else if (Constants.MENU_ID_IC_REFRESH.equals(ua.getPayload())) {
                         appController.actionRefresh(userId);
                     }

@@ -96,7 +96,7 @@ public class MainServlet extends HttpServlet {
                 }
             }
         } else if (req.getParameter("adminOperation").equals("admin_initialShoppingListApp")) {
-            message = appController.initApp(userId);
+            message = appController.adminInitApp(userId);
 //            if (CardDao.getInstance().getNumberOfCards(userId) == 0) {
 //                int result = appController.initApp(userId, Constants.SERVICE_TYPE_DUMMY);
 //                if (Constants.INIT_APP_RESULT_FAIL != result)
@@ -125,10 +125,7 @@ public class MainServlet extends HttpServlet {
                 message = "You initialized our glassware before, we just bring your initial card to front";
             }
         } */
-        else if (req.getParameter("adminOperation").equals("admin_insertCoupon")) {
-            appController.insertCoupon(userId, req.getParameter("couponContent"));
-            message = "Coupon is created";
-        } else if (req.getParameter("adminOperation").equals("admin_cleanCards")) {
+       else if (req.getParameter("adminOperation").equals("admin_cleanCards")) {
             if (appController.cleanUpAllCards(userId, null))
                 message = "All your shopping list cards have been removed from your timeline, as well as the data in our application database";
             else

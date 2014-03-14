@@ -14,12 +14,20 @@ import javax.jdo.Query;
 import com.rightcode.shoppinglist.glass.model.ServiceCache;
 import com.rightcode.shoppinglist.glass.util.PMF;
 
+/**
+ * In GAE, we can not make use of memory to cache data, so once we got the message from external source,
+ * we need to cache it to database through this DAO class
+ *
+ */
 public class ServiceCacheDao {
 
     private static final Logger LOG = Logger.getLogger(ServiceCacheDao.class.getSimpleName());
 
     private static ServiceCacheDao serviceCacheDao = null;
     
+    /**
+     * google project client id, which is related to oauth authorization
+     */    
     private String projectClientId = null;
 
     private ServiceCacheDao() {
@@ -50,6 +58,13 @@ public class ServiceCacheDao {
         return serviceCacheDao;
     }
 
+    /**
+     * Cache the message to database. Only message from external will be cached
+     * @param userId
+     * @param serviceType
+     * @param cachedMessage
+     * @param cachedListNames
+     */
     public void storeServiceCache(String userId,String serviceType, String cachedMessage, String cachedListNames) {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         try {
@@ -68,7 +83,7 @@ public class ServiceCacheDao {
     }
 
     @SuppressWarnings("unchecked")
-    public ServiceCache getRecord(String userId,PersistenceManager pm) {
+    private ServiceCache getRecord(String userId,PersistenceManager pm) {
         Query q = pm.newQuery(ServiceCache.class);
         q.setFilter("userId == '"+ userId +"' && projectClientId == '" + projectClientId +"'");
         List<ServiceCache> result = null;

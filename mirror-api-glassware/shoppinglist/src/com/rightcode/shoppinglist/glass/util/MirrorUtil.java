@@ -38,12 +38,12 @@ public final class MirrorUtil {
         }
     }
 
-    public static void createItemInfoCard(String userId, Map<String, Object> itemData, String shoppingListCardId) throws IOException {
+    public static void createProductCard(String userId, Map<String, Object> productViewBean, String shoppingListCardId) throws IOException {
 
         Credential credential = AuthUtil.getCredential(userId);
         Mirror mirrorClient = MirrorClient.getMirror(credential);
 
-        String html = VelocityHelper.getFinalStr(itemData, "productInfo.vm");
+        String html = VelocityHelper.getFinalStr(productViewBean, "productInfo.vm");
 
         TimelineItem timelineItem = new TimelineItem();
         timelineItem.setHtml(html);
@@ -61,10 +61,10 @@ public final class MirrorUtil {
         try {
             TimelineItem item = mirrorClient.timeline().insert(timelineItem).execute();
             CardDao.getInstance().insertCard(item.getId(), userId, Constants.CARD_TYPE_PRODUCT,
-                    (String) itemData.get(Constants.ITEM_COL_PRD_ID), shoppingListCardId);
+                    (String) productViewBean.get(Constants.ITEM_COL_PRD_ID), shoppingListCardId);
             LOG.info("Product card created:[" + item.getId() + "] [" + userId + "]");
         } catch (IOException e) {
-            LOG.severe("Error when create item info card, data:" + itemData);
+            LOG.severe("Error when create item info card, data:" + productViewBean);
             LOG.log(Level.SEVERE, e.getMessage(), e);
         }
     }

@@ -33,6 +33,7 @@ public class ServiceCache {
     @Persistent
     private Text cachedListData;
     
+    //Cache the ShoppingListCollection message
     @Persistent
     private Text cachedListNames;
 

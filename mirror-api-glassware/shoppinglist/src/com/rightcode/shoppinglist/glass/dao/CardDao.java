@@ -20,9 +20,11 @@ import com.rightcode.shoppinglist.glass.Constants;
 import com.rightcode.shoppinglist.glass.model.Card;
 import com.rightcode.shoppinglist.glass.util.PMF;
 
+
 /**
- * @author me
  * 
+ * @author me
+ *
  */
 public class CardDao {
 
@@ -30,6 +32,9 @@ public class CardDao {
 
     private static CardDao cardDao = null;
 
+    /**
+     * google project client id, which is related to oauth authorization
+     */
     private String projectClientId = null;
 
     private CardDao() {
@@ -61,6 +66,15 @@ public class CardDao {
         return cardDao;
     }
 
+    /**
+     * Insert a card to Card table
+     * 
+     * @param cardId
+     * @param userId
+     * @param type
+     * @param ref check definicaton in model {@link Card}
+     * @param shoppingListCardId
+     */
     public void insertCard(String cardId, String userId, String type, String ref, String shoppingListCardId) {
         PersistenceManager pm = PMF.get().getPersistenceManager();
 
@@ -226,50 +240,6 @@ public class CardDao {
             return "";
         }
     }
-    /**
-     * @param userId
-     * @param types
-     * @param shoppingListCardId
-     * @return
-     */
-//    public List<String> getCardsInTypes(String userId, String[] types, String shoppingListCardId) {
-//        PersistenceManager pm = PMF.get().getPersistenceManager();
-//
-//        Query q = pm.newQuery("select cardId from " + Card.class.getName());
-//
-//        StringBuilder filterStr = new StringBuilder("userId == userIdParm && projectClientId =='" + this.projectClientId +"'");
-//        String declareParamStr = "String userIdParm";
-//        List<String> params = new ArrayList<String>();
-//        params.add(userId);
-//
-//        if (types != null && types.length != 0) {
-//            filterStr.append(" && type in (");
-//            for (int i = 0; i < types.length; i++) {
-//                filterStr.append("'").append(types[i]).append("'");
-//                if(i != (types.length -1)){
-//                    filterStr.append(",");
-//                }
-////                declareParamStr += ", String typeParm" + i;
-////                params.add(types[i]);                
-//            }
-//            filterStr.append(")");
-//        }
-//        if (shoppingListCardId != null) {
-//            filterStr.append(" && shoppingListCardId == shoppingListCardIdParm");
-//            declareParamStr += ", String shoppingListCardIdParm";
-//            params.add(shoppingListCardId);
-//        }
-//        q.setFilter(filterStr.toString());
-//        q.declareParameters(declareParamStr);
-//
-//        List<String> result = null;
-//        try {
-//            result = (List<String>) q.executeWithArray(params.toArray());
-//        } finally {
-//            pm.close();
-//        }
-//        return result;
-//    }
     
     /**
      * Get the card id by ref, usually, ref is the prodcut id or shopping list id

@@ -27,21 +27,24 @@ import com.rightcode.shoppinglist.glass.service.ShoppingListProvider;
 import com.rightcode.shoppinglist.glass.util.MirrorUtil;
 import com.rightcode.shoppinglist.glass.util.VelocityHelper;
 
+/**
+ * The current application is following the MVC pattern.<br>
+ * This class acts as the controller to handle all the request from both web page and google glass
+ * 
+ * @author me
+ *
+ */
 public class AppController {
 
     private static AppController appController = null;
+    
     private ShoppingListProvider shoppingListProvider = null;
-
     private CardDao cardDao = null;
-    private String bundleIdSuffix = ""; // Reset this value whenever you are
-                                        // going to create bundle card
 
     private static final Logger LOG = Logger.getLogger(AppController.class.getSimpleName());
 
     /**
-     * Call back used by clean up batch call. Eric.TODO, can be further enhanced
-     * 
-     * @author me
+     * Call back used by clean up batch call.
      * 
      */
     private final static class CleanUpBatchCallback extends JsonBatchCallback<Void> {
@@ -82,7 +85,7 @@ public class AppController {
         }
 
         /**
-         * Must be call after each clean up
+         * Must be called after each clean up
          * 
          * @param resetValue
          */
@@ -109,7 +112,15 @@ public class AppController {
 
     }
 
-    public String initApp(String userId) throws IOException {
+    /**
+     * Admin function, to initialize the app by clean up user's timeline and then create an IC card for user 
+     * 
+     * 
+     * @param userId
+     * @return message of the execution result
+     * @throws IOException
+     */
+    public String adminInitApp(String userId) throws IOException {
 
         if (cardDao.getNumberOfCards(userId) > 0) {
             cleanUpAllCards(userId, null);
@@ -122,22 +133,34 @@ public class AppController {
         } else {
             msg = "Fail to create IC card for you, please contact our support team for details";
         }
-        // }
         return msg;
     }
 
+    /**
+     *  Method to handle card action<br>
+     *  Fetch all product cards of the specified shopping list
+     *  <ul>
+     *     <li>Card Type : <code>Constants.CARD_TYPE_SHOPPINGLIST</code></li>
+     *     <li>Action : <code>Constants.MENU_ID_STARTSHOPPING</code></li>
+     *  </ul>
+     * 
+     * @param userId
+     * @param shoppingListCardId
+     * @throws IOException
+     */
     public void actionStartShopping(String userId, String shoppingListCardId) throws IOException {
         Credential credential = AuthUtil.getCredential(userId);
         Mirror mirrorClient = MirrorClient.getMirror(credential);
-        bundleIdSuffix = String.valueOf(System.currentTimeMillis());
 
         List<String> prodcutCards = cardDao.getCardsByType(userId, Constants.CARD_TYPE_PRODUCT, shoppingListCardId);
-        if (prodcutCards != null && prodcutCards.size() > 0) {
+        if (prodcutCards != null && prodcutCards.size() > 0) { 
+            //This case might happen if user click the "start shopping" menu multiple times 
             for (int i = 0; i < prodcutCards.size(); i++) {
                 MirrorUtil.touchCard(mirrorClient, prodcutCards.get(i));
             }
             LOG.info("[Starting shopping] is clicked again, just moved all card to front of your timeline");
         } else {
+            //Below is the happy flow
             String shoppingListId = cardDao.getCardRefById(userId, shoppingListCardId);
             LOG.info("Starting shopping list:" + shoppingListId + " cardId:" + shoppingListCardId);
             updateShoppingListCard(mirrorClient, userId, shoppingListId, shoppingListCardId, Constants.SHOPPING_LIST_STATUS_IN_PROGRESS,
@@ -148,12 +171,25 @@ public class AppController {
             for (Iterator<Map<String, Object>> iterator = shoppingList.iterator(); iterator.hasNext();) {
                 Map<String, Object> viewbean = new HashMap<String, Object>(iterator.next());
                 viewbean.put(Constants.VELOCITY_PARM_ITEMS_IN_SAME_LIST, shoppingList);
-                MirrorUtil.createItemInfoCard(userId, viewbean, shoppingListCardId);
+                MirrorUtil.createProductCard(userId, viewbean, shoppingListCardId);
             }
             LOG.info("Starting shopping done, all shopping list cards have ben created");
         }
     }
 
+    /**
+     *  Method to handle card action <br>
+     *  Will clean up all product cards within the shopping list and change the shopping list status to "Done"
+     *  <ul>
+     *     <li>Card Type : <code>Constants.CARD_TYPE_SHOPPINGLIST</code></li>
+     *     <li>Action : <code>Constants.MENU_ID_FINISHSHOPPING</code></li>
+     *  </ul>
+     *  
+     * 
+     * @param userId
+     * @param shoppingListCardId
+     * @throws IOException
+     */
     public void actionFinishShopping(String userId, String shoppingListCardId) throws IOException {
         Credential credential = AuthUtil.getCredential(userId);
         Mirror mirrorClient = MirrorClient.getMirror(credential);
@@ -164,14 +200,16 @@ public class AppController {
         LOG.info("-----Finish Shopping Done");
     }
 
-    public void bringICToFront(String userId) throws IOException {
-        Credential credential = AuthUtil.getCredential(userId);
-        Mirror mirrorClient = MirrorClient.getMirror(credential);
-        List<String> cardIds = cardDao.getCardsByType(userId, Constants.CARD_TYPE_IC, null);
-        MirrorUtil.touchCard(mirrorClient, cardIds.get(0));
-    }
+//    public void bringICToFront(String userId) throws IOException {
+//        Credential credential = AuthUtil.getCredential(userId);
+//        Mirror mirrorClient = MirrorClient.getMirror(credential);
+//        List<String> cardIds = cardDao.getCardsByType(userId, Constants.CARD_TYPE_IC, null);
+//        MirrorUtil.touchCard(mirrorClient, cardIds.get(0));
+//    }
 
     /**
+     * To clean up the cards for specified shopping list
+     * 
      * @param userId
      * @param shoppingListCardId
      *            pass null if clean all shopping list
@@ -183,7 +221,14 @@ public class AppController {
         return cleanUpCards(userId, allCards);
     }
 
-    public boolean cleanUpCards(String userId, List<String> cards) throws IOException {
+    /**
+     * To clean up the specified card list 
+     * @param userId
+     * @param cards list of cards to be clean up
+     * @return
+     * @throws IOException
+     */
+    private boolean cleanUpCards(String userId, List<String> cards) throws IOException {
         Credential credential = AuthUtil.getCredential(userId);
 
         BatchRequest batch = MirrorClient.getMirror(null).batch();
@@ -205,6 +250,10 @@ public class AppController {
         }
     }
 
+    /**Admin function, to clean user token, then force user re-login
+     * 
+     * @throws IOException
+     */
     public void adminCleanUpToken() throws IOException {
         List<String> users = AuthUtil.getAllUserIds();
         for (int i = 0; i < users.size(); i++) {
@@ -212,18 +261,13 @@ public class AppController {
         }
     }
 
-    public void insertCoupon(String userId, String couponContent) throws IOException {
-        Credential credential = AuthUtil.getCredential(userId);
-        TimelineItem couponItem = new TimelineItem();
-        couponItem.setHtml(couponContent);
-
-        Mirror mirrorClient = MirrorClient.getMirror(credential);
-        mirrorClient.timeline().insert(couponItem).execute();
-        LOG.info("Coupon is created");
-    }
-
     /**
-     * 
+     *  Method to handle card action <br>
+     *  Fetch all shopping lists for specified user
+     *  <ul>
+     *     <li>Card Type : <code>Constants.CARD_TYPE_IC</code></li>
+     *     <li>Action : <code>Constants.MENU_ID_IC_FETCH</code></li>
+     *  </ul>
      * 
      * @param userId
      * @throws IOException
@@ -235,7 +279,6 @@ public class AppController {
             if (listCover != null && listCover.size() == 0) {
                 Credential credential = AuthUtil.getCredential(userId);
                 Mirror mirrorClient = MirrorClient.getMirror(credential);
-                bundleIdSuffix = String.valueOf(System.currentTimeMillis());
 
                 updateICCard(mirrorClient, userId, cardIdOfIC, false);
 
@@ -255,6 +298,7 @@ public class AppController {
                 }
                 
             } else {
+                //This flow might happen when user double tab the "fetch" menu
                 LOG.warning("-----You have created the list cover card for this project id, we won't create the them for you again");
             }
         } else {
@@ -262,7 +306,19 @@ public class AppController {
         }
     }
 
-    public void actionRestartFromIC(String userId, String cardIdOfIC) throws IOException {
+    /**
+     *  Method to handle card action <br>
+     *  Restart the shopping flow, will clean all fetched shopping list
+     *  <ul>
+     *     <li>Card Type : <code>Constants.CARD_TYPE_IC</code></li>
+     *     <li>Action : <code>Constants.MENU_ID_IC_RESTART</code></li>
+     *  </ul> 
+     * 
+     * @param userId
+     * @param cardIdOfIC
+     * @throws IOException
+     */
+    public void actionRestart(String userId, String cardIdOfIC) throws IOException {
 
         Credential credential = AuthUtil.getCredential(userId);
         Mirror mirrorClient = MirrorClient.getMirror(credential);
@@ -277,10 +333,33 @@ public class AppController {
 
     }
 
+    /**
+     *  Method to handle card action <br>
+     *  Re-fetch the shopping list data from external service and then perform update on all related product cards<br>
+     *  In current version,
+     *  1. Add shopping list
+     *  2. Add product 
+     *  <ul>
+     *     <li>Card Type : <code>Constants.CARD_TYPE_IC</code></li>
+     *     <li>Action : <code>Constants.MENU_ID_IC_REFRESH</code></li>
+     *  </ul> 
+     * 
+     * @param userId
+     * @throws IOException
+     */
     public void actionRefresh(String userId) throws IOException {
         shoppingListProvider.refreshData(userId);
     }
 
+    /**
+     * 
+     * Utility method to create the list cover card
+     * 
+     * @param mirrorClient
+     * @param userId
+     * @param bundleId
+     * @throws IOException
+     */
     private void createListCoverCard(Mirror mirrorClient, String userId, String bundleId) throws IOException {
         TimelineItem returnItem = null;
         String html = VelocityHelper.getFinalStr(new HashMap<String, Object>(), "listCover.vm");
@@ -302,6 +381,13 @@ public class AppController {
         }
     }
 
+    /**
+     * 
+     * Utility method to create the initial card
+     * @param mirrorClient
+     * @param userId
+     * @return
+     */
     private boolean createInitialCard(Mirror mirrorClient, String userId) {
         String html = VelocityHelper.getFinalStr(null, "initialCard.vm");
 
@@ -312,9 +398,9 @@ public class AppController {
 
         // And custom actions
         List<MenuValue> menuValues = new ArrayList<MenuValue>();
-        menuValues.add(new MenuValue().setIconUrl(Constants.MENU_ICON_IC_STARTSHOPPING)
-                .setDisplayName(Constants.MENU_NAME_IC_STARTSHOPPING));
-        menuItemList.add(new MenuItem().setValues(menuValues).setId(Constants.MENU_ID_IC_STARTSHOPPING).setAction("CUSTOM"));
+        menuValues.add(new MenuValue().setIconUrl(Constants.MENU_ICON_IC_FETCH)
+                .setDisplayName(Constants.MENU_NAME_IC_FETCH));
+        menuItemList.add(new MenuItem().setValues(menuValues).setId(Constants.MENU_ID_IC_FETCH).setAction("CUSTOM"));
         menuItemList.add(new MenuItem().setAction("TOGGLE_PINNED"));
 
         timelineItem.setMenuItems(menuItemList);
@@ -367,9 +453,22 @@ public class AppController {
         }
     }
 
+    /**
+     * 
+     *  Method to handle card action <br>
+     *  
+     *  <ul>
+     *     <li>Card Type : <code>Constants.CARD_TYPE_PRODUCT</code></li>
+     *     <li>Action : <code>Constants.MENU_ID_MARK && Constants.MENU_ID_UNMARK</code></li>
+     *  </ul>  
+     * 
+     * @param mirrorClient
+     * @param userId
+     * @param timelineItem
+     * @param isMark
+     */
     public void markOrUnMarkProduct(Mirror mirrorClient, String userId, TimelineItem timelineItem, boolean isMark) {
         String productCardId = timelineItem.getId();
-        // String bundleId = timelineItem.getBundleId();
 
         String productId = cardDao.getCardRefById(userId, productCardId);
         String shoppingListCardId = cardDao.getShoppingListCardByProductCard(userId, productCardId);
@@ -383,7 +482,6 @@ public class AppController {
 
         Map<String, Object> viewbean = new HashMap<String, Object>(shoppingListProvider.getProductData(userId, shoppingListId, productId));
         List<Map<String, Object>> subShoppingList = shoppingListProvider.getShoppingList(userId, shoppingListId);
-        // int[] completedStatus = MirrorUtil.calculateCompletedStatus(subShoppingList);
 
         // Create an empty timeline item for patch
         TimelineItem patchTimelineItem = new TimelineItem();
@@ -417,6 +515,7 @@ public class AppController {
     }
 
     /**
+     * Utiliy method to update IC card after different action triggered
      * 
      * @param mirrorClient
      * @param userId
@@ -429,10 +528,10 @@ public class AppController {
             timelineItem.setMenuItems(menuItemList);
             List<MenuValue> menuValues = new ArrayList<MenuValue>();
             if (restart) {
-                menuValues.add(new MenuValue().setIconUrl(Constants.MENU_ICON_IC_STARTSHOPPING).setDisplayName(
-                        Constants.MENU_NAME_IC_STARTSHOPPING));
+                menuValues.add(new MenuValue().setIconUrl(Constants.MENU_ICON_IC_FETCH).setDisplayName(
+                        Constants.MENU_NAME_IC_FETCH));
                 timelineItem.getMenuItems().add(
-                        new MenuItem().setValues(menuValues).setId(Constants.MENU_ID_IC_STARTSHOPPING).setAction("CUSTOM"));
+                        new MenuItem().setValues(menuValues).setId(Constants.MENU_ID_IC_FETCH).setAction("CUSTOM"));
             } else {
                 menuValues.add(new MenuValue().setIconUrl(Constants.MENU_ICON_IC_REFRESH).setDisplayName(Constants.MENU_NAME_IC_REFRESH));
                 timelineItem.getMenuItems().add(
@@ -450,6 +549,16 @@ public class AppController {
         }
     }
 
+    /**
+     * Utility method to update shopping list base on previous and current status
+     * 
+     * @param mirrorClient
+     * @param userId
+     * @param shoppingListId
+     * @param shoppingListCardId
+     * @param status status after update
+     * @param preStatus status before update
+     */
     private void updateShoppingListCard(Mirror mirrorClient, String userId, String shoppingListId, String shoppingListCardId,
             String status, String preStatus) {
         try {
@@ -474,12 +583,24 @@ public class AppController {
         }
     }
 
+    /**
+     * Generate bundle card id
+     * @param coverName
+     * @return
+     */
     private String getBundleId(String coverName) {
-        // Add current time stamp to separate the cards created in different
-        // time
-        return "bundle_" + coverName + "_" + bundleIdSuffix;
+        // Add current time stamp to separate the cards created in different time
+        return "bundle_" + coverName + "_" + System.currentTimeMillis();
     }
 
+    /**
+     * Utility method to build the shopping list card viewbean
+     * 
+     * @param userId
+     * @param shoppingListId
+     * @param status
+     * @return
+     */
     private Map<String, Object> buildShoppingListViewBean(String userId, String shoppingListId, String status) {
         List<Map<String, Object>> shoppingList = shoppingListProvider.getShoppingList(userId, shoppingListId);
         String shoppingListName = shoppingListProvider.getShoppingListName(userId, shoppingListId);

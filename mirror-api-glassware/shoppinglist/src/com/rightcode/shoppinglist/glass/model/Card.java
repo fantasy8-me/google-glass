@@ -33,9 +33,9 @@ public class Card {
   private String type;
 
   /**
-   * For product card, it is the product number<br>
-   * For bundle cover card, it is the bundleId<br>
-   * Not use for the main(shopping list) card
+   * For product card, it is the prdId<br>
+   * For list cover, it is the bundleId<br>
+   * For shopping list card, it is shopping list id
    */
   @Persistent
   private String ref;
@@ -47,8 +47,9 @@ public class Card {
 @Persistent
   private String shoppingListCardId;
 
+  //There is no api to support store the purchase status, so we have to store it in local db, along with the product card
   @Persistent
-  private boolean isPurchased = false; //Required if we don't have external service to store the purchase status
+  private boolean isPurchased = false; 
 
   public Card(String cardId, String userId, String projectClientId,String type, String ref, String shoppinglistCardId) {
     this.cardId = cardId;
