@@ -7,7 +7,7 @@ import javax.jdo.annotations.PrimaryKey;
 
 /**
  * As GAE can't support store credential in memory, so have to implement a solution bases on db
- * This class is the credential model which will be persistented in db
+ * This class is the credential model which will be persistent in db
  *
  */
 @PersistenceCapable(identityType = IdentityType.APPLICATION)

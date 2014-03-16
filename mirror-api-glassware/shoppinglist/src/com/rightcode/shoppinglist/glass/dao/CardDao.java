@@ -22,8 +22,7 @@ import com.rightcode.shoppinglist.glass.util.PMF;
 
 
 /**
- * 
- * @author me
+ * DAO class of Card model
  *
  */
 public class CardDao {
@@ -86,6 +85,7 @@ public class CardDao {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public String getCardRefById(String userId, String cardId) {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Query q = pm.newQuery("select ref from " + Card.class.getName());
@@ -93,7 +93,7 @@ public class CardDao {
         q.declareParameters("String userIdParm, String cardIdParm");
         List<String> result = null;
         try {
-            result = (List<String>) q.executeWithArray(new String[] { userId, cardId });
+            result = (List<String>) q.executeWithArray(new Object[] { userId, cardId });
         } finally {
             pm.close();
         }
@@ -104,6 +104,7 @@ public class CardDao {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public String getShoppingListCardByProductCard(String userId, String cardId) {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Query q = pm.newQuery("select shoppingListCardId from " + Card.class.getName());
@@ -111,7 +112,7 @@ public class CardDao {
         q.declareParameters("String userIdParm, String cardIdParm");
         List<String> result = null;
         try {
-            result = (List<String>) q.executeWithArray(new String[] { userId, cardId });
+            result = (List<String>) q.executeWithArray(new Object[] { userId, cardId });
         } finally {
             pm.close();
         }
@@ -122,6 +123,7 @@ public class CardDao {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public Map<String, Boolean> getPurchaseStatus(String userId) {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Query q = pm.newQuery("select ref,isPurchased from " + Card.class.getName());
@@ -168,10 +170,10 @@ public class CardDao {
      * @param userId
      * @return number of cards for user
      */
+    @SuppressWarnings("unchecked")
     public int getNumberOfCards(String userId) {
         PersistenceManager pm = PMF.get().getPersistenceManager();
-        // Eric.TODO, can not find the proper count approach in JDO, will double
-        // check later
+        // Can not find the proper count approach in JDO
         Query q = pm.newQuery("select cardId from " + Card.class.getName());
         q.setFilter("userId == userIdParm && projectClientId=='" + this.projectClientId + "'");
         q.declareParameters("String userIdParm");
@@ -191,6 +193,7 @@ public class CardDao {
      * @param type
      * @return
      */
+    @SuppressWarnings("unchecked")
     public List<String> getCardsByType(String userId, String type, String shoppingListCardId) {
         PersistenceManager pm = PMF.get().getPersistenceManager();
 
@@ -223,6 +226,7 @@ public class CardDao {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     public String getBundleIdFromListCoverCard(String userId) {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Query q = pm.newQuery("select ref from " + Card.class.getName());
@@ -248,6 +252,7 @@ public class CardDao {
      * @param type 
      * @return
      */
+    @SuppressWarnings("unchecked")
     public String getCardIdByRef(String userId, String id, String type) {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Query q = pm.newQuery("select cardId from " + Card.class.getName());
@@ -255,7 +260,7 @@ public class CardDao {
         q.declareParameters("String userIdParm, String idParm, String typeParm");
         List<String> result = null;
         try {
-            result = (List<String>) q.executeWithArray(new String[] { userId, id, type });
+            result = (List<String>) q.executeWithArray(new Object[] { userId, id, type });
         } finally {
             pm.close();
         }

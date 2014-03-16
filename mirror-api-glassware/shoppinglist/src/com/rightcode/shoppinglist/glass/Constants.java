@@ -14,8 +14,6 @@ public class Constants {
     public final static String ITEM_COL_PROMO = "promo";
     public final static String ITEM_COL_PURCHASED = "purchased";
 
-    // public final static String ITEM_PARM_MAXITEM = "maxItems";
-
     /* parameter used in velocity page */
     public final static String VELOCICY_PARM_AllPRODUCTS = "allProducts";
     public final static String VELOCICY_PARM_SHOPPING_LIST_NAME = "listName";

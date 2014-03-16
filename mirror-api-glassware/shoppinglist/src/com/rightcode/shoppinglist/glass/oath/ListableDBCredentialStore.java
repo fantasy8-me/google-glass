@@ -46,7 +46,7 @@ public class ListableDBCredentialStore implements CredentialStore {
             LOG.log(Level.SEVERE, "Unexpected error occur, might happen after you re-deploy appliation with new proejct id, try access again",e);
         } finally {
             pm.close();
-            lock.unlock();// Eric.TODO double check
+            lock.unlock();
         }
     }
 

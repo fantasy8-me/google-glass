@@ -200,13 +200,6 @@ public class AppController {
         LOG.info("-----Finish Shopping Done");
     }
 
-//    public void bringICToFront(String userId) throws IOException {
-//        Credential credential = AuthUtil.getCredential(userId);
-//        Mirror mirrorClient = MirrorClient.getMirror(credential);
-//        List<String> cardIds = cardDao.getCardsByType(userId, Constants.CARD_TYPE_IC, null);
-//        MirrorUtil.touchCard(mirrorClient, cardIds.get(0));
-//    }
-
     /**
      * To clean up the cards for specified shopping list
      * 

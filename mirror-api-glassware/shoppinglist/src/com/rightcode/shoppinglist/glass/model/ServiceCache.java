@@ -11,7 +11,7 @@ import com.google.appengine.api.datastore.Text;
 
 /**
  * 
- * @author me
+ * Model used to cache message
  * 
  */
 @PersistenceCapable(identityType = IdentityType.APPLICATION)

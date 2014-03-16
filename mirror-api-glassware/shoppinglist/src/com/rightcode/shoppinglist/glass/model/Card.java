@@ -7,7 +7,7 @@ import javax.jdo.annotations.PrimaryKey;
 
 /**
  * 
- * @author me
+ * The card model
  *
  */
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
