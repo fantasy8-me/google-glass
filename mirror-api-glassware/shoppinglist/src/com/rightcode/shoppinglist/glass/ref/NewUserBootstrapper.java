@@ -44,24 +44,9 @@ public class NewUserBootstrapper {
   public static void bootstrapNewUser(HttpServletRequest req, String userId) throws IOException {
     Credential credential = AuthUtil.newAuthorizationCodeFlow().loadCredential(userId);
 
-    /* Create contact comment by Shopping List Code
-    Contact starterProjectContact = new Contact();
-    starterProjectContact.setId(MainServlet.CONTACT_ID);
-    starterProjectContact.setDisplayName(MainServlet.CONTACT_NAME);
-    starterProjectContact.setImageUrls(Lists.newArrayList(WebUtil.buildUrl(req,
-        "/static/images/chipotle-tube-640x360.jpg")));
-    starterProjectContact.setAcceptCommands(Lists.newArrayList(
-        new Command().setType("TAKE_A_NOTE")));
-    Contact insertedContact = MirrorClient.insertContact(credential, starterProjectContact);
-    LOG.info("Bootstrapper inserted contact " + insertedContact.getId() + " for user " + userId);*/
-
     try {
     	/*Shopping List Code*/
       String subscription_callback = Util.buildSubscriptionCallBack(req);
-      // Subscribe to timeline updates
-//      Subscription subscription =
-//          MirrorClient.insertSubscription(credential, WebUtil.buildUrl(req, "/notify"), userId,
-//              "timeline");
       Subscription subscription =
               MirrorClient.insertSubscription(credential, subscription_callback, userId,
                   "timeline");
@@ -73,14 +58,6 @@ public class NewUserBootstrapper {
           + "localhost. Details:" + e.getDetails().toPrettyString());
     }
 
-    // Send welcome timeline item
-    /*Shopping List Code comment
-    TimelineItem timelineItem = new TimelineItem();
-    timelineItem.setText("Welcome to the Glass Java Quick Start");
-    timelineItem.setNotification(new NotificationConfig().setLevel("DEFAULT"));
-    TimelineItem insertedItem = MirrorClient.insertTimelineItem(credential, timelineItem);
-    LOG.info("Bootstrapper inserted welcome message " + insertedItem.getId() + " for user "
-        + userId);*/
   }
 
 }

@@ -19,6 +19,10 @@ import com.rightcode.shoppinglist.glass.dao.CardDao;
 import com.rightcode.shoppinglist.glass.ref.AuthUtil;
 import com.rightcode.shoppinglist.glass.ref.MirrorClient;
 
+/**
+ * Contains utility method for mirror api
+ *
+ */
 public final class MirrorUtil {
 
     private static final Logger LOG = Logger.getLogger(MirrorUtil.class.getSimpleName());
@@ -38,12 +42,19 @@ public final class MirrorUtil {
         }
     }
 
+    /**
+     * Create product card in use's timeline
+     * @param userId
+     * @param productViewBean
+     * @param shoppingListCardId
+     * @throws IOException
+     */
     public static void createProductCard(String userId, Map<String, Object> productViewBean, String shoppingListCardId) throws IOException {
 
         Credential credential = AuthUtil.getCredential(userId);
         Mirror mirrorClient = MirrorClient.getMirror(credential);
 
-        String html = VelocityHelper.getFinalStr(productViewBean, "productInfo.vm");
+        String html = VelocityHelper.getHtmlStr(productViewBean, "productInfo.vm");
 
         TimelineItem timelineItem = new TimelineItem();
         timelineItem.setHtml(html);
@@ -70,7 +81,7 @@ public final class MirrorUtil {
     }
 
     /**
-     * Update the html conent in the product card
+     * Update the html content in the product card
      * 
      * @param userId
      * @param metaData
@@ -87,7 +98,7 @@ public final class MirrorUtil {
         Map<String, Object> viewbean = new HashMap<>(metaData);
 
         viewbean.put(Constants.VELOCITY_PARM_ITEMS_IN_SAME_LIST, shoppingList);
-        String html = VelocityHelper.getFinalStr(viewbean, "productInfo.vm");
+        String html = VelocityHelper.getHtmlStr(viewbean, "productInfo.vm");
         patchTimelineItem.setHtml(html);
         try {
             Credential credential = AuthUtil.getCredential(userId);
@@ -99,9 +110,18 @@ public final class MirrorUtil {
         }
     }
 
+    /**
+     * Update the html content of shoppinglist card
+     * 
+     * @param userId
+     * @param shoppingListCardId
+     * @param shoppingList
+     * @param shoppingListName
+     * @param status
+     */
     public static void updateShoppingListCardContent(String userId, String shoppingListCardId,
             List<Map<String, Object>> shoppingList, String shoppingListName, String status) {
-        String html = VelocityHelper.getFinalStr(buildShoppingListViewBean(shoppingList, shoppingListName, status), "shoppingList.vm");
+        String html = VelocityHelper.getHtmlStr(buildShoppingListViewBean(shoppingList, shoppingListName, status), "shoppingList.vm");
         TimelineItem timelineItem = new TimelineItem();
         timelineItem.setHtml(html);
 
@@ -115,6 +135,16 @@ public final class MirrorUtil {
         }
     }
 
+    /**
+     * Create shopping list card in use's timeline
+     * @param userId
+     * @param shoppingList
+     * @param shoppingListName
+     * @param shoppingListId
+     * @param bundleId
+     * @return id of the card
+     * @throws IOException
+     */
     public static String createShoppingListCard(String userId, List<Map<String, Object>> shoppingList,
             String shoppingListName, String shoppingListId, String bundleId) throws IOException {
         CardDao cardDao = CardDao.getInstance();
@@ -123,7 +153,7 @@ public final class MirrorUtil {
 
         Map<String, Object> items = buildShoppingListViewBean(shoppingList, shoppingListName, Constants.SHOPPING_LIST_STATUS_READY);
 
-        String html = VelocityHelper.getFinalStr(items, "shoppingList.vm");
+        String html = VelocityHelper.getHtmlStr(items, "shoppingList.vm");
 
         TimelineItem timelineItem = new TimelineItem();
         timelineItem.setHtml(html);
@@ -155,6 +185,13 @@ public final class MirrorUtil {
         }
     }
 
+    /**
+     * Generate the shoppinglist viewbean from the shopping list model
+     * @param shoppingList
+     * @param shoppingListName
+     * @param status
+     * @return
+     */
     public static Map<String, Object> buildShoppingListViewBean(List<Map<String, Object>> shoppingList,
             String shoppingListName, String status) {
         Map<String, Object> viewBean = new HashMap<String, Object>();

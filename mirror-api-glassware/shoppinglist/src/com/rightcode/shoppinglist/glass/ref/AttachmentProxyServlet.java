@@ -15,9 +15,6 @@
  */
 package com.rightcode.shoppinglist.glass.ref;
 
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.common.io.ByteStreams;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Logger;
@@ -26,6 +23,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.common.io.ByteStreams;
 
 /**
  * Allows logged in users to view their timeline item attachments by proxying

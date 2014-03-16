@@ -16,9 +16,8 @@ import com.rightcode.shoppinglist.glass.util.PMF;
 
 /**
  * When deploy the sample app to GAE, found data can not be persistent in memory. 
- * This class is to store the credential to database
+ * This class is to store the credential to database.
  * 
- * @author
  */
 public class ListableDBCredentialStore implements CredentialStore {
 

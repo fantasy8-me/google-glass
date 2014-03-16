@@ -17,6 +17,10 @@ import org.apache.tools.ant.filters.StringInputStream;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 
+/**
+ * This is a testing class for connectivity test of external service 
+ *
+ */
 public class ConnectivityTester {
 
     private static final Logger LOG = Logger.getLogger(ConnectivityTester.class.getSimpleName());
@@ -67,12 +71,7 @@ public class ConnectivityTester {
     }
 
     private static ArrayList<String> GetSlIds(String slcollectionJson) {
-//        LOG.info("-----Going to initial GSON");
-//        Gson g = new Gson();
-//       // Type type = new TypeToken<List<Map<String, Object>>>() {}.getType();
-//        LOG.info("-----Going to read response");
         List<Map<String, Object>> list = null;
-//        LOG.info("-----Done process response");
         ArrayList<String> aList = new ArrayList<String>();
         
         JsonFactory jsonFactory = new JacksonFactory();

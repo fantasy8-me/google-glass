@@ -27,8 +27,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.api.client.auth.oauth2.Credential;
-
 /**
  * A filter which ensures that prevents unauthenticated users from accessing the
  * web app
@@ -56,13 +54,7 @@ public class AuthFilter implements Filter {
       LOG.fine("Checking to see if anyone is logged in");
       String userId = AuthUtil.getUserId(httpRequest);
       LOG.info("USER:"+userId);
-      if(userId != null){
-          Credential credential = AuthUtil.getCredential(AuthUtil.getUserId(httpRequest));
-          LOG.info("------Credential:"+credential);
-          if(credential != null){
-              LOG.info("------AccessTokenn:"+credential.getAccessToken() + " ExpiresInSeconds:" + credential.getExpiresInSeconds());
-          }
-      }
+
       if (AuthUtil.getUserId(httpRequest) == null
           || AuthUtil.getCredential(AuthUtil.getUserId(httpRequest)) == null
           || AuthUtil.getCredential(AuthUtil.getUserId(httpRequest)).getAccessToken() == null) {

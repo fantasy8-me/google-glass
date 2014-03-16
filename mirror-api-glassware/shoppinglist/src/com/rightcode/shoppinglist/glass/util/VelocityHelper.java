@@ -18,12 +18,19 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import com.rightcode.shoppinglist.glass.Constants;
 import com.rightcode.shoppinglist.glass.service.DemoShoppingListProvider;
 
+/**
+ * Velocity helper class. Velocity is used to generate the html content of card
+ *
+ */
 public class VelocityHelper {
 
     private static final Logger LOG = Logger.getLogger(VelocityHelper.class.getSimpleName());
 
     private static final String resourceRoot = "com/rightcode/shoppinglist/glass/vm/";
 
+    /**
+     * Initialize the veloicty engine
+     */
     public static void initVelocity() {
         // Globally init Velocity
         try {
@@ -38,7 +45,13 @@ public class VelocityHelper {
 
     }
 
-    public static String getFinalStr(Map<String, Object> data, String tempalteName) {
+    /**
+     * Merge the data and template to generate the final html string
+     * @param data
+     * @param tempalteName the template file name e.g. productInfo.vm
+     * @return
+     */
+    public static String getHtmlStr(Map<String, Object> data, String tempalteName) {
         VelocityContext context = new VelocityContext();
         if (data != null) {
             Iterator<String> iter = data.keySet().iterator();
@@ -73,7 +86,7 @@ public class VelocityHelper {
         items.put(Constants.VELOCICY_PARM_AllPRODUCTS, shoppingList);
 
 
-        System.out.println(VelocityHelper.getFinalStr(items, "shoppingList.vm"));
+        System.out.println(VelocityHelper.getHtmlStr(items, "shoppingList.vm"));
 
     }
 

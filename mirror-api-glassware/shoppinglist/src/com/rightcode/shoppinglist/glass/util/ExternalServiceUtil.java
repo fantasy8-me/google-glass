@@ -36,12 +36,21 @@ public class ExternalServiceUtil {
      */
     private static boolean enableExternal = true;
 
+    /**
+     * Get shopping list from external service and convert it to internal model.
+     * <br>
+     * Before the external service ready, we have build up a internal model. To minimize the impact to existing logic
+     * While the external service is ready, we need convert the data from external service to the internal model.
+     * 
+     * @return
+     */
     public static Object[] getConvertedData() {
-
+        
+        //To use thread in GAE environment, we need to get the thread factory from "com.google.appengine.api.ThreadManager"
         ExecutorService exec = Executors.newCachedThreadPool(ThreadManager.currentRequestThreadFactory());
         // ExecutorService exec = Executors.newCachedThreadPool(); //only user for main method testing
 
-        FeatchTask task = new FeatchTask();
+        FetchTask task = new FetchTask();
         Future<Object[]> future = exec.submit(task);
         Object[] taskResult = null;
         try {
@@ -56,6 +65,13 @@ public class ExternalServiceUtil {
         return taskResult;
     }
 
+    /**
+     * Get the shopping list collection from external service, it is the first message we need from external service.
+     * Once we get it, we need to get the details of each shoppinglist one by one
+     * @return
+     * @throws ClientProtocolException
+     * @throws IOException
+     */
     private static List<Map<String, Object>> getAllShoppingList() throws ClientProtocolException, IOException {
         String shoppingCollectionUrl = buildUrl("ShoppingListCollection");
 
@@ -75,6 +91,13 @@ public class ExternalServiceUtil {
         return result;
     }
 
+    /**
+     * Get specified shopping list data from external service
+     * @param shoppingListId
+     * @return
+     * @throws ClientProtocolException
+     * @throws IOException
+     */
     @SuppressWarnings("unchecked")
     private static Map<String, Object> getShoppingList(String shoppingListId) throws ClientProtocolException, IOException {
         String shoppingListUrl = buildUrl("ShoppingList/" + shoppingListId);
@@ -89,12 +112,16 @@ public class ExternalServiceUtil {
         } else {
             result = (Map<String, Object>) jsonFactory.fromInputStream(ExternalServiceUtil.class
                     .getResourceAsStream("/com/rightcode/shoppinglist/glass/testing/external_allLists_demo_list3.json"), null);
-
-            // result = jsonFactory.fromInputStream(new StringInputStream(shoppingListStr), null);
         }
         return result;
     }
 
+    /**
+     * Convert the data from external service to internal data model
+     * 
+     * @param dataFromExternal
+     * @return
+     */
     private static List<Map<String, Object>> convertList(Map<String, Object> dataFromExternal) {
         @SuppressWarnings("unchecked")
         List<Map<String, Object>> productLines = (List<Map<String, Object>>) dataFromExternal.get(Constants.EXTERNAL_MSG_TAG_LINES);
@@ -296,7 +323,11 @@ public class ExternalServiceUtil {
         }
     }
 
-    final static class FeatchTask implements Callable<Object[]> {
+    /**
+     * To support timeout control, we make use of ExecutorService, this class contains the actual logic which will be call by ExecutorService.
+     *
+     */
+    final static class FetchTask implements Callable<Object[]> {
 
         @Override
         public Object[] call() throws Exception {

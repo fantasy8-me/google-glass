@@ -55,18 +55,11 @@ import com.rightcode.shoppinglist.glass.util.ConnectivityTester;
 import com.rightcode.shoppinglist.glass.util.Util;
 
 /**
- * Handles POST requests from index.jsp
+ * Handles POST requests from index.jsp, changed base on google's sample application
  * 
  * @author Jenny Murphy - http://google.com/+JennyMurphy
  */
 public class MainServlet extends HttpServlet {
-
-    /**
-     * Private class to process batch request results.
-     * <p/>
-     * For more information, see
-     * https://code.google.com/p/google-api-java-client/wiki/Batch.
-     */
 
     private static final Logger LOG = Logger.getLogger(MainServlet.class.getSimpleName());
 
@@ -97,34 +90,7 @@ public class MainServlet extends HttpServlet {
             }
         } else if (req.getParameter("adminOperation").equals("admin_initialShoppingListApp")) {
             message = appController.adminInitApp(userId);
-//            if (CardDao.getInstance().getNumberOfCards(userId) == 0) {
-//                int result = appController.initApp(userId, Constants.SERVICE_TYPE_DUMMY);
-//                if (Constants.INIT_APP_RESULT_FAIL != result)
-//                    message = "We have initialized our glassware in you glass with local data, you should able to see a intial card created for you, pin it and use it to start shopping";
-//                else {
-//                    message = "Fail to initialize the glassware, please check log";
-//                }
-//            } else {
-//                appController.bringICToFront(userId);
-//                message = "You initialized our glassware before, we just bring your initial card to front";
-//            }
         } 
-        /*
-        else if (req.getParameter("adminOperation").equals("admin_initialShoppingListAppFromExternal")) {
-            if (CardDao.getInstance().getNumberOfCards(userId) == 0) {
-                int result = appController.initApp(userId, Constants.SERVICE_TYPE_EXTERNAL);
-                if (Constants.INIT_APP_RESULT_FAIL == result) {
-                    message = "Fail to initialize the glassware, please check log";
-                } else if (Constants.INIT_APP_RESULT_SUCCESS_WITH_DUMMY == result) {
-                    message = "We have swapped from external server and initialized our glassware in you glass with local data, you should able to see a intial card created for you, pin it and use it to start shopping";
-                } else if (Constants.INIT_APP_RESULT_SUCCESS_WITH_EXTERNAL == result) {
-                    message = "We have initialized our glassware in you glass with external data, you should able to see a intial card created for you, pin it and use it to start shopping";
-                }
-            } else {
-                appController.bringICToFront(userId);
-                message = "You initialized our glassware before, we just bring your initial card to front";
-            }
-        } */
        else if (req.getParameter("adminOperation").equals("admin_cleanCards")) {
             if (appController.cleanUpAllCards(userId, null))
                 message = "All your shopping list cards have been removed from your timeline, as well as the data in our application database";

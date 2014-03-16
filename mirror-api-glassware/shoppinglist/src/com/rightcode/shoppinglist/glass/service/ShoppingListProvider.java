@@ -79,9 +79,27 @@ public interface ShoppingListProvider {
     public void unMarkProduct(String userId, String shoppingListId, String productId, String cardId);
     
     
+    /**
+     * Get the shoppinglist name by shopping list id 
+     *
+     * @param userId
+     * @param shoppingListId
+     * @return
+     */
     public String getShoppingListName(String userId, String shoppingListId);
     
+    /**
+     * Fetch the latest shopping list from external service and perform the update on user's time line to reflect the change
+     * 
+     * @param userId
+     * @return whether the refresh is successful
+     */
     public boolean refreshData(String userId);
     
+    /**
+     * Fetch shopping list for specified user from external service. The data will then be cached in local db for later access
+     * @param userId
+     * @return
+     */
     public int fetchShoppingLists(String userId);
 }

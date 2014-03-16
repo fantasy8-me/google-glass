@@ -1,19 +1,4 @@
-<!--
-Copyright (C) 2013 Google Inc.
- 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
- 
-http://www.apache.org/licenses/LICENSE-2.0
- 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
--->
-<%@page import="com.rightcode.shoppinglist.glass.util.Util"%>
+<%@ page import="com.rightcode.shoppinglist.glass.util.Util"%>
 <%@ page import="com.google.api.client.auth.oauth2.Credential"%>
 <%@ page import="com.google.api.services.mirror.model.Contact"%>
 <%@ page import="com.rightcode.shoppinglist.glass.ref.MirrorClient"%>
@@ -34,15 +19,11 @@ limitations under the License.
  
   Credential credential = com.rightcode.shoppinglist.glass.ref.AuthUtil.getCredential(userId);
  
-  /* Contact contact = MirrorClient.getContact(credential, MainServlet.CONTACT_ID); */
- 
   List<TimelineItem> timelineItems = MirrorClient.listItems(credential, 3L).getItems();
- 
  
   List<Subscription> subscriptions = MirrorClient.listSubscriptions(credential).getItems();
   boolean timelineSubscriptionExists = false;
   boolean locationSubscriptionExists = false;
- 
  
   if (subscriptions != null) {
     for (Subscription subscription : subscriptions) {
@@ -114,11 +95,6 @@ iframe{
 								onclick="document.getElementById('adminOperation').value='admin_cleanCards'">Delete timeline cards
 								and uncheck Items</button>
 						</td>
-<!-- 						<td>
-							<button class="btn btn-block btn-primary" type="submit"
-								onclick="document.getElementById('adminOperation').value='admin_initialShoppingListAppFromExternal'">Fetch
-								data from external server</button>
-						</td> -->
 						<td>
 							<button class="btn btn-block btn-primary" type="submit"
 								onclick="document.getElementById('adminOperation').value='admin_initialShoppingListApp'">Clean timeline, database and send welcome card to timeline</button>
@@ -159,28 +135,6 @@ iframe{
 	<script src="/static/bootstrap/js/bootstrap.min.js"></script>
 	<script type="text/javascript" charset="utf-8" src="/static/tubular/js/jquery.tubular.1.0.js"></script>
 	<script type="text/javascript">
-		var jsonTemplates = {
-			"simpleText" : '    {\n\
-        "text": "This item auto-resizes according to the text length",\n\
-            "notification": {\n\
-            "level": "DEFAULT"\n\
-        }\n\
-    }',
-			"html" : '  {\n\
-      "html": "<strong class=\\\"blue\\\">HTML</strong>",\n\
-      "notification": {\n\
-          "level": "DEFAULT"\n\
-      }\n\
-   }'
-		};
-
-		function insertTemplate(templates) {
-			if (templates.selectedIndex !== 0) {
-				console.log(templates.selectedIndex)
-				document.getElementById("jsonMsg").value = jsonTemplates[templates[templates.selectedIndex].value];
-			}
-		}
-		
 		$(".container").ready(function() {
 			$('.container').tubular({videoId: 'v1uyQZNg2vE'}); // where idOfYourVideo is the YouTube ID.
 		});

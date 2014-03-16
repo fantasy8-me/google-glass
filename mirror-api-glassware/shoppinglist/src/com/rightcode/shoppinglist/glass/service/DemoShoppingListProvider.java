@@ -125,6 +125,7 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
 
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean refreshData(String userId) {
         initData(userId);
@@ -173,7 +174,7 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
     @SuppressWarnings("unused")
     private Object[] getLocalData() throws IOException {
         JsonFactory jsonFactory = new JacksonFactory();
-        Object[] result = new Object[2]; // Local testing
+        Object[] result = new Object[2];
         Map<String, Map<String, List<Map<String, Object>>>> productDataOfUser = jsonFactory.fromInputStream(
                 DemoShoppingListProvider.class.getResourceAsStream("/com/rightcode/shoppinglist/glass/testing/productData_refresh.json"),
                 null);
@@ -184,6 +185,13 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
         return result;
     }
 
+    /**
+     * Load data from db if the data is memory is lost.
+     * In GAE environment, data in memory will be removed under some circumstances, so this method must be called in the beginning
+     * by any method require product data access.
+     * @param userId
+     */
+    @SuppressWarnings("unchecked")
     private void initData(String userId) {
         JsonFactory jsonFactory = new JacksonFactory();
         ServiceCacheDao scDao = ServiceCacheDao.getInstance();
@@ -234,6 +242,15 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
         }
     }
 
+    /**
+     * Utility method used to perform the timeline update if new shopping ist found when user request refresh the shopping list
+     * @param userId
+     * @param oldData
+     * @param newData
+     * @param newShoppingListNameMap
+     * @return
+     * @throws IOException
+     */
     private boolean updateTimeline(String userId, Map<String, List<Map<String, Object>>> oldData,
             Map<String, List<Map<String, Object>>> newData, Map<String, String> newShoppingListNameMap) throws IOException {
         Iterator<String> listIds = newData.keySet().iterator();
@@ -250,8 +267,6 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
                     // around is to use number of product cards to determine.
                     if (productCards.size() > 0) {
                         LOG.info("-----Going to check list:" + shoppingListId + " for any update");
-                        // MirrorUtil.updateShoppingListCardContent(userId, shoppingListCardId, newData.get(shoppingListId),
-                        // newShoppingListNameMap.get(shoppingListId), Constants.SHOPPING_LIST_STATUS_IN_PROGRESS);
                         updateTimeLineForSingleList(userId, oldProductlist, newProductList, shoppingListCardId);
                     }
                 }
@@ -265,6 +280,14 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
         return true;
     }
 
+    /**
+     * Utility method used to perform the timeline update for individual shopping list when user request refresh the shopping list.
+     * @param userId
+     * @param oldProductlist
+     * @param newProductList
+     * @param shoppingListCardId
+     * @throws IOException
+     */
     private void updateTimeLineForSingleList(String userId, List<Map<String, Object>> oldProductlist,
             List<Map<String, Object>> newProductList, String shoppingListCardId) throws IOException {
         for (int i = 0; i < newProductList.size(); i++) {
@@ -316,6 +339,11 @@ public class DemoShoppingListProvider implements ShoppingListProvider {
 
     }
 
+    /**
+     * Logic to merge the purchase status to shopping list model
+     * @param purchaseStatus
+     * @param shoppingList
+     */
     private void enrichPurchaseStatus(Map<String, Boolean> purchaseStatus, List<Map<String, Object>> shoppingList) {
         for (int i = 0; i < shoppingList.size(); i++) {
             Map<String, Object> product = shoppingList.get(i);

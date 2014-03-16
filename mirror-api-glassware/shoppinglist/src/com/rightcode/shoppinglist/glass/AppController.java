@@ -362,7 +362,7 @@ public class AppController {
      */
     private void createListCoverCard(Mirror mirrorClient, String userId, String bundleId) throws IOException {
         TimelineItem returnItem = null;
-        String html = VelocityHelper.getFinalStr(new HashMap<String, Object>(), "listCover.vm");
+        String html = VelocityHelper.getHtmlStr(new HashMap<String, Object>(), "listCover.vm");
 
         TimelineItem timelineItem = new TimelineItem();
         timelineItem.setHtml(html);
@@ -389,7 +389,7 @@ public class AppController {
      * @return
      */
     private boolean createInitialCard(Mirror mirrorClient, String userId) {
-        String html = VelocityHelper.getFinalStr(null, "initialCard.vm");
+        String html = VelocityHelper.getHtmlStr(null, "initialCard.vm");
 
         TimelineItem timelineItem = new TimelineItem();
         timelineItem.setHtml(html);
@@ -499,7 +499,7 @@ public class AppController {
         }
 
         viewbean.put(Constants.VELOCITY_PARM_ITEMS_IN_SAME_LIST, subShoppingList);
-        String html = VelocityHelper.getFinalStr(viewbean, "productInfo.vm");
+        String html = VelocityHelper.getHtmlStr(viewbean, "productInfo.vm");
         patchTimelineItem.setHtml(html);
 
         try {
@@ -562,7 +562,7 @@ public class AppController {
     private void updateShoppingListCard(Mirror mirrorClient, String userId, String shoppingListId, String shoppingListCardId,
             String status, String preStatus) {
         try {
-            String html = VelocityHelper.getFinalStr(buildShoppingListViewBean(userId, shoppingListId, status), "shoppingList.vm");
+            String html = VelocityHelper.getHtmlStr(buildShoppingListViewBean(userId, shoppingListId, status), "shoppingList.vm");
             TimelineItem timelineItem = new TimelineItem();
             timelineItem.setHtml(html);
             if (!status.equals(preStatus)) {

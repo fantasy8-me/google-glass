@@ -15,20 +15,25 @@ import com.rightcode.shoppinglist.glass.ref.MainServlet;
 /**
  * General Utilities
  * 
- * @author me
- * 
  */
 public class Util {
     
     private static final Logger LOG = Logger.getLogger(Util.class.getSimpleName());
 
+    /**
+     * ssl link is required for subscription call back. This method is used to put all the 
+     * ssl generation logic in one place for better maintenance
+     * @param req
+     * @return
+     */
     public static String buildSubscriptionCallBack(HttpServletRequest req) {
         String serverName = req.getServerName();
         String subscription_callback = null;
         if (serverName.equals("localhost")) {
             subscription_callback = "https://localglassware.ngrok.com/notify";
         } else if (serverName.equals("glass.rightcode.co.il")) {
-            // Eric.TODO, after the ssl enabled, remove this special handling
+            // if ssl setting of glass.rightcode.co.il is ready, we can use 
+            //https://glass.rightcode.co.il then remove this else if logic 
             subscription_callback = "https://glassshoppinglist.appspot.com/notify";
         } else {
             subscription_callback = "https://" + serverName + "/notify";
@@ -37,6 +42,11 @@ public class Util {
         return subscription_callback;
     }
     
+    /**
+     * Get project client id from config file
+     * 
+     * @return current project client id
+     */
     public static String getProjectClientId(){
         URL resource = Util.class.getResource("/oauth.properties");
 
